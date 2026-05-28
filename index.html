@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ASCII Pepe Viewer</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg0: #081108;
+        --bg1: #0f2310;
+        --panel: rgba(8, 18, 10, 0.78);
+        --panel-strong: rgba(7, 16, 9, 0.92);
+        --ink: #eaffec;
+        --muted: #b5d5bb;
+        --accent: #7dff89;
+        --accent2: #d4ff7a;
+        --border: rgba(176, 255, 190, 0.12);
+        --shadow: rgba(0, 0, 0, 0.25);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(255,255,255,.08), transparent 24%),
+          linear-gradient(180deg, var(--bg1), var(--bg0));
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(transparent 0 49.5%, rgba(255,255,255,.02) 50%, transparent 50.5%),
+          linear-gradient(90deg, transparent 0 49.5%, rgba(255,255,255,.012) 50%, transparent 50.5%);
+        background-size: 100% 5px, 5px 100%;
+        opacity: .16;
+        pointer-events: none;
+      }
+      .shell {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.85fr);
+      }
+      .sceneWrap { position: relative; overflow: hidden; }
+      canvas { width: 100%; height: 100%; display: block; }
+      .note {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--panel-strong);
+        border: 1px solid var(--border);
+        color: #eaffec;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 34px var(--shadow);
+      }
+      .kbd {
+        color: #d9ffd9;
+        border: 1px solid rgba(183,255,189,.14);
+        background: rgba(255,255,255,.03);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 11px;
+      }
+      .panel {
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(8,18,10,.82), rgba(4,10,6,.94));
+        border-left: 1px solid var(--border);
+        box-shadow: -20px 0 80px rgba(0,0,0,.2);
+        overflow: auto;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 18px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 34px rgba(0,0,0,.22);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 3vw, 40px);
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .lede {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 14px;
+      }
+      .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+      .pill {
+        border: 1px solid rgba(183,255,189,.16);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 12px;
+        color: #dfffe7;
+        background: rgba(255,255,255,.03);
+      }
+      .section { margin-top: 18px; }
+      .section h2 {
+        margin: 0 0 10px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        color: var(--accent2);
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+      .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+      button {
+        appearance: none;
+        border: 1px solid rgba(183,255,189,.18);
+        background: linear-gradient(180deg, rgba(124,255,136,.16), rgba(94,210,103,.06));
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        transition: transform 160ms ease, border-color 160ms ease;
+      }
+      button:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
+      button:active { transform: translateY(1px); }
+      button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+      .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
+      .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
+      input[type="range"] { width: 100%; accent-color: var(--accent); }
+      @media (max-width: 980px) {
+        .shell { grid-template-columns: 1fr; grid-template-rows: 58vh 42vh; }
+        .panel { border-left: 0; border-top: 1px solid var(--border); }
+        .note { left: 12px; bottom: 12px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .note::after { content: "  • motion reduced"; color: var(--muted); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="sceneWrap">
+        <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
+        <div class="note">ASCII Pepe — press <span class="kbd">Space</span> to pause</div>
+      </div>
+      <aside class="panel">
+        <div class="card">
+          <h1>ASCII Pepe Viewer</h1>
+          <p class="lede">
+            A code-driven Pepe portrait rendered with terminal-style shading, slow rotation, and a living meme expression.
+          </p>
+
+          <div class="pillrow">
+            <span class="pill">ASCII framebuffer</span>
+            <span class="pill">3D rotation</span>
+            <span class="pill">Depth shading</span>
+            <span class="pill">Pepe face</span>
+          </div>
+
+          <div class="controls">
+            <button id="toggle" type="button">Pause</button>
+            <div class="slider">
+              <label for="speed"><span>Spin speed</span><span id="speedValue">1.0×</span></label>
+              <input id="speed" type="range" min="0" max="2" step="0.05" value="1" />
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>About</h2>
+            <div class="meta">
+              The face is built from character cells, shaped with a small 3D transform, and shaded so the eyes, cheeks,
+              mouth, and outline read like a real Pepe portrait instead of a flat sticker.
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Quick controls</h2>
+            <div class="meta">
+              <div>• <span class="kbd">Space</span> pause / resume</div>
+              <div>• Use the speed slider to slow down or speed up the spin</div>
+              <div>• Resize the window — the ASCII grid adapts responsively</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('scene');
+      const ctx = canvas.getContext('2d');
+      const toggleBtn = document.getElementById('toggle');
+      const speedInput = document.getElementById('speed');
+      const speedValue = document.getElementById('speedValue');
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let cols = 0;
+      let rows = 0;
+      let charW = 10;
+      let charH = 18;
+      let paused = false;
+      let speed = 1;
+      let rot = 0;
+      let drift = 0;
+      let raf = 0;
+
+      const ramp = ' .,:;=!*#%@';
+      const greenPalette = ['#1e5e20', '#2c7a2f', '#38933a', '#4eb54b', '#72d86b'];
+      const shadowGreen = 'rgba(14, 34, 16, 0.96)';
+      const outline = '#102010';
+      const white = '#f7f6ef';
+      const black = '#111111';
+      const lip = '#a56a35';
+      const tongue = '#ef1a67';
+      const innerMouth = '#d8adc4';
+
+      const resize = () => {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        charH = Math.max(14, Math.min(24, Math.floor(Math.min(width, height) / 28)));
+        charW = Math.max(8, Math.floor(charH * 0.62));
+        cols = Math.max(50, Math.floor(width / charW));
+        rows = Math.max(28, Math.floor(height / charH));
+        ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
+        ctx.textBaseline = 'top';
+      };
+
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const sat = (v) => clamp(v, 0, 1);
+      const ellipse = (x, y, cx, cy, rx, ry) => (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2);
+      const smooth = (a, b, x) => {
+        const t = sat((x - a) / (b - a));
+        return t * t * (3 - 2 * t);
+      };
+
+      function rotate2D(x, y, angle) {
+        const s = Math.sin(angle);
+        const c = Math.cos(angle);
+        return [x * c - y * s, x * s + y * c];
+      }
+
+      function headMask(x, y) {
+        const bulb = Math.min(
+          ellipse(x, y, -0.24, 0.01, 0.44, 0.58),
+          ellipse(x, y, 0.12, -0.02, 0.62, 0.56),
+          ellipse(x, y, 0.16, 0.26, 0.58, 0.42)
+        );
+        return bulb;
+      }
+
+      function featureAt(x, y, t) {
+        const hx = x;
+        const hy = y;
+        const head = headMask(hx, hy);
+        if (head > 1.04) return null;
+
+        const edge = smooth(0.98, 1.05, head);
+        const depth = 1 - clamp(head, 0, 1);
+        const wrinkle = Math.sin((hx * 8.5) + t * 1.9) * 0.014 + Math.sin((hy * 11.5) - t * 1.3) * 0.012;
+
+        let ch = ramp[Math.floor(depth * (ramp.length - 1))];
+        let color = greenPalette[Math.floor(clamp(depth * 4.2, 0, 4))];
+        let priority = 1;
+
+        if (edge > 0.35) {
+          ch = '#';
+          color = outline;
+          priority = 8;
+        }
+
+        // Forehead / eye wrinkles.
+        const browLeft = Math.abs(hy + 0.27 - 0.05 * Math.sin((hx + 0.16) * 6.5)) < 0.03 && hx < 0.28;
+        const browRight = Math.abs(hy + 0.23 - 0.03 * Math.sin((hx - 0.22) * 7.5)) < 0.03 && hx > 0.08;
+        if ((browLeft || browRight) && priority < 6) {
+          ch = '~';
+          color = shadowGreen;
+          priority = 6;
+        }
+
+        // Eyes: big white ovals with pupils and highlights.
+        const eyeL = ellipse(hx, hy, -0.14, -0.08, 0.23, 0.18);
+        const eyeR = ellipse(hx, hy, 0.32, -0.05, 0.21, 0.17);
+        const pupilL = ellipse(hx, hy, -0.09, -0.06, 0.08, 0.09);
+        const pupilR = ellipse(hx, hy, 0.38, -0.04, 0.075, 0.085);
+        const glintL = ellipse(hx, hy, -0.05, -0.10, 0.025, 0.035);
+        const glintR = ellipse(hx, hy, 0.42, -0.08, 0.022, 0.03);
+        const lidL = hy < -0.14 && hy > -0.34 && hx < 0.05 && hx > -0.42;
+        const lidR = hy < -0.12 && hy > -0.30 && hx > 0.10 && hx < 0.56;
+
+        if (eyeL <= 1 && priority < 7) {
+          ch = eyeL < 0.88 ? 'O' : 'o';
+          color = white;
+          priority = 7;
+        }
+        if (eyeR <= 1 && priority < 7) {
+          ch = eyeR < 0.88 ? 'O' : 'o';
+          color = white;
+          priority = 7;
+        }
+        if (pupilL <= 1 && priority < 8) {
+          ch = '@';
+          color = black;
+          priority = 8;
+        }
+        if (pupilR <= 1 && priority < 8) {
+          ch = '@';
+          color = black;
+          priority = 8;
+        }
+        if (glintL <= 1 && priority < 9) {
+          ch = '.';
+          color = white;
+          priority = 9;
+        }
+        if (glintR <= 1 && priority < 9) {
+          ch = '.';
+          color = white;
+          priority = 9;
+        }
+        if ((lidL || lidR) && priority < 5) {
+          ch = '-';
+          color = shadowGreen;
+          priority = 5;
+        }
+
+        // Nose bridge / snout crease.
+        const bridge = Math.abs(hx - 0.04 - 0.18 * Math.tan(hy * 1.1)) < 0.02 && hy > -0.16 && hy < 0.20;
+        if (bridge && priority < 6) {
+          ch = '/';
+          color = outline;
+          priority = 6;
+        }
+
+        // Cheek folds.
+        const foldL = Math.abs(hy - (0.04 + 0.10 * Math.sin((hx + 0.46) * 7))) < 0.025 && hx < 0.12 && hx > -0.52;
+        const foldR = Math.abs(hy - (0.05 + 0.08 * Math.sin((hx - 0.20) * 7.5))) < 0.025 && hx > 0.03 && hx < 0.56;
+        if ((foldL || foldR) && priority < 5) {
+          ch = '~';
+          color = shadowGreen;
+          priority = 5;
+        }
+
+        // Mouth / lip / tongue.
+        const outerM = ellipse(hx, hy, 0.04, 0.34, 0.58, 0.21);
+        const innerM = ellipse(hx, hy, 0.06, 0.37, 0.47, 0.14);
+        const tongueM = ellipse(hx, hy, -0.01, 0.42, 0.23, 0.085);
+        const toothM = ellipse(hx, hy, 0.28, 0.40, 0.09, 0.04);
+        const gumLine = Math.abs(hy - (0.24 + 0.12 * Math.cos((hx + 0.08) * 2.7))) < 0.03 && hx > -0.45 && hx < 0.57;
+
+        if (outerM <= 1 && priority < 6) {
+          ch = ')';
+          color = lip;
+          priority = 6;
+        }
+        if (innerM <= 1 && priority < 7) {
+          ch = '_';
+          color = innerM < 0.72 ? innerM > 0.55 ? '#f4d0e1' : innerM > 0.38 ? tongue : '#ef7aaa' : innerM > 0.85 ? innerM > 0.92 ? '#e9f0ee' : innerM : innerM;
+          priority = 7;
+        }
+        if (tongueM <= 1 && priority < 8) {
+          ch = '~';
+          color = tongue;
+          priority = 8;
+        }
+        if (toothM <= 1 && priority < 9) {
+          ch = '.';
+          color = '#f5ede7';
+          priority = 9;
+        }
+        if (gumLine && priority < 4) {
+          ch = '-';
+          color = shadowGreen;
+          priority = 4;
+        }
+
+        // Lower jaw and chin shadow.
+        const jaw = ellipse(hx, hy, -0.08, 0.33, 0.74, 0.62);
+        if (jaw <= 1 && priority < 2) {
+          ch = depth > 0.55 ? '.' : ',';
+          color = greenPalette[0];
+          priority = 2;
+        }
+
+        // Big outline bump on the left cheek / head silhouette.
+        if (head > 0.93 && priority < 8) {
+          ch = '#';
+          color = outline;
+          priority = 8;
+        }
+
+        // Micro shading makes the face feel alive.
+        if (priority < 3 && wrinkle > 0.013) {
+          ch = ch === ' ' ? '.' : ch;
+          color = greenPalette[1];
+          priority = 3;
+        }
+
+        return { ch, color, priority };
+      }
+
+      function drawFrame(time) {
+        const t = time * 0.001;
+        if (!paused) {
+          rot += 0.0105 * speed;
+          drift += 0.0065 * speed;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+        const bloom = ctx.createRadialGradient(width * 0.46, height * 0.44, 20, width * 0.46, height * 0.44, Math.max(width, height) * 0.58);
+        bloom.addColorStop(0, 'rgba(245,255,246,0.10)');
+        bloom.addColorStop(0.42, 'rgba(46,111,50,0.08)');
+        bloom.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = bloom;
+        ctx.fillRect(0, 0, width, height);
+
+        const cellCount = cols * rows;
+        const chars = new Array(cellCount).fill(' ');
+        const colors = new Array(cellCount).fill('transparent');
+        const depth = new Float32Array(cellCount).fill(-1e9);
+
+        const baseX = width * 0.37;
+        const baseY = height * 0.50;
+        const scale = Math.min(width, height) * 0.88;
+        const pitch = Math.sin(t * 0.8) * 0.06 - 0.04;
+        const yaw = Math.sin(t * 0.5) * 0.12 + 0.10;
+        const roll = rot + Math.sin(t * 0.4) * 0.05;
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const idx = row * cols + col;
+            const nx = (col / (cols - 1)) * 2 - 1;
+            const ny = (row / (rows - 1)) * 2 - 1;
+
+            let x = (nx * 1.15 + 0.09 * Math.sin(t * 0.7 + ny * 3.2));
+            let y = (ny * 1.02 + 0.04 * Math.cos(t * 0.9 + nx * 4.1));
+
+            [x, y] = rotate2D(x, y, roll);
+            x *= 1 + yaw * 0.18;
+            y *= 1 + pitch * 0.12;
+            x += 0.04 * Math.sin(t * 0.6 + y * 3.5);
+            y += 0.03 * Math.sin(t * 0.8 + x * 4.0);
+
+            const [sx, sy] = [baseX + x * scale * 0.42, baseY + y * scale * 0.34];
+            const c = Math.floor(sx / charW);
+            const r = Math.floor(sy / charH);
+            if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
+
+            const localX = x * 0.90 + 0.02 * Math.sin(drift + y * 2.1);
+            const localY = y * 0.90 + 0.02 * Math.cos(drift + x * 2.3);
+            const z = 1 - clamp(headMask(localX, localY), 0, 1);
+            const screenIdx = r * cols + c;
+            if (z <= depth[screenIdx]) continue;
+
+            const feature = featureAt(localX, localY, t + drift);
+            if (!feature) continue;
+            depth[screenIdx] = z;
+            chars[screenIdx] = feature.ch;
+            colors[screenIdx] = feature.color;
+          }
+        }
+
+        // Draw the ASCII face.
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const idx = row * cols + col;
+            const ch = chars[idx];
+            if (ch === ' ') continue;
+            ctx.fillStyle = colors[idx];
+            ctx.fillText(ch, col * charW, row * charH);
+          }
+        }
+
+        ctx.fillStyle = 'rgba(240,255,241,.78)';
+        ctx.font = `${Math.max(11, charH - 3)}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
+        ctx.fillText('pepe energy', 18, height - Math.max(20, charH + 8));
+
+        raf = requestAnimationFrame(drawFrame);
+      }
+
+      function setSpeed(v) {
+        speed = v;
+        speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        paused = !paused;
+        toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+      });
+      speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          toggleBtn.click();
+        }
+      });
+      window.addEventListener('resize', resize);
+
+      resize();
+      setSpeed(parseFloat(speedInput.value));
+      drawFrame(performance.now());
+    </script>
+  </body>
+</html>
