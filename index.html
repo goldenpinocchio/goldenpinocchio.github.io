@@ -153,6 +153,25 @@
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
+      .featureToggles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .featureToggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(183,255,189,.16);
+        background: rgba(255,255,255,.03);
+        color: #e9ffec;
+        font-size: 12px;
+        user-select: none;
+      }
+      .featureToggle input { accent-color: var(--accent); }
       @media (max-width: 980px) {
         .sceneWrap { padding: 16px 16px 10px; }
       }
@@ -258,6 +277,13 @@
             </div>
           </div>
 
+          <div class="featureToggles" aria-label="Feature toggles">
+            <label class="featureToggle"><input id="showEyes" type="checkbox" checked /> Eyes</label>
+            <label class="featureToggle"><input id="showBrow" type="checkbox" checked /> Brow</label>
+            <label class="featureToggle"><input id="showMouth" type="checkbox" checked /> Mouth</label>
+            <label class="featureToggle"><input id="showShade" type="checkbox" checked /> Shade</label>
+          </div>
+
           <div class="section">
             <h2>About</h2>
             <div class="meta">
@@ -272,6 +298,7 @@
             <div class="meta">
               <div>• <span class="kbd">Space</span> pause / resume</div>
               <div>• Use the speed slider to slow down or speed up the 360° spin</div>
+              <div>• Toggle Eyes / Brow / Mouth / Shade, or use <span class="kbd">1</span>–<span class="kbd">4</span></div>
               <div>• Resize the window — the ASCII grid adapts responsively</div>
             </div>
           </div>
@@ -285,6 +312,10 @@
       const toggleBtn = document.getElementById('toggle');
       const speedInput = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
+      const showEyesInput = document.getElementById('showEyes');
+      const showBrowInput = document.getElementById('showBrow');
+      const showMouthInput = document.getElementById('showMouth');
+      const showShadeInput = document.getElementById('showShade');
 
       let width = 0;
       let height = 0;
@@ -298,12 +329,17 @@
       let rot = 0;
       let drift = 0;
       let raf = 0;
+      let showEyes = true;
+      let showBrow = true;
+      let showMouth = true;
+      let showShade = true;
 
       const ramp = ' .,:;i1tfLCG08WM#@';
       const skinTones = ['#050b05', '#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#79bd61', '#98d27b', '#c8f79f'];
       const shadowTones = ['#030703', '#050b05', '#081408', '#102010', '#173217'];
       const rimTones = ['#040904', '#081408', '#102010', '#173217'];
       const cheekTones = ['#5e3320', '#7e462a', '#a95d38', '#c77a4a', '#e0a161'];
+      const chinTones = ['#061006', '#0a1b0a', '#102510', '#173217', '#1f451f', '#295d2b'];
       const eyeWhite = '#f7f6ef';
       const black = '#111111';
       const lip = '#9a5f31';
@@ -368,9 +404,9 @@
         const brow = 1 - superEllipse(x, y, 0.00, -0.25, 0.74, 0.17, 2.92);
         const cheekL = 1 - superEllipse(x, y, -0.34, 0.10, 0.52, 0.36, 1.42);
         const cheekR = 1 - superEllipse(x, y, 0.30, 0.09, 0.44, 0.30, 1.44);
-        const jaw = 1 - superEllipse(x, y, -0.01, 0.31, 0.72, 0.26, 1.34);
-        const chin = 1 - superEllipse(x, y, 0.08, 0.52, 0.16, 0.07, 2.24);
-        const snout = 1 - superEllipse(x, y, 0.16, 0.17, 0.48, 0.16, 2.22);
+        const jaw = 1 - superEllipse(x, y, -0.01, 0.28, 0.68, 0.22, 1.34);
+        const chin = 1 - superEllipse(x, y, 0.03, 0.46, 0.10, 0.04, 2.28);
+        const snout = 1 - superEllipse(x, y, 0.14, 0.16, 0.46, 0.15, 2.22);
         const crown = 1 - superEllipse(x, y, 0.00, -0.21, 0.60, 0.09, 2.52);
         return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout, crown);
       }
@@ -420,24 +456,31 @@
         const socketL = ellipse(x, y, -0.10 + eyeShift, -0.03 + browLift, 0.34 * eyeSquash, 0.22);
         const socketR = ellipse(x, y, 0.20 + eyeShift, -0.03 - browLift, 0.31 * eyeSquash, 0.20);
 
-        if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
-        if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
-        if (pupilL <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
-        if (pupilR <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
-        if (glintL <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
-        if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
-        if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
-        if ((socketL <= 1 || socketR <= 1) && priority < 5) { ch = ch === ' ' ? '.' : ch; color = shadowTones[2]; priority = 5; }
-        const browShadowL = y > -0.11 && y < 0.03 && x > -0.30 && x < 0.02;
-        const browShadowR = y > -0.11 && y < 0.03 && x > 0.06 && x < 0.38;
-        if ((browShadowL || browShadowR) && priority < 6) { ch = ch === ' ' ? ':' : ch; color = shadowTones[3]; priority = 6; }
+        if (showEyes) {
+          if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
+          if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
+          if (pupilL <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
+          if (pupilR <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
+          if (glintL <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
+          if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
+          if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
+          if ((socketL <= 1 || socketR <= 1) && priority < 5) { ch = ch === ' ' ? '.' : ch; color = shadowTones[2]; priority = 5; }
+        }
 
-        const browBarL = y > -0.25 && y < -0.14 && x > -0.40 && x < 0.00;
-        const browBarR = y > -0.23 && y < -0.13 && x > 0.01 && x < 0.38;
-        if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[2]; priority = 7; }
+        if (showShade) {
+          const browShadowL = y > -0.11 && y < 0.03 && x > -0.30 && x < 0.02;
+          const browShadowR = y > -0.11 && y < 0.03 && x > 0.06 && x < 0.38;
+          if ((browShadowL || browShadowR) && priority < 6) { ch = ch === ' ' ? ':' : ch; color = shadowTones[3]; priority = 6; }
+        }
+
+        if (showBrow) {
+          const browBarL = y > -0.25 && y < -0.14 && x > -0.40 && x < 0.00;
+          const browBarR = y > -0.23 && y < -0.13 && x > 0.01 && x < 0.38;
+          if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[2]; priority = 7; }
+        }
 
         const bridge = Math.abs(x - 0.08 - 0.14 * Math.tan(y * 0.85) - turn * 0.02) < 0.013 && y > -0.16 && y < 0.18;
-        if (bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
+        if (showBrow && bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
 
         const nose = ellipse(x, y, 0.09 + turn * 0.02, 0.04, 0.052, 0.046);
         if (nose <= 1 && priority < 8) { ch = ch === ' ' ? ':' : ch; color = rimTones[1]; priority = 8; }
@@ -472,26 +515,34 @@
         const toothM = ellipse(x, y, 0.29 + turn * 0.02, 0.38, 0.07, 0.032);
         const gumLine = Math.abs(y - (0.27 + 0.055 * Math.cos((x + 0.08) * 2.5))) < 0.016 && x > -0.38 && x < 0.48;
         const muzzleShade = y > 0.00 && y < 0.20 && x > -0.02 && x < 0.34;
+        const chinShade = y > 0.22 && y < 0.52 && x > -0.12 && x < 0.30;
 
-        if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
-        if (innerM <= 1 && priority < 9) {
-          ch = '_';
-          color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
-          priority = 9;
+        if (showMouth) {
+          if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
+          if (innerM <= 1 && priority < 9) {
+            ch = '_';
+            color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
+            priority = 9;
+          }
+          if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
+          if (toothM <= 1 && priority < 11) { ch = '.'; color = '#f5ede7'; priority = 11; }
+          if (gumLine && priority < 4) { ch = '-'; color = rimTones[0]; priority = 4; }
+          if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
         }
-        if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
-        if (toothM <= 1 && priority < 11) { ch = '.'; color = '#f5ede7'; priority = 11; }
-        if (gumLine && priority < 4) { ch = '-'; color = rimTones[0]; priority = 4; }
-        if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
-        if (mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
-        if (muzzleShade && priority < 5) { ch = ch === ' ' ? '.' : ch; color = skinTones[Math.max(0, toneIdx - 2)]; priority = 5; }
-        const jawShadow = Math.abs(y - 0.50) < 0.012 && x > -0.02 && x < 0.34;
-        if (jawShadow && priority < 6) { ch = '_'; color = rimTones[1]; priority = 6; }
+        if (showShade && mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
+        if (showShade && muzzleShade && priority < 5) { ch = ch === ' ' ? '.' : ch; color = skinTones[Math.max(0, toneIdx - 2)]; priority = 5; }
+        if (showShade && chinShade && priority < 5) {
+          ch = ch === ' ' ? '.' : ch;
+          color = chinTones[Math.min(chinTones.length - 1, toneIdx + 1)];
+          priority = 5;
+        }
+        const jawShadow = Math.abs(y - 0.50) < 0.010 && x > -0.01 && x < 0.26;
+        if (showShade && jawShadow && priority < 6) { ch = '_'; color = chinTones[1]; priority = 6; }
 
         const cornerL = ellipse(x, y, -0.36 + turn * 0.02, 0.33, 0.12, 0.08);
         const cornerR = ellipse(x, y, 0.39 + turn * 0.02, 0.33, 0.12, 0.08);
-        if (cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
-        if (cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
+        if (showMouth && cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
+        if (showMouth && cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
 
         const jaw = ellipse(x, y, -0.02 + turn * 0.05, 0.30, 0.88 * (1 - Math.abs(turn) * 0.06), 0.70);
         if (jaw <= 1 && priority < 3) {
@@ -501,11 +552,11 @@
         }
 
         const lowerLip = Math.abs(y - (0.39 + 0.05 * Math.cos((x + 0.14) * 4.2))) < 0.016 && x > -0.20 && x < 0.46;
-        if (lowerLip && priority < 7) { ch = '_'; color = lip; priority = 7; }
+        if (showMouth && lowerLip && priority < 7) { ch = '_'; color = lip; priority = 7; }
 
         if (priority < 4 && ridge > 0.95) {
           ch = ch === ' ' ? '.' : ch;
-          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
+          color = y > 0.18 ? chinTones[Math.min(chinTones.length - 1, toneIdx + 1)] : skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
           priority = 4;
         }
 
@@ -605,21 +656,44 @@
         speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
       }
 
+      function syncFeatureState() {
+        showEyes = showEyesInput.checked;
+        showBrow = showBrowInput.checked;
+        showMouth = showMouthInput.checked;
+        showShade = showShadeInput.checked;
+      }
+
       toggleBtn.addEventListener('click', () => {
         paused = !paused;
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
       speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      [showEyesInput, showBrowInput, showMouthInput, showShadeInput].forEach((input) => {
+        input.addEventListener('change', syncFeatureState);
+      });
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
           toggleBtn.click();
+        } else if (e.code === 'Digit1') {
+          showEyesInput.checked = !showEyesInput.checked;
+          syncFeatureState();
+        } else if (e.code === 'Digit2') {
+          showBrowInput.checked = !showBrowInput.checked;
+          syncFeatureState();
+        } else if (e.code === 'Digit3') {
+          showMouthInput.checked = !showMouthInput.checked;
+          syncFeatureState();
+        } else if (e.code === 'Digit4') {
+          showShadeInput.checked = !showShadeInput.checked;
+          syncFeatureState();
         }
       });
       window.addEventListener('resize', resize);
 
       resize();
       setSpeed(parseFloat(speedInput.value));
+      syncFeatureState();
       drawFrame(performance.now());
     </script>
   </body>
