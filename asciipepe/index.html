@@ -351,12 +351,13 @@
       let showDepth = true;
 
       const ramp = ' .,:;=!*#%@';
-      const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
-      const rimTones = ['#081408', '#102010', '#173217', '#204320'];
-      const cheekTones = ['#6c3b25', '#915030', '#b86d42', '#d99859'];
+      const skinTones = ['#061106', '#091709', '#0d1d0d', '#122412', '#173017', '#1d3c1b', '#245020', '#2d6328', '#387a31', '#45903b', '#56a94a', '#6fc85d', '#8be274', '#b4f29a', '#e2ffcc'];
+      const rimTones = ['#050d05', '#091509', '#0f1f0f', '#173017', '#204220', '#2d5529'];
+      const cheekTones = ['#4e2a1c', '#6c3a27', '#8d4d31', '#b46340', '#cf8154', '#e2a76d'];
       const eyeWhite = '#f7f6ef';
       const black = '#111111';
       const lip = '#9a5f31';
+      const mouthTones = ['#6f3b22', '#8d4d2b', '#b46340', '#d98257', '#efab78'];
       const tongue = '#ef1a67';
       const highlight = '#f6ffe7';
 
@@ -391,11 +392,12 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const compact = width <= 720 || height <= 680;
-        const frameBias = showFramebuffer ? 1 : 0.82;
-        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / ((compact ? 26 : 22) / frameBias))));
-        charW = Math.max(8, Math.floor(charH * 0.6 * frameBias));
-        cols = Math.max(compact ? 30 : 44, Math.floor((width / charW) * frameBias));
-        rows = Math.max(compact ? 18 : 24, Math.floor((height / charH) * frameBias));
+        const targetRows = compact ? 42 : 69;
+        const frameBias = showFramebuffer ? 1 : 0.9;
+        charH = Math.max(compact ? 9 : 10, Math.min(compact ? 14 : 15, Math.floor(height / targetRows)));
+        charW = Math.max(5, Math.floor(charH * 0.58 * frameBias));
+        cols = Math.max(compact ? 36 : 60, Math.floor((width / charW) * frameBias));
+        rows = targetRows;
         ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
         ctx.textBaseline = 'top';
       }
@@ -440,7 +442,7 @@
         const ridge = showDepth ? clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1) : 0.56;
         const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
         let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
-        let color = showDepth ? skinTones[toneIdx] : skinTones[4];
+        let color = showDepth ? skinTones[toneIdx] : skinTones[5];
         let priority = 1;
 
         if (profile < 0.18) {
@@ -451,7 +453,7 @@
 
         if (showDepth && edge > 0.41 && priority < 7) {
           ch = '%';
-          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
+          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
           priority = 7;
         }
 
@@ -497,12 +499,12 @@
         const cheekGlowR = ellipse(x, y, 0.22, 0.10, 0.17, 0.12);
         if (cheekGlowL <= 1 && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowL * 3), 0, 3)];
+          color = cheekTones[clamp(5 - Math.floor(cheekGlowL * 5), 0, 5)];
           priority = 5;
         }
         if (cheekGlowR <= 1 && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowR * 3), 0, 3)];
+          color = cheekTones[clamp(5 - Math.floor(cheekGlowR * 5), 0, 5)];
           priority = 5;
         }
 
@@ -518,7 +520,7 @@
         if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
         if (innerM <= 1 && priority < 9) {
           ch = '_';
-          color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
+          color = mouthTones[Math.min(mouthTones.length - 1, Math.max(0, 4 - Math.floor(innerM * 4)))];
           priority = 9;
         }
         if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
