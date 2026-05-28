@@ -145,7 +145,7 @@
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
       @media (max-width: 980px) {
-        .shell { grid-template-columns: 1fr; grid-template-rows: 58vh 42vh; }
+        .shell { grid-template-columns: 1fr; grid-template-rows: 52vh 48vh; }
         .panel { border-left: 0; border-top: 1px solid var(--border); }
         .note { left: 12px; bottom: 12px; }
       }
@@ -237,7 +237,7 @@
         <div class="card">
           <h1>ASCIIPEPE V2</h1>
           <p class="lede">
-            A larger, more dimensional Pepe portrait with richer tone mapping, deeper shading, and a full 360° spin.
+            A more tightly framed Pepe portrait with richer tone mapping, deeper shading, and a full 360° spin.
           </p>
 
           <div class="pillrow">
@@ -259,8 +259,9 @@
           <div class="section">
             <h2>About</h2>
             <div class="meta">
-              ASCIIPEPE V2 pushes the portrait harder toward a chunky, sculpted meme bust: bigger in frame, more color
-              tones, stronger lighting, and a full turntable spin so the head reads as a proper 3D-ish character.
+              ASCIIPEPE V2 keeps the turntable spin, but pulls the portrait back so the full face fits the screen more
+              comfortably. The goal is a clearer read of the Pepe shape, eyes, mouth, and shading without the bust
+              feeling oversized.
             </div>
           </div>
 
@@ -480,9 +481,9 @@
         const depth = new Float32Array(cellCount).fill(-1e9);
 
         const compact = width <= 720 || height <= 680;
-        const baseX = width * 0.50;
-        const baseY = height * (compact ? 0.47 : 0.49);
-        const scale = Math.min(width, height) * (compact ? 0.96 : 1.08);
+        const baseX = width * (compact ? 0.44 : 0.45);
+        const baseY = height * (compact ? 0.48 : 0.49);
+        const scale = Math.min(width, height) * (compact ? 0.64 : 0.72);
         const spin = rot;
         const yaw = spin;
         const pitch = 0.18 * Math.sin(t * 0.54) - 0.08;
