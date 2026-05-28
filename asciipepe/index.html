@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ASCIIPEPE V2</title>
+    <title>ASCIIPEPE</title>
     <style>
       :root {
         color-scheme: dark;
@@ -268,22 +268,15 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE V2 — press <span class="kbd">Space</span> to pause</div>
+        <div class="note">ASCIIPEPE — press <span class="kbd">Space</span> to pause</div>
       </div>
       <aside class="panel">
         <div class="card">
-          <h1>ASCIIPEPE V2</h1>
+          <h1>ASCIIPEPE</h1>
           <p class="lede">
-            A more tightly framed Pepe portrait with cleaner edges, a sharper jawline, and richer tone mapping — still spinning, but less blob and more frog.
+            A responsive ASCII portrait experiment that uses shading, motion, and color to turn Pepe into a readable
+            little terminal-style character study.
           </p>
-
-          <div class="pillrow">
-            <span class="pill">ASCII framebuffer</span>
-            <span class="pill">3D rotation</span>
-            <span class="pill">360° turntable</span>
-            <span class="pill">Depth shading</span>
-            <span class="pill">Pepe face</span>
-          </div>
 
           <div class="controls">
             <button id="toggle" type="button">Pause</button>
@@ -303,9 +296,9 @@
           <div class="section">
             <h2>About</h2>
             <div class="meta">
-              ASCIIPEPE V2 keeps the turntable spin, but pulls the portrait back so the full face fits the screen more
-              comfortably. The goal is a clearer read of the Pepe shape, eyes, mouth, and shading without the bust
-              feeling oversized.
+              ASCIIPEPE explores how far a frog portrait can be pushed with text, tone, and motion. The render stays
+              playful and legible, with a live ASCII grid, layered shading, and enough movement to keep the face
+              feeling alive.
             </div>
           </div>
 
@@ -351,8 +344,8 @@
       let showDepth = true;
 
       const ramp = ' .,:;=!*#%@';
-      const skinTones = ['#061106', '#091709', '#0d1d0d', '#122412', '#173017', '#1d3c1b', '#245020', '#2d6328', '#387a31', '#45903b', '#56a94a', '#6fc85d', '#8be274', '#b4f29a', '#e2ffcc'];
-      const rimTones = ['#050d05', '#091509', '#0f1f0f', '#173017', '#204220', '#2d5529'];
+      const skinTones = ['#081208', '#0c180b', '#10200e', '#142810', '#173017', '#1f451d', '#275c23', '#2f7429', '#38902f', '#42ab34', '#50c43d', '#67d956', '#84e86d', '#abee86', '#d5f6ae'];
+      const rimTones = ['#061006', '#0a160a', '#101f10', '#173017', '#214521', '#2c5d2a'];
       const cheekTones = ['#4e2a1c', '#6c3a27', '#8d4d31', '#b46340', '#cf8154', '#e2a76d'];
       const eyeWhite = '#f7f6ef';
       const black = '#111111';
@@ -508,14 +501,14 @@
           priority = 5;
         }
 
-        const mouthCurve = 0.28 + 0.04 * Math.cos((x + 0.08) * 2.6);
+        const mouthCurve = 0.285 + 0.055 * ((x - 0.03) * (x - 0.03) * 4.4 - 0.34);
         const mouthBand = Math.abs(y - mouthCurve) < 0.020 && x > -0.48 && x < 0.58;
-        const mouthShade = Math.abs(y - (mouthCurve + 0.045)) < 0.016 && x > -0.36 && x < 0.50;
-        const outerM = ellipse(x, y, 0.02, 0.26, 0.72 * eyeSquash, 0.17);
-        const innerM = ellipse(x, y, 0.06, 0.29, 0.60 * eyeSquash, 0.12);
-        const tongueM = ellipse(x, y, -0.01, 0.33, 0.24 * eyeSquash, 0.070);
-        const toothM = ellipse(x, y, 0.31, 0.29, 0.09, 0.040);
-        const gumLine = Math.abs(y - (0.19 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
+        const mouthShade = Math.abs(y - (mouthCurve + 0.040)) < 0.016 && x > -0.36 && x < 0.50;
+        const outerM = ellipse(x, y, 0.02, 0.255, 0.74 * eyeSquash, 0.17);
+        const innerM = ellipse(x, y, 0.04, 0.285, 0.62 * eyeSquash, 0.118);
+        const tongueM = ellipse(x, y, -0.01, 0.328, 0.24 * eyeSquash, 0.068);
+        const toothM = ellipse(x, y, 0.33, 0.285, 0.09, 0.040);
+        const gumLine = Math.abs(y - (0.185 + 0.070 * Math.cos((x + 0.06) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
 
         if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
         if (innerM <= 1 && priority < 9) {
@@ -529,8 +522,8 @@
         if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
         if (mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
 
-        const cornerL = ellipse(x, y, -0.34 + turn * 0.03, 0.33, 0.11, 0.08);
-        const cornerR = ellipse(x, y, 0.40 + turn * 0.03, 0.33, 0.12, 0.085);
+        const cornerL = ellipse(x, y, -0.36 + turn * 0.03, 0.305, 0.11, 0.085);
+        const cornerR = ellipse(x, y, 0.42 + turn * 0.03, 0.302, 0.12, 0.088);
         if (cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
         if (cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
 
