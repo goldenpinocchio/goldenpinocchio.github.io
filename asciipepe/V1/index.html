@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ASCIIPEPE V2</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg0: #071006;
+        --bg1: #0e2210;
+        --panel: rgba(8, 16, 9, 0.78);
+        --panel-strong: rgba(6, 13, 7, 0.92);
+        --ink: #f0ffee;
+        --muted: #bbd4bf;
+        --accent: #7dff89;
+        --accent2: #d6ff7a;
+        --border: rgba(176, 255, 190, 0.12);
+        --shadow: rgba(0, 0, 0, 0.28);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-text-size-adjust: 100%;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(255,255,255,.08), transparent 24%),
+          linear-gradient(180deg, var(--bg1), var(--bg0));
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(transparent 0 49.5%, rgba(255,255,255,.02) 50%, transparent 50.5%),
+          linear-gradient(90deg, transparent 0 49.5%, rgba(255,255,255,.012) 50%, transparent 50.5%);
+        background-size: 100% 5px, 5px 100%;
+        opacity: .16;
+        pointer-events: none;
+      }
+      .shell {
+        width: 100%;
+        min-height: 100dvh;
+        display: block;
+      }
+      .sceneWrap {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        display: flex;
+        flex-direction: column;
+        min-height: 100svh;
+        padding: 20px 20px 12px;
+      }
+      canvas { width: 100%; flex: 1 1 auto; min-height: 72svh; display: block; }
+      .note {
+        position: static;
+        margin-top: 14px;
+        display: inline-flex;
+        align-self: flex-start;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--panel-strong);
+        border: 1px solid var(--border);
+        color: #eaffec;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 34px var(--shadow);
+      }
+      .kbd {
+        color: #d9ffd9;
+        border: 1px solid rgba(183,255,189,.14);
+        background: rgba(255,255,255,.03);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 11px;
+      }
+      .panel {
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(8,18,10,.82), rgba(4,10,6,.94));
+        border-top: 1px solid var(--border);
+        box-shadow: 0 -20px 80px rgba(0,0,0,.2);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 18px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 34px rgba(0,0,0,.22);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 3vw, 40px);
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .lede {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 14px;
+      }
+      .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+      .pill {
+        border: 1px solid rgba(183,255,189,.16);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 12px;
+        color: #dfffe7;
+        background: rgba(255,255,255,.03);
+      }
+      .section { margin-top: 18px; }
+      .section h2 {
+        margin: 0 0 10px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        color: var(--accent2);
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+      .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+      button {
+        appearance: none;
+        border: 1px solid rgba(183,255,189,.18);
+        background: linear-gradient(180deg, rgba(124,255,136,.16), rgba(94,210,103,.06));
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        transition: transform 160ms ease, border-color 160ms ease;
+      }
+      button:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
+      button:active { transform: translateY(1px); }
+      button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+      .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
+      .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
+      input[type="range"] { width: 100%; accent-color: var(--accent); }
+      @media (max-width: 980px) {
+        .sceneWrap { padding: 16px 16px 10px; }
+      }
+      @media (max-width: 720px) and (orientation: portrait) {
+        html, body {
+          min-height: 100dvh;
+        }
+
+        .sceneWrap {
+          min-height: 82svh;
+          touch-action: manipulation;
+          padding: 14px 14px 10px;
+        }
+
+        .note {
+          margin-top: 12px;
+          padding: 8px 10px;
+          font-size: 11px;
+          max-width: calc(100vw - 20px);
+        }
+
+        .panel {
+          padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+          box-shadow: 0 -20px 80px rgba(0,0,0,.18);
+        }
+
+        .card {
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        h1 {
+          font-size: clamp(24px, 7.2vw, 30px);
+          margin-bottom: 6px;
+        }
+
+        .lede {
+          font-size: 13px;
+          line-height: 1.45;
+        }
+
+        .pillrow {
+          display: none;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          margin-top: 14px;
+        }
+
+        button {
+          width: 100%;
+          padding: 12px 14px;
+        }
+
+        .slider {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .section {
+          margin-top: 14px;
+        }
+
+        .meta {
+          font-size: 12px;
+          line-height: 1.5;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .note::after { content: "  • motion reduced"; color: var(--muted); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="sceneWrap">
+        <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
+        <div class="note">ASCIIPEPE V2 — press <span class="kbd">Space</span> to pause</div>
+      </div>
+      <aside class="panel">
+        <div class="card">
+          <h1>ASCIIPEPE V2</h1>
+          <p class="lede">
+            A more tightly framed Pepe portrait with cleaner edges, a sharper jawline, and richer tone mapping — still spinning, but less blob and more frog.
+          </p>
+
+          <div class="pillrow">
+            <span class="pill">ASCII framebuffer</span>
+            <span class="pill">3D rotation</span>
+            <span class="pill">360° turntable</span>
+            <span class="pill">Depth shading</span>
+            <span class="pill">Pepe face</span>
+          </div>
+
+          <div class="controls">
+            <button id="toggle" type="button">Pause</button>
+            <div class="slider">
+              <label for="speed"><span>Spin speed</span><span id="speedValue">0.6×</span></label>
+              <input id="speed" type="range" min="0" max="2" step="0.05" value="0.6" />
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>About</h2>
+            <div class="meta">
+              ASCIIPEPE V2 keeps the turntable spin, but pulls the portrait back so the full face fits the screen more
+              comfortably. The goal is a clearer read of the Pepe shape, eyes, mouth, and shading without the bust
+              feeling oversized.
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Quick controls</h2>
+            <div class="meta">
+              <div>• <span class="kbd">Space</span> pause / resume</div>
+              <div>• Use the speed slider to slow down or speed up the 360° spin</div>
+              <div>• Resize the window — the ASCII grid adapts responsively</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('scene');
+      const ctx = canvas.getContext('2d');
+      const toggleBtn = document.getElementById('toggle');
+      const speedInput = document.getElementById('speed');
+      const speedValue = document.getElementById('speedValue');
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let cols = 0;
+      let rows = 0;
+      let charW = 10;
+      let charH = 18;
+      let paused = false;
+      let speed = 0.6;
+      let rot = 0;
+      let drift = 0;
+      let raf = 0;
+
+      const ramp = ' .,:;=!*#%@';
+      const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
+      const rimTones = ['#081408', '#102010', '#173217', '#204320'];
+      const cheekTones = ['#6c3b25', '#915030', '#b86d42', '#d99859'];
+      const eyeWhite = '#f7f6ef';
+      const black = '#111111';
+      const lip = '#9a5f31';
+      const tongue = '#ef1a67';
+      const highlight = '#f6ffe7';
+
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const sat = (v) => clamp(v, 0, 1);
+      const ellipse = (x, y, cx, cy, rx, ry) => (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2);
+      const superEllipse = (x, y, cx, cy, rx, ry, power = 1.7) => {
+        const dx = Math.abs((x - cx) / rx);
+        const dy = Math.abs((y - cy) / ry);
+        return dx ** power + dy ** power;
+      };
+      const smooth = (a, b, x) => {
+        const t = sat((x - a) / (b - a));
+        return t * t * (3 - 2 * t);
+      };
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(1, canvas.clientWidth);
+        height = Math.max(1, canvas.clientHeight);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const compact = width <= 720 || height <= 680;
+        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
+        charW = Math.max(8, Math.floor(charH * 0.6));
+        cols = Math.max(compact ? 30 : 44, Math.floor(width / charW));
+        rows = Math.max(compact ? 18 : 24, Math.floor(height / charH));
+        ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
+        ctx.textBaseline = 'top';
+      }
+
+      function rotate3D(x, y, z, yaw, pitch, roll) {
+        const sy = Math.sin(yaw);
+        const cy = Math.cos(yaw);
+        const sp = Math.sin(pitch);
+        const cp = Math.cos(pitch);
+        const sr = Math.sin(roll);
+        const cr = Math.cos(roll);
+
+        let x1 = x * cy + z * sy;
+        let z1 = -x * sy + z * cy;
+        let y1 = y;
+
+        let y2 = y1 * cp - z1 * sp;
+        let z2 = y1 * sp + z1 * cp;
+        let x2 = x1;
+
+        let x3 = x2 * cr - y2 * sr;
+        let y3 = x2 * sr + y2 * cr;
+        return [x3, y3, z2];
+      }
+
+      function headField(x, y) {
+        const skull = 1 - superEllipse(x, y, -0.06, -0.10, 0.78, 0.68, 1.72);
+        const brow = 1 - superEllipse(x, y, 0.02, -0.28, 0.64, 0.23, 2.35);
+        const cheekL = 1 - superEllipse(x, y, -0.38, 0.10, 0.54, 0.40, 1.56);
+        const cheekR = 1 - superEllipse(x, y, 0.34, 0.08, 0.42, 0.33, 1.55);
+        const jaw = 1 - superEllipse(x, y, 0.02, 0.32, 0.70, 0.28, 1.42);
+        const chin = 1 - superEllipse(x, y, 0.08, 0.52, 0.22, 0.09, 2.00);
+        const snout = 1 - superEllipse(x, y, 0.16, 0.17, 0.46, 0.17, 2.10);
+        return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout);
+      }
+
+      function featureAt(x, y, z, t, turn, light) {
+        const profile = headField(x, y);
+        if (profile <= 0) return null;
+
+        const edge = smooth(0.05, 0.22, profile);
+        const ridge = clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
+        const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
+        let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
+        let color = skinTones[toneIdx];
+        let priority = 1;
+
+        if (profile < 0.18) {
+          ch = '#';
+          color = rimTones[Math.floor(clamp((1 - profile) * (rimTones.length - 1), 0, rimTones.length - 1))];
+          priority = 8;
+        }
+
+        if (edge > 0.41 && priority < 7) {
+          ch = '%';
+          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
+          priority = 7;
+        }
+
+        const browLift = 0.020 * Math.sin(t * 1.8 + x * 5.5);
+        const eyeShift = turn * 0.06;
+        const eyeSquash = 1 - Math.min(0.14, Math.abs(turn) * 0.12);
+        const eyeL = ellipse(x, y, -0.14 + eyeShift, -0.06 + browLift, 0.30 * eyeSquash, 0.19);
+        const eyeR = ellipse(x, y, 0.22 + eyeShift, -0.05 - browLift, 0.24 * eyeSquash, 0.17);
+        const pupilL = ellipse(x, y, -0.08 + eyeShift, -0.03 + browLift, 0.055 * eyeSquash, 0.060);
+        const pupilR = ellipse(x, y, 0.22 + eyeShift, -0.02 - browLift, 0.050 * eyeSquash, 0.056);
+        const glintL = ellipse(x, y, -0.04 + eyeShift, -0.10 + browLift, 0.028, 0.035);
+        const glintR = ellipse(x, y, 0.26 + eyeShift, -0.09 - browLift, 0.024, 0.030);
+        const lidL = y < -0.10 && y > -0.32 && x < 0.10 && x > -0.44;
+        const lidR = y < -0.11 && y > -0.30 && x > 0.04 && x < 0.54;
+
+        if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
+        if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
+        if (pupilL <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
+        if (pupilR <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
+        if (glintL <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
+        if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
+        if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
+
+        const browBarL = y > -0.22 && y < -0.14 && x > -0.38 && x < 0.04;
+        const browBarR = y > -0.20 && y < -0.12 && x > 0.02 && x < 0.38;
+        if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[2]; priority = 7; }
+
+        const bridge = Math.abs(x - 0.12 - 0.14 * Math.tan(y * 0.95) - turn * 0.04) < 0.016 && y > -0.13 && y < 0.16;
+        if (bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
+
+        const nose = ellipse(x, y, 0.10 + turn * 0.03, 0.05, 0.052, 0.046);
+        if (nose <= 1 && priority < 8) { ch = ch === ' ' ? ':' : ch; color = rimTones[1]; priority = 8; }
+        const nostrilL = ellipse(x, y, 0.06 + turn * 0.02, 0.08, 0.017, 0.013);
+        const nostrilR = ellipse(x, y, 0.12 + turn * 0.02, 0.08, 0.017, 0.013);
+        if (nostrilL <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
+        if (nostrilR <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
+
+        const foldL = Math.abs(y - (0.03 + 0.11 * Math.sin((x + 0.46) * 7 + turn))) < 0.022 && x < 0.10 && x > -0.50;
+        const foldR = Math.abs(y - (0.04 + 0.08 * Math.sin((x - 0.10) * 7.3 - turn))) < 0.022 && x > 0.02 && x < 0.58;
+        if ((foldL || foldR)) { ch = ch === ' ' ? '~' : ch; if (priority < 6) { color = rimTones[1]; priority = 6; } }
+
+        const cheekGlowL = ellipse(x, y, -0.28, 0.12, 0.18, 0.13);
+        const cheekGlowR = ellipse(x, y, 0.22, 0.10, 0.17, 0.12);
+        if (cheekGlowL <= 1 && priority < 5) {
+          ch = ch === ' ' ? '.' : ch;
+          color = cheekTones[clamp(3 - Math.floor(cheekGlowL * 3), 0, 3)];
+          priority = 5;
+        }
+        if (cheekGlowR <= 1 && priority < 5) {
+          ch = ch === ' ' ? '.' : ch;
+          color = cheekTones[clamp(3 - Math.floor(cheekGlowR * 3), 0, 3)];
+          priority = 5;
+        }
+
+        const mouthCurve = 0.39 + 0.04 * Math.cos((x + 0.08) * 2.6);
+        const mouthBand = Math.abs(y - mouthCurve) < 0.020 && x > -0.48 && x < 0.58;
+        const mouthShade = Math.abs(y - (mouthCurve + 0.045)) < 0.016 && x > -0.36 && x < 0.50;
+        const outerM = ellipse(x, y, 0.02 + turn * 0.03, 0.37, 0.72 * eyeSquash, 0.17);
+        const innerM = ellipse(x, y, 0.06 + turn * 0.04, 0.40, 0.60 * eyeSquash, 0.12);
+        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.44, 0.24 * eyeSquash, 0.070);
+        const toothM = ellipse(x, y, 0.31 + turn * 0.03, 0.40, 0.09, 0.040);
+        const gumLine = Math.abs(y - (0.29 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
+
+        if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
+        if (innerM <= 1 && priority < 9) {
+          ch = '_';
+          color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
+          priority = 9;
+        }
+        if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
+        if (toothM <= 1 && priority < 11) { ch = '.'; color = '#f5ede7'; priority = 11; }
+        if (gumLine && priority < 4) { ch = '-'; color = rimTones[0]; priority = 4; }
+        if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
+        if (mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
+
+        const cornerL = ellipse(x, y, -0.34 + turn * 0.03, 0.33, 0.11, 0.08);
+        const cornerR = ellipse(x, y, 0.40 + turn * 0.03, 0.33, 0.12, 0.085);
+        if (cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
+        if (cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
+
+        const jaw = ellipse(x, y, -0.04 + turn * 0.06, 0.32, 0.96 * (1 - Math.abs(turn) * 0.06), 0.74);
+        if (jaw <= 1 && priority < 3) {
+          ch = ridge > 0.55 ? '.' : ',';
+          color = skinTones[Math.max(0, toneIdx - 1)];
+          priority = 3;
+        }
+
+        const lowerLip = Math.abs(y - (0.40 + 0.06 * Math.cos((x + 0.16) * 4.2))) < 0.018 && x > -0.24 && x < 0.56;
+        if (lowerLip && priority < 7) { ch = '_'; color = lip; priority = 7; }
+
+        if (priority < 4 && ridge > 0.95) {
+          ch = ch === ' ' ? '.' : ch;
+          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
+          priority = 4;
+        }
+
+        return { ch, color, priority };
+      }
+
+      function drawFrame(time) {
+        const t = time * 0.001;
+        if (!paused) {
+          rot += 0.026 * speed;
+          drift += 0.010 * speed;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+        const bloom = ctx.createRadialGradient(width * 0.52, height * 0.46, 20, width * 0.52, height * 0.46, Math.max(width, height) * 0.64);
+        bloom.addColorStop(0, 'rgba(255,255,248,0.12)');
+        bloom.addColorStop(0.28, 'rgba(104,165,90,0.12)');
+        bloom.addColorStop(0.58, 'rgba(46,89,48,0.10)');
+        bloom.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = bloom;
+        ctx.fillRect(0, 0, width, height);
+
+        const cellCount = cols * rows;
+        const chars = new Array(cellCount).fill(' ');
+        const colors = new Array(cellCount).fill('transparent');
+        const depth = new Float32Array(cellCount).fill(-1e9);
+
+        const compact = width <= 720 || height <= 680;
+        const scenePad = compact ? 0.14 : 0.11;
+        const padX = width * scenePad;
+        const padY = height * scenePad;
+        const usableWidth = Math.max(0, width - padX * 2);
+        const usableHeight = Math.max(0, height - padY * 2);
+        const baseX = padX + usableWidth * 0.5;
+        const baseY = padY + usableHeight * 0.5;
+        const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.60 : 0.66);
+        const spin = rot;
+        const yaw = spin;
+        const pitch = 0.18 * Math.sin(t * 0.54) - 0.08;
+        const roll = 0.10 * Math.sin(t * 0.38) + 0.02 * Math.sin(t * 1.3);
+        const turn = Math.sin(t * 0.55) * 0.32 + Math.sin(t * 1.15) * 0.06;
+        const sway = Math.sin(t * 0.36) * 0.06;
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const idx = row * cols + col;
+            const nx = (col / (cols - 1)) * 2 - 1;
+            const ny = (row / (rows - 1)) * 2 - 1;
+
+            let x = nx * 1.08 + 0.08 * Math.sin(t * 0.65 + ny * 3.2);
+            let y = ny * 1.02 + 0.04 * Math.cos(t * 0.9 + nx * 4.1);
+            x *= 1 - Math.min(0.16, Math.abs(nx) * 0.08);
+            y *= 1 - Math.min(0.08, Math.abs(ny) * 0.05);
+
+            const profile = headField(x, y);
+            if (profile <= 0) continue;
+            const localZ = Math.sqrt(profile) * 0.98;
+            const lit = clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1);
+            let [rx, ry, rz] = rotate3D(x, y, localZ, yaw, pitch, roll);
+            rx += 0.03 * Math.sin(t * 0.4 + y * 2.4);
+            ry += sway * rx;
+            rz += 0.02 * Math.cos(t * 0.3 + x * 2.1);
+
+            const sx = baseX + rx * scale;
+            const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
+            const c = Math.floor(sx / charW);
+            const r = Math.floor(sy / charH);
+            if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
+
+            const screenIdx = r * cols + c;
+            const depthValue = rz + localZ * 0.22;
+            if (depthValue <= depth[screenIdx]) continue;
+
+            const feature = featureAt(x, y, localZ, t + drift, turn, lit);
+            if (!feature) continue;
+            depth[screenIdx] = depthValue;
+            chars[screenIdx] = feature.ch;
+            colors[screenIdx] = feature.color;
+          }
+        }
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const idx = row * cols + col;
+            const ch = chars[idx];
+            if (ch === ' ') continue;
+            ctx.fillStyle = colors[idx];
+            ctx.fillText(ch, col * charW, row * charH);
+          }
+        }
+
+        raf = requestAnimationFrame(drawFrame);
+      }
+
+      function setSpeed(v) {
+        speed = v;
+        speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        paused = !paused;
+        toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+      });
+      speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          toggleBtn.click();
+        }
+      });
+      window.addEventListener('resize', resize);
+
+      resize();
+      setSpeed(parseFloat(speedInput.value));
+      drawFrame(performance.now());
+    </script>
+  </body>
+</html>
