@@ -498,6 +498,9 @@
           }
         }
 
+        raf = requestAnimationFrame(drawFrame);
+      }
+
       function setSpeed(v) {
         speed = v;
         speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
