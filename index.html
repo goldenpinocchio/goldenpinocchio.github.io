@@ -278,10 +278,10 @@
           </div>
 
           <div class="featureToggles" aria-label="Feature toggles">
-            <label class="featureToggle"><input id="showEyes" type="checkbox" checked /> Eyes</label>
-            <label class="featureToggle"><input id="showBrow" type="checkbox" checked /> Brow</label>
-            <label class="featureToggle"><input id="showMouth" type="checkbox" checked /> Mouth</label>
-            <label class="featureToggle"><input id="showShade" type="checkbox" checked /> Shade</label>
+            <label class="featureToggle"><input id="showFramebuffer" type="checkbox" checked /> ASCII framebuffer</label>
+            <label class="featureToggle"><input id="showRotation" type="checkbox" checked /> 3D rotation</label>
+            <label class="featureToggle"><input id="showTurntable" type="checkbox" checked /> 360 turntable</label>
+            <label class="featureToggle"><input id="showDepth" type="checkbox" checked /> Depth shading</label>
           </div>
 
           <div class="section">
@@ -298,7 +298,7 @@
             <div class="meta">
               <div>• <span class="kbd">Space</span> pause / resume</div>
               <div>• Use the speed slider to slow down or speed up the 360° spin</div>
-              <div>• Toggle Eyes / Brow / Mouth / Shade, or use <span class="kbd">1</span>–<span class="kbd">4</span></div>
+              <div>• Toggle ASCII framebuffer / 3D rotation / 360 turntable / depth shading, or use <span class="kbd">1</span>–<span class="kbd">4</span></div>
               <div>• Resize the window — the ASCII grid adapts responsively</div>
             </div>
           </div>
@@ -312,10 +312,10 @@
       const toggleBtn = document.getElementById('toggle');
       const speedInput = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
-      const showEyesInput = document.getElementById('showEyes');
-      const showBrowInput = document.getElementById('showBrow');
-      const showMouthInput = document.getElementById('showMouth');
-      const showShadeInput = document.getElementById('showShade');
+      const showFramebufferInput = document.getElementById('showFramebuffer');
+      const showRotationInput = document.getElementById('showRotation');
+      const showTurntableInput = document.getElementById('showTurntable');
+      const showDepthInput = document.getElementById('showDepth');
 
       let width = 0;
       let height = 0;
@@ -329,10 +329,13 @@
       let rot = 0;
       let drift = 0;
       let raf = 0;
+      let showFramebuffer = true;
+      let showRotation = true;
+      let showTurntable = true;
+      let showDepth = true;
       let showEyes = true;
       let showBrow = true;
       let showMouth = true;
-      let showShade = true;
 
       const ramp = ' .,:;i1tfLCG08WM#@';
       const skinTones = ['#050b05', '#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#79bd61', '#98d27b', '#c8f79f'];
@@ -370,10 +373,11 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const compact = width <= 720 || height <= 680;
-        charH = Math.max(compact ? 11 : 13, Math.min(compact ? 18 : 24, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
+        const frameBias = showFramebuffer ? 1 : 0.8;
+        charH = Math.max(compact ? 11 : 13, Math.min(compact ? 18 : 24, Math.floor((Math.min(width, height) / (compact ? 26 : 22)) * frameBias)));
         charW = Math.max(6, Math.floor(charH * 0.54));
-        cols = Math.max(compact ? 40 : 60, Math.floor(width / charW));
-        rows = Math.max(compact ? 24 : 34, Math.floor(height / charH));
+        cols = Math.max(compact ? 40 : 60, Math.floor((width / charW) * frameBias));
+        rows = Math.max(compact ? 24 : 34, Math.floor((height / charH) * frameBias));
         ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
         ctx.textBaseline = 'top';
       }
@@ -404,8 +408,8 @@
         const brow = 1 - superEllipse(x, y, 0.00, -0.25, 0.74, 0.17, 2.92);
         const cheekL = 1 - superEllipse(x, y, -0.34, 0.10, 0.52, 0.36, 1.42);
         const cheekR = 1 - superEllipse(x, y, 0.30, 0.09, 0.44, 0.30, 1.44);
-        const jaw = 1 - superEllipse(x, y, -0.01, 0.28, 0.68, 0.22, 1.34);
-        const chin = 1 - superEllipse(x, y, 0.03, 0.46, 0.10, 0.04, 2.28);
+        const jaw = 1 - superEllipse(x, y, -0.01, 0.29, 0.70, 0.24, 1.34);
+        const chin = 1 - superEllipse(x, y, 0.04, 0.49, 0.14, 0.06, 2.18);
         const snout = 1 - superEllipse(x, y, 0.14, 0.16, 0.46, 0.15, 2.22);
         const crown = 1 - superEllipse(x, y, 0.00, -0.21, 0.60, 0.09, 2.52);
         return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout, crown);
@@ -421,10 +425,10 @@
           0,
           1
         );
-        const depthShade = clamp((1 - light) * 0.58 + (x < -0.14 ? 0.16 : 0) + (y > 0.18 ? 0.10 : 0), 0, 1);
+        const depthShade = showDepth ? clamp((1 - light) * 0.58 + (x < -0.14 ? 0.16 : 0) + (y > 0.18 ? 0.10 : 0), 0, 1) : 0;
         const toneIdx = Math.floor(clamp(surface * (skinTones.length - 1), 0, skinTones.length - 1));
         let ch = ramp[Math.floor(surface * (ramp.length - 1))];
-        let color = depthShade > 0.68
+        let color = showDepth && depthShade > 0.68
           ? shadowTones[Math.min(shadowTones.length - 1, Math.floor(depthShade * (shadowTones.length - 1)))]
           : skinTones[toneIdx];
         const ridge = surface;
@@ -467,7 +471,7 @@
           if ((socketL <= 1 || socketR <= 1) && priority < 5) { ch = ch === ' ' ? '.' : ch; color = shadowTones[2]; priority = 5; }
         }
 
-        if (showShade) {
+        if (showDepth) {
           const browShadowL = y > -0.11 && y < 0.03 && x > -0.30 && x < 0.02;
           const browShadowR = y > -0.11 && y < 0.03 && x > 0.06 && x < 0.38;
           if ((browShadowL || browShadowR) && priority < 6) { ch = ch === ' ' ? ':' : ch; color = shadowTones[3]; priority = 6; }
@@ -529,15 +533,15 @@
           if (gumLine && priority < 4) { ch = '-'; color = rimTones[0]; priority = 4; }
           if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
         }
-        if (showShade && mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
-        if (showShade && muzzleShade && priority < 5) { ch = ch === ' ' ? '.' : ch; color = skinTones[Math.max(0, toneIdx - 2)]; priority = 5; }
-        if (showShade && chinShade && priority < 5) {
+        if (showDepth && mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
+        if (showDepth && muzzleShade && priority < 5) { ch = ch === ' ' ? '.' : ch; color = skinTones[Math.max(0, toneIdx - 2)]; priority = 5; }
+        if (showDepth && chinShade && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
           color = chinTones[Math.min(chinTones.length - 1, toneIdx + 1)];
           priority = 5;
         }
         const jawShadow = Math.abs(y - 0.50) < 0.010 && x > -0.01 && x < 0.26;
-        if (showShade && jawShadow && priority < 6) { ch = '_'; color = chinTones[1]; priority = 6; }
+        if (showDepth && jawShadow && priority < 6) { ch = '_'; color = chinTones[1]; priority = 6; }
 
         const cornerL = ellipse(x, y, -0.36 + turn * 0.02, 0.33, 0.12, 0.08);
         const cornerR = ellipse(x, y, 0.39 + turn * 0.02, 0.33, 0.12, 0.08);
@@ -565,7 +569,7 @@
 
       function drawFrame(time) {
         const t = time * 0.001;
-        if (!paused) {
+        if (!paused && showTurntable) {
           rot += 0.018 * speed;
           drift += 0.006 * speed;
         }
@@ -593,12 +597,12 @@
         const baseX = padX + usableWidth * 0.5;
         const baseY = padY + usableHeight * 0.5;
         const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.70 : 0.76);
-        const spin = rot;
-        const yaw = spin * 0.48;
-        const pitch = 0.08 * Math.sin(t * 0.54) - 0.04;
-        const roll = 0.04 * Math.sin(t * 0.38) + 0.01 * Math.sin(t * 1.3);
-        const turn = Math.sin(t * 0.55) * 0.15 + Math.sin(t * 1.15) * 0.03;
-        const sway = Math.sin(t * 0.36) * 0.03;
+        const spin = showTurntable ? rot : 0;
+        const yaw = showRotation ? spin * 0.48 : 0;
+        const pitch = showRotation ? (0.08 * Math.sin(t * 0.54) - 0.04) : 0;
+        const roll = showRotation ? (0.04 * Math.sin(t * 0.38) + 0.01 * Math.sin(t * 1.3)) : 0;
+        const turn = showRotation ? (Math.sin(t * 0.55) * 0.15 + Math.sin(t * 1.15) * 0.03) : 0;
+        const sway = showRotation ? Math.sin(t * 0.36) * 0.03 : 0;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
@@ -657,10 +661,11 @@
       }
 
       function syncFeatureState() {
-        showEyes = showEyesInput.checked;
-        showBrow = showBrowInput.checked;
-        showMouth = showMouthInput.checked;
-        showShade = showShadeInput.checked;
+        showFramebuffer = showFramebufferInput.checked;
+        showRotation = showRotationInput.checked;
+        showTurntable = showTurntableInput.checked;
+        showDepth = showDepthInput.checked;
+        resize();
       }
 
       toggleBtn.addEventListener('click', () => {
@@ -668,7 +673,7 @@
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
       speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
-      [showEyesInput, showBrowInput, showMouthInput, showShadeInput].forEach((input) => {
+      [showFramebufferInput, showRotationInput, showTurntableInput, showDepthInput].forEach((input) => {
         input.addEventListener('change', syncFeatureState);
       });
       window.addEventListener('keydown', (e) => {
@@ -676,16 +681,16 @@
           e.preventDefault();
           toggleBtn.click();
         } else if (e.code === 'Digit1') {
-          showEyesInput.checked = !showEyesInput.checked;
+          showFramebufferInput.checked = !showFramebufferInput.checked;
           syncFeatureState();
         } else if (e.code === 'Digit2') {
-          showBrowInput.checked = !showBrowInput.checked;
+          showRotationInput.checked = !showRotationInput.checked;
           syncFeatureState();
         } else if (e.code === 'Digit3') {
-          showMouthInput.checked = !showMouthInput.checked;
+          showTurntableInput.checked = !showTurntableInput.checked;
           syncFeatureState();
         } else if (e.code === 'Digit4') {
-          showShadeInput.checked = !showShadeInput.checked;
+          showDepthInput.checked = !showDepthInput.checked;
           syncFeatureState();
         }
       });
