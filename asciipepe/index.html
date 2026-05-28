@@ -397,15 +397,15 @@
           priority = 7;
         }
 
-        const browLift = 0.020 * Math.sin(t * 1.8 + x * 5.5);
-        const eyeShift = turn * 0.06;
-        const eyeSquash = 1 - Math.min(0.14, Math.abs(turn) * 0.12);
-        const eyeL = ellipse(x, y, -0.14 + eyeShift, -0.10 + browLift, 0.30 * eyeSquash, 0.19);
-        const eyeR = ellipse(x, y, 0.22 + eyeShift, -0.09 - browLift, 0.24 * eyeSquash, 0.17);
-        const pupilL = ellipse(x, y, -0.08 + eyeShift, -0.07 + browLift, 0.055 * eyeSquash, 0.060);
-        const pupilR = ellipse(x, y, 0.22 + eyeShift, -0.06 - browLift, 0.050 * eyeSquash, 0.056);
-        const glintL = ellipse(x, y, -0.04 + eyeShift, -0.14 + browLift, 0.028, 0.035);
-        const glintR = ellipse(x, y, 0.26 + eyeShift, -0.13 - browLift, 0.024, 0.030);
+        const browLift = 0;
+        const eyeShift = 0;
+        const eyeSquash = 1 - Math.min(0.10, Math.abs(turn) * 0.06);
+        const eyeL = ellipse(x, y, -0.14 + eyeShift, -0.16 + browLift, 0.30 * eyeSquash, 0.19);
+        const eyeR = ellipse(x, y, 0.22 + eyeShift, -0.15 - browLift, 0.24 * eyeSquash, 0.17);
+        const pupilL = ellipse(x, y, -0.08 + eyeShift, -0.13 + browLift, 0.055 * eyeSquash, 0.060);
+        const pupilR = ellipse(x, y, 0.22 + eyeShift, -0.12 - browLift, 0.050 * eyeSquash, 0.056);
+        const glintL = ellipse(x, y, -0.04 + eyeShift, -0.20 + browLift, 0.028, 0.035);
+        const glintR = ellipse(x, y, 0.26 + eyeShift, -0.19 - browLift, 0.024, 0.030);
         const lidL = y < -0.10 && y > -0.32 && x < 0.10 && x > -0.44;
         const lidR = y < -0.11 && y > -0.30 && x > 0.04 && x < 0.54;
 
@@ -448,14 +448,14 @@
           priority = 5;
         }
 
-        const mouthCurve = 0.34 + 0.04 * Math.cos((x + 0.08) * 2.6);
+        const mouthCurve = 0.28 + 0.04 * Math.cos((x + 0.08) * 2.6);
         const mouthBand = Math.abs(y - mouthCurve) < 0.020 && x > -0.48 && x < 0.58;
         const mouthShade = Math.abs(y - (mouthCurve + 0.045)) < 0.016 && x > -0.36 && x < 0.50;
-        const outerM = ellipse(x, y, 0.02 + turn * 0.03, 0.32, 0.72 * eyeSquash, 0.17);
-        const innerM = ellipse(x, y, 0.06 + turn * 0.04, 0.35, 0.60 * eyeSquash, 0.12);
-        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.39, 0.24 * eyeSquash, 0.070);
-        const toothM = ellipse(x, y, 0.31 + turn * 0.03, 0.35, 0.09, 0.040);
-        const gumLine = Math.abs(y - (0.25 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
+        const outerM = ellipse(x, y, 0.02, 0.26, 0.72 * eyeSquash, 0.17);
+        const innerM = ellipse(x, y, 0.06, 0.29, 0.60 * eyeSquash, 0.12);
+        const tongueM = ellipse(x, y, -0.01, 0.33, 0.24 * eyeSquash, 0.070);
+        const toothM = ellipse(x, y, 0.31, 0.29, 0.09, 0.040);
+        const gumLine = Math.abs(y - (0.19 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
 
         if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
         if (innerM <= 1 && priority < 9) {
@@ -537,8 +537,8 @@
             const nx = (col / (cols - 1)) * 2 - 1;
             const ny = (row / (rows - 1)) * 2 - 1;
 
-            let x = nx * 1.08 + 0.08 * Math.sin(animT * 0.65 + ny * 3.2);
-            let y = ny * 1.02 + 0.04 * Math.cos(animT * 0.9 + nx * 4.1);
+            let x = nx * 1.08;
+            let y = ny * 1.02;
             x *= 1 - Math.min(0.16, Math.abs(nx) * 0.08);
             y *= 1 - Math.min(0.08, Math.abs(ny) * 0.05);
 
@@ -547,9 +547,6 @@
             const localZ = Math.sqrt(profile) * 0.98;
             const lit = clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1);
             let [rx, ry, rz] = rotate3D(x, y, localZ, yaw, pitch, roll);
-            rx += 0.03 * Math.sin(animT * 0.4 + y * 2.4);
-            ry += sway * rx;
-            rz += 0.02 * Math.cos(animT * 0.3 + x * 2.1);
 
             const sx = baseX + rx * scale;
             const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
