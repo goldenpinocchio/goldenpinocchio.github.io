@@ -344,13 +344,13 @@
       let showDepth = true;
 
       const ramp = ' .,:;=!*#%@';
-      const skinTones = ['#080604', '#1a2a00', '#243900', '#314b00', '#3b6000', '#488000', '#529115', '#66ac2d', '#7fc34b', '#9ddb71', '#bde89a', '#cdfeff'];
-      const rimTones = ['#080604', '#1a1205', '#2c1d08', '#3f270a', '#53340d', '#68410f'];
+      const skinTones = ['#080604', '#132100', '#1e3200', '#2b4400', '#396000', '#488000', '#5a9720', '#6faf34', '#86c74a', '#a5dd6d', '#cdfeff'];
+      const rimTones = ['#080604', '#251100', '#3f1c00', '#5a2700', '#753300', '#964400'];
       const cheekTones = ['#4e2a1c', '#6c3a27', '#8d4d31', '#b46340', '#cf8154', '#e2a76d'];
       const eyeWhite = '#cdfeff';
       const black = '#080604';
       const lip = '#964400';
-      const mouthTones = ['#5e2700', '#7b3600', '#964400', '#b35d16', '#d47f37'];
+      const mouthTones = ['#4b1f00', '#6a2c00', '#964400', '#b7651a', '#d89046'];
       const tongue = '#ef1a67';
       const highlight = '#f4ffff';
 
@@ -385,8 +385,8 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const compact = width <= 720 || height <= 680;
-        const targetRows = 420;
-        const targetCols = compact ? 260 : 620;
+        const targetRows = 100;
+        const targetCols = compact ? 140 : 260;
         const frameBias = showFramebuffer ? 1 : 0.92;
         charH = Math.max(1, Math.floor(height / targetRows));
         charW = Math.max(1, Math.floor((width / targetCols) * frameBias));
