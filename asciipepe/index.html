@@ -152,6 +152,41 @@
       button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
+      .toggleGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        margin-top: 12px;
+      }
+      .toggleItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        user-select: none;
+      }
+      .toggleItem input {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 6px;
+        border: 1px solid rgba(183,255,189,.25);
+        background: rgba(255,255,255,.03);
+        display: inline-grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .toggleItem input:checked {
+        background: linear-gradient(180deg, rgba(124,255,136,.22), rgba(94,210,103,.10));
+        border-color: rgba(183,255,189,.45);
+      }
+      .toggleItem input:checked::after {
+        content: '✓';
+        color: var(--ink);
+        font-size: 12px;
+        line-height: 1;
+      }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
       @media (max-width: 980px) {
         .sceneWrap { padding: 16px 16px 10px; }
@@ -258,6 +293,13 @@
             </div>
           </div>
 
+          <div class="toggleGrid" aria-label="Render options">
+            <label class="toggleItem"><input id="framebufferToggle" type="checkbox" checked /> ASCII framebuffer</label>
+            <label class="toggleItem"><input id="rotationToggle" type="checkbox" checked /> 3D rotation</label>
+            <label class="toggleItem"><input id="turntableToggle" type="checkbox" checked /> 360° turntable</label>
+            <label class="toggleItem"><input id="depthToggle" type="checkbox" checked /> Depth shading</label>
+          </div>
+
           <div class="section">
             <h2>About</h2>
             <div class="meta">
@@ -285,6 +327,10 @@
       const toggleBtn = document.getElementById('toggle');
       const speedInput = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
+      const framebufferToggle = document.getElementById('framebufferToggle');
+      const rotationToggle = document.getElementById('rotationToggle');
+      const turntableToggle = document.getElementById('turntableToggle');
+      const depthToggle = document.getElementById('depthToggle');
 
       let width = 0;
       let height = 0;
@@ -299,6 +345,10 @@
       let drift = 0;
       let frozenT = 0;
       let raf = 0;
+      let showFramebuffer = true;
+      let showRotation = true;
+      let showTurntable = true;
+      let showDepth = true;
 
       const ramp = ' .,:;=!*#%@';
       const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
@@ -323,6 +373,13 @@
         return t * t * (3 - 2 * t);
       };
 
+      function syncFeatureState() {
+        showFramebuffer = framebufferToggle.checked;
+        showRotation = rotationToggle.checked;
+        showTurntable = turntableToggle.checked;
+        showDepth = depthToggle.checked;
+      }
+
       function resize() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         width = Math.max(1, canvas.clientWidth);
@@ -334,10 +391,11 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const compact = width <= 720 || height <= 680;
-        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
-        charW = Math.max(8, Math.floor(charH * 0.6));
-        cols = Math.max(compact ? 30 : 44, Math.floor(width / charW));
-        rows = Math.max(compact ? 18 : 24, Math.floor(height / charH));
+        const frameBias = showFramebuffer ? 1 : 0.82;
+        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / ((compact ? 26 : 22) / frameBias))));
+        charW = Math.max(8, Math.floor(charH * 0.6 * frameBias));
+        cols = Math.max(compact ? 30 : 44, Math.floor((width / charW) * frameBias));
+        rows = Math.max(compact ? 18 : 24, Math.floor((height / charH) * frameBias));
         ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
         ctx.textBaseline = 'top';
       }
@@ -379,10 +437,10 @@
         if (profile <= 0) return null;
 
         const edge = smooth(0.05, 0.22, profile);
-        const ridge = clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
+        const ridge = showDepth ? clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1) : 0.56;
         const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
         let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
-        let color = skinTones[toneIdx];
+        let color = showDepth ? skinTones[toneIdx] : skinTones[4];
         let priority = 1;
 
         if (profile < 0.18) {
@@ -391,7 +449,7 @@
           priority = 8;
         }
 
-        if (edge > 0.41 && priority < 7) {
+        if (showDepth && edge > 0.41 && priority < 7) {
           ch = '%';
           color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
           priority = 7;
@@ -496,7 +554,7 @@
       function drawFrame(time) {
         const t = time * 0.001;
         const animT = paused ? frozenT : t;
-        if (!paused) {
+        if (!paused && showTurntable) {
           rot += 0.026 * speed;
           drift += 0.010 * speed;
         }
@@ -524,12 +582,11 @@
         const baseX = padX + usableWidth * 0.5;
         const baseY = padY + usableHeight * 0.5;
         const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.60 : 0.66);
-        const spin = rot;
-        const yaw = spin;
-        const pitch = 0.18 * Math.sin(animT * 0.54) - 0.08;
-        const roll = 0.10 * Math.sin(animT * 0.38) + 0.02 * Math.sin(animT * 1.3);
-        const turn = Math.sin(animT * 0.55) * 0.32 + Math.sin(animT * 1.15) * 0.06;
-        const sway = Math.sin(animT * 0.36) * 0.06;
+        const spin = showTurntable ? rot : 0;
+        const yaw = showRotation ? spin : 0;
+        const pitch = showRotation ? (0.18 * Math.sin(animT * 0.54) - 0.08) : 0;
+        const roll = showRotation ? (0.10 * Math.sin(animT * 0.38) + 0.02 * Math.sin(animT * 1.3)) : 0;
+        const turn = showTurntable ? (Math.sin(animT * 0.55) * 0.32 + Math.sin(animT * 1.15) * 0.06) : 0;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
@@ -545,8 +602,8 @@
             const profile = headField(x, y);
             if (profile <= 0) continue;
             const localZ = Math.sqrt(profile) * 0.98;
-            const lit = clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1);
-            let [rx, ry, rz] = rotate3D(x, y, localZ, yaw, pitch, roll);
+            const lit = showDepth ? clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1) : 0.55;
+            let [rx, ry, rz] = showRotation ? rotate3D(x, y, localZ, yaw, pitch, roll) : [x, y, localZ];
 
             const sx = baseX + rx * scale;
             const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
@@ -590,6 +647,10 @@
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
       speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      framebufferToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      rotationToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      turntableToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      depthToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
@@ -597,7 +658,7 @@
         }
       });
       window.addEventListener('resize', resize);
-
+      syncFeatureState();
       resize();
       setSpeed(parseFloat(speedInput.value));
       drawFrame(performance.now());
