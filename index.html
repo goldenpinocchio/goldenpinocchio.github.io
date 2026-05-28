@@ -22,8 +22,10 @@
       * { box-sizing: border-box; }
       html, body {
         margin: 0;
-        height: 100%;
+        min-height: 100%;
+        min-height: 100dvh;
         overflow: hidden;
+        -webkit-text-size-adjust: 100%;
         background:
           radial-gradient(circle at 50% 42%, rgba(255,255,255,.08), transparent 24%),
           linear-gradient(180deg, var(--bg1), var(--bg0));
@@ -47,7 +49,7 @@
         display: grid;
         grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.85fr);
       }
-      .sceneWrap { position: relative; overflow: hidden; }
+      .sceneWrap { position: relative; overflow: hidden; isolation: isolate; }
       canvas { width: 100%; height: 100%; display: block; }
       .note {
         position: absolute;
@@ -77,6 +79,9 @@
         border-left: 1px solid var(--border);
         box-shadow: -20px 0 80px rgba(0,0,0,.2);
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
       }
       .card {
         background: var(--panel);
@@ -143,6 +148,79 @@
         .shell { grid-template-columns: 1fr; grid-template-rows: 58vh 42vh; }
         .panel { border-left: 0; border-top: 1px solid var(--border); }
         .note { left: 12px; bottom: 12px; }
+      }
+      @media (max-width: 720px) and (orientation: portrait) {
+        html, body {
+          overflow: hidden;
+          min-height: 100dvh;
+        }
+
+        .shell {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(60svh, 63svh) minmax(37svh, 1fr);
+        }
+
+        .sceneWrap {
+          touch-action: manipulation;
+        }
+
+        .note {
+          left: 10px;
+          bottom: 10px;
+          padding: 8px 10px;
+          font-size: 11px;
+          max-width: calc(100vw - 20px);
+        }
+
+        .panel {
+          padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+          box-shadow: 0 -20px 80px rgba(0,0,0,.18);
+        }
+
+        .card {
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        h1 {
+          font-size: clamp(24px, 7.2vw, 30px);
+          margin-bottom: 6px;
+        }
+
+        .lede {
+          font-size: 13px;
+          line-height: 1.45;
+        }
+
+        .pillrow {
+          display: none;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          margin-top: 14px;
+        }
+
+        button {
+          width: 100%;
+          padding: 12px 14px;
+        }
+
+        .slider {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .section {
+          margin-top: 14px;
+        }
+
+        .meta {
+          font-size: 12px;
+          line-height: 1.5;
+        }
       }
       @media (prefers-reduced-motion: reduce) {
         .note::after { content: "  • motion reduced"; color: var(--muted); }
@@ -246,10 +324,11 @@
         canvas.style.height = height + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        charH = Math.max(16, Math.min(30, Math.floor(Math.min(width, height) / 22)));
-        charW = Math.max(9, Math.floor(charH * 0.6));
-        cols = Math.max(44, Math.floor(width / charW));
-        rows = Math.max(24, Math.floor(height / charH));
+        const compact = width <= 720 || height <= 680;
+        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
+        charW = Math.max(8, Math.floor(charH * 0.6));
+        cols = Math.max(compact ? 30 : 44, Math.floor(width / charW));
+        rows = Math.max(compact ? 18 : 24, Math.floor(height / charH));
         ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
         ctx.textBaseline = 'top';
       }
@@ -400,9 +479,10 @@
         const colors = new Array(cellCount).fill('transparent');
         const depth = new Float32Array(cellCount).fill(-1e9);
 
+        const compact = width <= 720 || height <= 680;
         const baseX = width * 0.50;
-        const baseY = height * 0.49;
-        const scale = Math.min(width, height) * 1.08;
+        const baseY = height * (compact ? 0.47 : 0.49);
+        const scale = Math.min(width, height) * (compact ? 0.96 : 1.08);
         const spin = rot;
         const yaw = spin;
         const pitch = 0.18 * Math.sin(t * 0.54) - 0.08;
@@ -431,7 +511,7 @@
             rz += 0.02 * Math.cos(t * 0.3 + x * 2.1);
 
             const sx = baseX + rx * scale;
-            const sy = baseY + ry * scale * 0.93;
+            const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
             const c = Math.floor(sx / charW);
             const r = Math.floor(sy / charH);
             if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
