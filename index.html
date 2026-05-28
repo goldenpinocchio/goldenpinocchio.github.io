@@ -7,16 +7,13 @@
     <style>
       :root {
         color-scheme: dark;
-        --bg0: #071006;
-        --bg1: #0e2210;
-        --panel: rgba(8, 16, 9, 0.78);
-        --panel-strong: rgba(6, 13, 7, 0.92);
+        --bg: #6cae47;
+        --panel: rgba(8, 18, 10, 0.78);
+        --panel-strong: rgba(6, 13, 7, 0.94);
         --ink: #f0ffee;
-        --muted: #bbd4bf;
-        --accent: #7dff89;
-        --accent2: #d6ff7a;
-        --border: rgba(176, 255, 190, 0.12);
-        --shadow: rgba(0, 0, 0, 0.28);
+        --muted: #c8ddc8;
+        --accent: #d6ff7a;
+        --border: rgba(255, 255, 255, 0.12);
       }
 
       * { box-sizing: border-box; }
@@ -24,12 +21,7 @@
         margin: 0;
         min-height: 100%;
         min-height: 100dvh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-text-size-adjust: 100%;
-        background:
-          radial-gradient(circle at 50% 42%, rgba(255,255,255,.08), transparent 24%),
-          linear-gradient(180deg, var(--bg1), var(--bg0));
+        background: var(--bg);
         color: var(--ink);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
@@ -37,30 +29,30 @@
         content: "";
         position: fixed;
         inset: 0;
-        background:
-          linear-gradient(transparent 0 49.5%, rgba(255,255,255,.02) 50%, transparent 50.5%),
-          linear-gradient(90deg, transparent 0 49.5%, rgba(255,255,255,.012) 50%, transparent 50.5%);
-        background-size: 100% 5px, 5px 100%;
-        opacity: .16;
         pointer-events: none;
+        background: linear-gradient(transparent 0 49.5%, rgba(255,255,255,.02) 50%, transparent 50.5%);
+        opacity: 0.15;
       }
       .shell {
-        width: 100%;
         min-height: 100dvh;
-        display: block;
+        display: flex;
+        flex-direction: column;
       }
       .sceneWrap {
         position: relative;
-        overflow: hidden;
-        isolation: isolate;
+        flex: 1 1 auto;
+        min-height: 72svh;
+        padding: 20px 20px 12px;
         display: flex;
         flex-direction: column;
-        min-height: 100svh;
-        padding: 20px 20px 12px;
       }
-      canvas { width: 100%; flex: 1 1 auto; min-height: 72svh; display: block; }
+      canvas {
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 72svh;
+        display: block;
+      }
       .note {
-        position: static;
         margin-top: 14px;
         display: inline-flex;
         align-self: flex-start;
@@ -71,12 +63,10 @@
         color: #eaffec;
         font-size: 12px;
         letter-spacing: 0.02em;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 12px 34px var(--shadow);
       }
       .kbd {
         color: #d9ffd9;
-        border: 1px solid rgba(183,255,189,.14);
+        border: 1px solid rgba(183,255,189,.16);
         background: rgba(255,255,255,.03);
         padding: 2px 6px;
         border-radius: 6px;
@@ -84,12 +74,9 @@
       }
       .panel {
         padding: 24px;
-        background: linear-gradient(180deg, rgba(8,18,10,.82), rgba(4,10,6,.94));
+        background: linear-gradient(180deg, rgba(8,18,10,.82), rgba(4,10,6,.96));
         border-top: 1px solid var(--border);
         box-shadow: 0 -20px 80px rgba(0,0,0,.2);
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
         padding-bottom: calc(24px + env(safe-area-inset-bottom));
       }
       .card {
@@ -98,7 +85,6 @@
         border-radius: 20px;
         padding: 18px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 12px 34px rgba(0,0,0,.22);
       }
       h1 {
         margin: 0 0 8px;
@@ -127,14 +113,20 @@
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: .14em;
-        color: var(--accent2);
+        color: var(--accent);
       }
       .meta {
         color: var(--muted);
         font-size: 13px;
         line-height: 1.65;
       }
-      .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-top: 18px;
+      }
       button {
         appearance: none;
         border: 1px solid rgba(183,255,189,.18);
@@ -145,84 +137,27 @@
         font: inherit;
         font-weight: 650;
         cursor: pointer;
-        transition: transform 160ms ease, border-color 160ms ease;
       }
-      button:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
-      button:active { transform: translateY(1px); }
-      button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
-      input[type="range"] { width: 100%; accent-color: var(--accent); }
+      input[type="range"] { width: 100%; accent-color: var(--bg); }
+
       @media (max-width: 980px) {
         .sceneWrap { padding: 16px 16px 10px; }
       }
       @media (max-width: 720px) and (orientation: portrait) {
-        html, body {
-          min-height: 100dvh;
-        }
-
-        .sceneWrap {
-          min-height: 82svh;
-          touch-action: manipulation;
-          padding: 14px 14px 10px;
-        }
-
-        .note {
-          margin-top: 12px;
-          padding: 8px 10px;
-          font-size: 11px;
-          max-width: calc(100vw - 20px);
-        }
-
-        .panel {
-          padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
-          box-shadow: 0 -20px 80px rgba(0,0,0,.18);
-        }
-
-        .card {
-          padding: 14px;
-          border-radius: 16px;
-        }
-
-        h1 {
-          font-size: clamp(24px, 7.2vw, 30px);
-          margin-bottom: 6px;
-        }
-
-        .lede {
-          font-size: 13px;
-          line-height: 1.45;
-        }
-
-        .pillrow {
-          display: none;
-        }
-
-        .controls {
-          flex-direction: column;
-          align-items: stretch;
-          gap: 8px;
-          margin-top: 14px;
-        }
-
-        button {
-          width: 100%;
-          padding: 12px 14px;
-        }
-
-        .slider {
-          width: 100%;
-          min-width: 0;
-        }
-
-        .section {
-          margin-top: 14px;
-        }
-
-        .meta {
-          font-size: 12px;
-          line-height: 1.5;
-        }
+        .sceneWrap { min-height: 78svh; padding: 14px 14px 10px; }
+        .note { margin-top: 12px; padding: 8px 10px; font-size: 11px; }
+        .panel { padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); }
+        .card { padding: 14px; border-radius: 16px; }
+        h1 { font-size: clamp(24px, 7.2vw, 30px); margin-bottom: 6px; }
+        .lede { font-size: 13px; line-height: 1.45; }
+        .pillrow { display: none; }
+        .controls { flex-direction: column; align-items: stretch; gap: 8px; margin-top: 14px; }
+        button { width: 100%; padding: 12px 14px; }
+        .slider { width: 100%; min-width: 0; }
+        .section { margin-top: 14px; }
+        .meta { font-size: 12px; line-height: 1.5; }
       }
       @media (prefers-reduced-motion: reduce) {
         .note::after { content: "  • motion reduced"; color: var(--muted); }
@@ -232,28 +167,28 @@
   <body>
     <div class="shell">
       <div class="sceneWrap">
-        <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE V2 — press <span class="kbd">Space</span> to pause</div>
+        <canvas id="scene" aria-label="Pepe portrait" role="img"></canvas>
+        <div class="note">ASCIIPEPE V2 — press <span class="kbd">Space</span> to pause motion</div>
       </div>
       <aside class="panel">
         <div class="card">
           <h1>ASCIIPEPE V2</h1>
           <p class="lede">
-            A more tightly framed Pepe portrait with cleaner edges, a sharper jawline, and richer tone mapping — still spinning, but less blob and more frog.
+            A flatter Pepe portrait matched to the reference: bold outline, sharp brow wrinkles, big eyes, and a cleaner mouth.
           </p>
 
           <div class="pillrow">
             <span class="pill">ASCII framebuffer</span>
-            <span class="pill">3D rotation</span>
-            <span class="pill">360° turntable</span>
-            <span class="pill">Depth shading</span>
+            <span class="pill">Flat illustration</span>
+            <span class="pill">Classic Pepe</span>
+            <span class="pill">Bold outline</span>
             <span class="pill">Pepe face</span>
           </div>
 
           <div class="controls">
             <button id="toggle" type="button">Pause</button>
             <div class="slider">
-              <label for="speed"><span>Spin speed</span><span id="speedValue">1.0×</span></label>
+              <label for="speed"><span>Motion</span><span id="speedValue">1.0×</span></label>
               <input id="speed" type="range" min="0" max="2" step="0.05" value="1" />
             </div>
           </div>
@@ -261,9 +196,7 @@
           <div class="section">
             <h2>About</h2>
             <div class="meta">
-              ASCIIPEPE V2 keeps the turntable spin, but pulls the portrait back so the full face fits the screen more
-              comfortably. The goal is a clearer read of the Pepe shape, eyes, mouth, and shading without the bust
-              feeling oversized.
+              This version is a flatter, closer match to the reference Pepe: big eyes, heavy brow wrinkles, a clean mouth, and a bold cartoon outline.
             </div>
           </div>
 
@@ -271,8 +204,8 @@
             <h2>Quick controls</h2>
             <div class="meta">
               <div>• <span class="kbd">Space</span> pause / resume</div>
-              <div>• Use the speed slider to slow down or speed up the 360° spin</div>
-              <div>• Resize the window — the ASCII grid adapts responsively</div>
+              <div>• Use the motion slider to gently animate the portrait</div>
+              <div>• Resize the window — the portrait stays centered and responsive</div>
             </div>
           </div>
         </div>
@@ -286,302 +219,218 @@
       const speedInput = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
 
+      const BG = '#6cae47';
+      const OUTLINE = '#111111';
+      const HAIRLINE = '#1d1d1d';
+      const SKIN = '#5e9c42';
+      const SKIN_DARK = '#4f8436';
+      const LIP = '#c07a2f';
+      const MOUTH = '#e91569';
+      const TONGUE = '#f357a2';
+      const INNER = '#f3bdd6';
+      const TEETH = '#f7e9df';
+      const EYE = '#ffffff';
+      const PUPIL = '#151515';
+      const GLOW = '#ffffff';
+
       let width = 0;
       let height = 0;
       let dpr = 1;
-      let cols = 0;
-      let rows = 0;
-      let charW = 10;
-      let charH = 18;
       let paused = false;
-      let speed = 1;
-      let rot = 0;
-      let drift = 0;
-      let raf = 0;
-
-      const ramp = ' .,:;=!*#%@';
-      const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
-      const rimTones = ['#081408', '#102010', '#173217', '#204320'];
-      const cheekTones = ['#6c3b25', '#915030', '#b86d42', '#d99859'];
-      const eyeWhite = '#f7f6ef';
-      const black = '#111111';
-      const lip = '#9a5f31';
-      const tongue = '#ef1a67';
-      const highlight = '#f6ffe7';
+      let motion = 1;
 
       const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-      const sat = (v) => clamp(v, 0, 1);
-      const ellipse = (x, y, cx, cy, rx, ry) => (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2);
-      const superEllipse = (x, y, cx, cy, rx, ry, power = 1.7) => {
-        const dx = Math.abs((x - cx) / rx);
-        const dy = Math.abs((y - cy) / ry);
-        return dx ** power + dy ** power;
-      };
-      const smooth = (a, b, x) => {
-        const t = sat((x - a) / (b - a));
+      const smoothstep = (a, b, x) => {
+        const t = clamp((x - a) / (b - a), 0, 1);
         return t * t * (3 - 2 * t);
       };
 
       function resize() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
         width = Math.max(1, canvas.clientWidth);
         height = Math.max(1, canvas.clientHeight);
-        canvas.width = Math.floor(width * dpr);
-        canvas.height = Math.floor(height * dpr);
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        const compact = width <= 720 || height <= 680;
-        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
-        charW = Math.max(8, Math.floor(charH * 0.6));
-        cols = Math.max(compact ? 30 : 44, Math.floor(width / charW));
-        rows = Math.max(compact ? 18 : 24, Math.floor(height / charH));
-        ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
-        ctx.textBaseline = 'top';
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
       }
 
-      function rotate3D(x, y, z, yaw, pitch, roll) {
-        const sy = Math.sin(yaw);
-        const cy = Math.cos(yaw);
-        const sp = Math.sin(pitch);
-        const cp = Math.cos(pitch);
-        const sr = Math.sin(roll);
-        const cr = Math.cos(roll);
-
-        let x1 = x * cy + z * sy;
-        let z1 = -x * sy + z * cy;
-        let y1 = y;
-
-        let y2 = y1 * cp - z1 * sp;
-        let z2 = y1 * sp + z1 * cp;
-        let x2 = x1;
-
-        let x3 = x2 * cr - y2 * sr;
-        let y3 = x2 * sr + y2 * cr;
-        return [x3, y3, z2];
+      function drawWrinkle(x1, y1, x2, y2, cx, cy, lw = 4.5) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.quadraticCurveTo(cx, cy, x2, y2);
+        ctx.lineWidth = lw;
+        ctx.strokeStyle = HAIRLINE;
+        ctx.stroke();
       }
 
-      function headField(x, y) {
-        const skull = 1 - superEllipse(x, y, -0.01, -0.12, 0.72, 0.64, 1.80);
-        const brow = 1 - superEllipse(x, y, -0.02, -0.29, 0.56, 0.22, 2.25);
-        const cheekL = 1 - superEllipse(x, y, -0.33, 0.07, 0.46, 0.37, 1.60);
-        const cheekR = 1 - superEllipse(x, y, 0.27, 0.06, 0.52, 0.37, 1.60);
-        const jaw = 1 - superEllipse(x, y, 0.01, 0.30, 0.64, 0.29, 1.46);
-        const chin = 1 - superEllipse(x, y, 0.04, 0.50, 0.28, 0.11, 1.95);
-        const snout = 1 - superEllipse(x, y, 0.06, 0.18, 0.40, 0.16, 2.08);
-        return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout);
+      function drawEye(cx, cy, w, h, open, tilt, pupilOffsetX, pupilOffsetY) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(tilt);
+
+        const oh = h * open;
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.54, 0);
+        ctx.bezierCurveTo(-w * 0.40, -oh * 0.84, w * 0.06, -oh * 0.98, w * 0.54, -oh * 0.10);
+        ctx.bezierCurveTo(w * 0.38, oh * 0.76, -w * 0.20, oh * 0.66, -w * 0.54, 0);
+        ctx.closePath();
+        ctx.fillStyle = EYE;
+        ctx.fill();
+        ctx.lineWidth = Math.max(5, Math.min(width, height) * 0.0062);
+        ctx.strokeStyle = OUTLINE;
+        ctx.stroke();
+
+        ctx.lineWidth = Math.max(6, Math.min(width, height) * 0.0074);
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.40, -oh * 0.20);
+        ctx.quadraticCurveTo(0, -oh * 0.62, w * 0.46, -oh * 0.12);
+        ctx.strokeStyle = HAIRLINE;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(pupilOffsetX, pupilOffsetY, Math.min(w, h) * 0.185, 0, Math.PI * 2);
+        ctx.fillStyle = PUPIL;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(pupilOffsetX + Math.min(w, h) * 0.055, pupilOffsetY - Math.min(w, h) * 0.045, Math.min(w, h) * 0.055, 0, Math.PI * 2);
+        ctx.fillStyle = GLOW;
+        ctx.fill();
+
+        ctx.restore();
       }
 
-      function featureAt(x, y, z, t, turn, light) {
-        const profile = headField(x, y);
-        if (profile <= 0) return null;
-
-        const edge = smooth(0.05, 0.22, profile);
-        const ridge = clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
-        const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
-        let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
-        let color = skinTones[toneIdx];
-        let priority = 1;
-
-        if (profile < 0.18) {
-          ch = '#';
-          color = rimTones[Math.floor(clamp((1 - profile) * (rimTones.length - 1), 0, rimTones.length - 1))];
-          priority = 8;
-        }
-
-        if (edge > 0.41 && priority < 7) {
-          ch = '%';
-          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
-          priority = 7;
-        }
-
-        const browLift = 0.014 * Math.sin(t * 1.8 + x * 5.5);
-        const eyeShift = turn * 0.06;
-        const eyeSquash = 1 - Math.min(0.14, Math.abs(turn) * 0.12);
-        const eyeL = ellipse(x, y, -0.18 + eyeShift, -0.08 + browLift, 0.27 * eyeSquash, 0.20);
-        const eyeR = ellipse(x, y, 0.18 + eyeShift, -0.05 - browLift, 0.26 * eyeSquash, 0.19);
-        const pupilL = ellipse(x, y, -0.11 + eyeShift, -0.04 + browLift, 0.050 * eyeSquash, 0.060);
-        const pupilR = ellipse(x, y, 0.24 + eyeShift, -0.03 - browLift, 0.049 * eyeSquash, 0.058);
-        const glintL = ellipse(x, y, -0.07 + eyeShift, -0.11 + browLift, 0.028, 0.035);
-        const glintR = ellipse(x, y, 0.28 + eyeShift, -0.10 - browLift, 0.026, 0.032);
-        const lidL = y < -0.12 && y > -0.34 && x < 0.06 && x > -0.44;
-        const lidR = y < -0.11 && y > -0.31 && x > 0.00 && x < 0.54;
-
-        if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
-        if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
-        if (pupilL <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
-        if (pupilR <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
-        if (glintL <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
-        if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
-        if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
-
-        const browBarL = y > -0.20 && y < -0.14 && x > -0.34 && x < 0.02;
-        const browBarR = y > -0.19 && y < -0.13 && x > 0.00 && x < 0.34;
-        if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[2]; priority = 7; }
-
-        const bridge = Math.abs(x - 0.02 - 0.16 * Math.tan(y * 1.05) - turn * 0.06) < 0.014 && y > -0.14 && y < 0.18;
-        if (bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
-
-        const nose = ellipse(x, y, 0.05 + turn * 0.03, 0.03, 0.05, 0.045);
-        if (nose <= 1 && priority < 8) { ch = ch === ' ' ? ':' : ch; color = rimTones[1]; priority = 8; }
-        const nostrilL = ellipse(x, y, 0.02 + turn * 0.02, 0.06, 0.016, 0.012);
-        const nostrilR = ellipse(x, y, 0.08 + turn * 0.02, 0.06, 0.016, 0.012);
-        if (nostrilL <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
-        if (nostrilR <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
-
-        const foldL = Math.abs(y - (0.05 + 0.10 * Math.sin((x + 0.46) * 7 + turn))) < 0.020 && x < 0.12 && x > -0.50;
-        const foldR = Math.abs(y - (0.05 + 0.08 * Math.sin((x - 0.14) * 7.3 - turn))) < 0.020 && x > 0.02 && x < 0.58;
-        if ((foldL || foldR) && priority < 6) { ch = '~'; color = rimTones[1]; priority = 6; }
-
-        const cheekGlowL = ellipse(x, y, -0.28, 0.12, 0.18, 0.13);
-        const cheekGlowR = ellipse(x, y, 0.22, 0.10, 0.17, 0.12);
-        if (cheekGlowL <= 1 && priority < 5) {
-          ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowL * 3), 0, 3)];
-          priority = 5;
-        }
-        if (cheekGlowR <= 1 && priority < 5) {
-          ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowR * 3), 0, 3)];
-          priority = 5;
-        }
-
-        const mouthCurve = 0.36 + 0.04 * Math.cos((x + 0.04) * 2.8);
-        const mouthBand = Math.abs(y - mouthCurve) < 0.018 && x > -0.46 && x < 0.54;
-        const mouthShade = Math.abs(y - (mouthCurve + 0.040)) < 0.014 && x > -0.34 && x < 0.46;
-        const outerM = ellipse(x, y, 0.00 + turn * 0.04, 0.35, 0.66 * eyeSquash, 0.16);
-        const innerM = ellipse(x, y, 0.02 + turn * 0.05, 0.38, 0.54 * eyeSquash, 0.10);
-        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.42, 0.20 * eyeSquash, 0.062);
-        const toothM = ellipse(x, y, 0.29 + turn * 0.03, 0.38, 0.08, 0.036);
-        const gumLine = Math.abs(y - (0.27 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.020 && x > -0.44 && x < 0.54;
-
-        if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
-        if (innerM <= 1 && priority < 9) {
-          ch = '_';
-          color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
-          priority = 9;
-        }
-        if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
-        if (toothM <= 1 && priority < 11) { ch = '.'; color = '#f5ede7'; priority = 11; }
-        if (gumLine && priority < 4) { ch = '-'; color = rimTones[0]; priority = 4; }
-        if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
-        if (mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
-
-        const cornerL = ellipse(x, y, -0.34 + turn * 0.03, 0.33, 0.11, 0.08);
-        const cornerR = ellipse(x, y, 0.40 + turn * 0.03, 0.33, 0.12, 0.085);
-        if (cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
-        if (cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
-
-        const jaw = ellipse(x, y, -0.04 + turn * 0.06, 0.32, 0.96 * (1 - Math.abs(turn) * 0.06), 0.74);
-        if (jaw <= 1 && priority < 3) {
-          ch = ridge > 0.55 ? '.' : ',';
-          color = skinTones[Math.max(0, toneIdx - 1)];
-          priority = 3;
-        }
-
-        const lowerLip = Math.abs(y - (0.40 + 0.06 * Math.cos((x + 0.16) * 4.2))) < 0.018 && x > -0.24 && x < 0.56;
-        if (lowerLip && priority < 7) { ch = '_'; color = lip; priority = 7; }
-
-        if (priority < 4 && ridge > 0.95) {
-          ch = ch === ' ' ? '.' : ch;
-          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
-          priority = 4;
-        }
-
-        return { ch, color, priority };
-      }
-
-      function drawFrame(time) {
-        const t = time * 0.001;
-        if (!paused) {
-          rot += 0.026 * speed;
-          drift += 0.010 * speed;
-        }
+      function drawHead() {
+        const now = performance.now() * 0.001;
+        const bob = paused ? 0 : Math.sin(now * 1.2 * motion) * 4;
+        const sway = paused ? 0 : Math.sin(now * 0.8 * motion) * 2;
+        const blink = paused ? 0 : smoothstep(0.84, 1.0, Math.sin(now * 2.2 * motion) * 0.5 + 0.5) * 0.60;
 
         ctx.clearRect(0, 0, width, height);
-        const bloom = ctx.createRadialGradient(width * 0.52, height * 0.46, 20, width * 0.52, height * 0.46, Math.max(width, height) * 0.64);
-        bloom.addColorStop(0, 'rgba(255,255,248,0.12)');
-        bloom.addColorStop(0.28, 'rgba(104,165,90,0.12)');
-        bloom.addColorStop(0.58, 'rgba(46,89,48,0.10)');
-        bloom.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = bloom;
+        ctx.fillStyle = BG;
         ctx.fillRect(0, 0, width, height);
 
-        const cellCount = cols * rows;
-        const chars = new Array(cellCount).fill(' ');
-        const colors = new Array(cellCount).fill('transparent');
-        const depth = new Float32Array(cellCount).fill(-1e9);
+        const s = Math.min(width, height) * 0.37;
+        ctx.save();
+        ctx.translate(width * 0.49 + sway, height * 0.47 + bob);
+        ctx.scale(s, s);
 
-        const compact = width <= 720 || height <= 680;
-        const scenePad = compact ? 0.14 : 0.11;
-        const padX = width * scenePad;
-        const padY = height * scenePad;
-        const usableWidth = Math.max(0, width - padX * 2);
-        const usableHeight = Math.max(0, height - padY * 2);
-        const baseX = padX + usableWidth * 0.5;
-        const baseY = padY + usableHeight * 0.5;
-        const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.60 : 0.66);
-        const spin = rot;
-        const yaw = spin;
-        const pitch = 0.18 * Math.sin(t * 0.54) - 0.08;
-        const roll = 0.10 * Math.sin(t * 0.38) + 0.02 * Math.sin(t * 1.3);
-        const turn = Math.sin(t * 0.55) * 0.32 + Math.sin(t * 1.15) * 0.06;
-        const sway = Math.sin(t * 0.36) * 0.06;
+        ctx.beginPath();
+        ctx.moveTo(-0.78, 0.38);
+        ctx.bezierCurveTo(-1.02, 0.14, -0.98, -0.30, -0.58, -0.58);
+        ctx.bezierCurveTo(-0.50, -0.86, -0.10, -0.90, 0.18, -0.82);
+        ctx.bezierCurveTo(0.44, -0.80, 0.70, -0.68, 0.84, -0.48);
+        ctx.bezierCurveTo(0.96, -0.26, 0.96, -0.02, 0.88, 0.10);
+        ctx.bezierCurveTo(1.00, 0.22, 1.02, 0.38, 0.95, 0.50);
+        ctx.bezierCurveTo(0.84, 0.70, 0.62, 0.82, 0.38, 0.86);
+        ctx.bezierCurveTo(0.10, 0.92, -0.26, 0.92, -0.52, 0.82);
+        ctx.bezierCurveTo(-0.76, 0.74, -0.90, 0.58, -0.78, 0.38);
+        ctx.closePath();
+        ctx.fillStyle = SKIN;
+        ctx.fill();
+        ctx.lineWidth = 0.055;
+        ctx.strokeStyle = OUTLINE;
+        ctx.stroke();
 
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            const idx = row * cols + col;
-            const nx = (col / (cols - 1)) * 2 - 1;
-            const ny = (row / (rows - 1)) * 2 - 1;
+        ctx.beginPath();
+        ctx.moveTo(-0.66, 0.52);
+        ctx.bezierCurveTo(-0.46, 0.72, -0.02, 0.78, 0.30, 0.72);
+        ctx.bezierCurveTo(0.58, 0.66, 0.74, 0.57, 0.84, 0.48);
+        ctx.lineWidth = 0.04;
+        ctx.strokeStyle = SKIN_DARK;
+        ctx.stroke();
 
-            let x = nx * 1.08 + 0.08 * Math.sin(t * 0.65 + ny * 3.2);
-            let y = ny * 1.02 + 0.04 * Math.cos(t * 0.9 + nx * 4.1);
-            x *= 1 - Math.min(0.16, Math.abs(nx) * 0.08);
-            y *= 1 - Math.min(0.08, Math.abs(ny) * 0.05);
+        drawWrinkle(-0.54, -0.30, 0.10, -0.24, -0.20, -0.40, 0.074);
+        drawWrinkle(-0.50, -0.20, 0.14, -0.14, -0.14, -0.28, 0.066);
+        drawWrinkle(-0.42, -0.10, 0.10, -0.04, -0.10, -0.16, 0.052);
+        drawWrinkle(0.06, -0.26, 0.40, -0.18, 0.28, -0.36, 0.056);
+        drawWrinkle(0.04, -0.16, 0.36, -0.10, 0.26, -0.26, 0.046);
+        drawWrinkle(0.13, -0.05, 0.26, 0.02, 0.20, -0.02, 0.036);
 
-            const profile = headField(x, y);
-            if (profile <= 0) continue;
-            const localZ = Math.sqrt(profile) * 0.98;
-            const lit = clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1);
-            let [rx, ry, rz] = rotate3D(x, y, localZ, yaw, pitch, roll);
-            rx += 0.03 * Math.sin(t * 0.4 + y * 2.4);
-            ry += sway * rx;
-            rz += 0.02 * Math.cos(t * 0.3 + x * 2.1);
+        ctx.beginPath();
+        ctx.moveTo(0.10, -0.01);
+        ctx.lineTo(0.20, 0.12);
+        ctx.lineTo(0.06, 0.17);
+        ctx.lineTo(0.04, 0.07);
+        ctx.closePath();
+        ctx.fillStyle = OUTLINE;
+        ctx.fill();
 
-            const sx = baseX + rx * scale;
-            const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
-            const c = Math.floor(sx / charW);
-            const r = Math.floor(sy / charH);
-            if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
+        drawEye(-0.08, -0.14, 0.56, 0.38, 1 - blink * 0.65, -0.04, 0.02, 0.00);
+        drawEye(0.34, -0.13, 0.52, 0.36, 1 - blink * 0.55, -0.02, 0.03, 0.00);
 
-            const screenIdx = r * cols + c;
-            const depthValue = rz + localZ * 0.22;
-            if (depthValue <= depth[screenIdx]) continue;
+        drawWrinkle(0.03, -0.17, 0.22, -0.10, 0.15, -0.16, 0.056);
+        drawWrinkle(0.16, -0.10, 0.34, -0.02, 0.25, -0.08, 0.050);
+        drawWrinkle(0.23, -0.02, 0.42, 0.02, 0.30, 0.06, 0.036);
+        drawWrinkle(0.15, 0.04, 0.06, 0.14, 0.10, 0.08, 0.028);
 
-            const feature = featureAt(x, y, localZ, t + drift, turn, lit);
-            if (!feature) continue;
-            depth[screenIdx] = depthValue;
-            chars[screenIdx] = feature.ch;
-            colors[screenIdx] = feature.color;
-          }
-        }
+        ctx.beginPath();
+        ctx.moveTo(-0.56, 0.28);
+        ctx.bezierCurveTo(-0.38, 0.15, 0.10, 0.16, 0.58, 0.22);
+        ctx.bezierCurveTo(0.76, 0.24, 0.84, 0.36, 0.80, 0.49);
+        ctx.bezierCurveTo(0.64, 0.62, 0.32, 0.63, 0.00, 0.61);
+        ctx.bezierCurveTo(-0.30, 0.59, -0.58, 0.50, -0.66, 0.42);
+        ctx.bezierCurveTo(-0.74, 0.34, -0.68, 0.30, -0.56, 0.28);
+        ctx.closePath();
+        ctx.fillStyle = LIP;
+        ctx.fill();
+        ctx.lineWidth = 0.05;
+        ctx.strokeStyle = OUTLINE;
+        ctx.stroke();
 
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            const idx = row * cols + col;
-            const ch = chars[idx];
-            if (ch === ' ') continue;
-            ctx.fillStyle = colors[idx];
-            ctx.fillText(ch, col * charW, row * charH);
-          }
-        }
+        ctx.beginPath();
+        ctx.moveTo(-0.50, 0.33);
+        ctx.bezierCurveTo(-0.24, 0.26, 0.18, 0.27, 0.60, 0.33);
+        ctx.bezierCurveTo(0.72, 0.35, 0.76, 0.43, 0.70, 0.48);
+        ctx.bezierCurveTo(0.48, 0.51, 0.12, 0.51, -0.22, 0.48);
+        ctx.bezierCurveTo(-0.42, 0.46, -0.56, 0.39, -0.50, 0.33);
+        ctx.closePath();
+        ctx.fillStyle = MOUTH;
+        ctx.fill();
 
-        raf = requestAnimationFrame(drawFrame);
+        ctx.beginPath();
+        ctx.moveTo(-0.20, 0.49);
+        ctx.bezierCurveTo(-0.10, 0.42, 0.08, 0.40, 0.22, 0.44);
+        ctx.bezierCurveTo(0.28, 0.50, 0.18, 0.55, 0.03, 0.56);
+        ctx.bezierCurveTo(-0.12, 0.57, -0.22, 0.53, -0.20, 0.49);
+        ctx.closePath();
+        ctx.fillStyle = TONGUE;
+        ctx.fill();
+        ctx.lineWidth = 0.03;
+        ctx.strokeStyle = OUTLINE;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0.10, 0.45);
+        ctx.bezierCurveTo(0.28, 0.41, 0.42, 0.42, 0.54, 0.48);
+        ctx.bezierCurveTo(0.60, 0.53, 0.54, 0.58, 0.42, 0.59);
+        ctx.bezierCurveTo(0.26, 0.60, 0.18, 0.57, 0.10, 0.45);
+        ctx.closePath();
+        ctx.fillStyle = INNER;
+        ctx.fill();
+        ctx.lineWidth = 0.022;
+        ctx.strokeStyle = OUTLINE;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0.16, 0.48);
+        ctx.bezierCurveTo(0.30, 0.47, 0.40, 0.49, 0.46, 0.53);
+        ctx.strokeStyle = TEETH;
+        ctx.lineWidth = 0.018;
+        ctx.stroke();
+
+        drawWrinkle(-0.52, 0.41, -0.48, 0.36, -0.54, 0.39, 0.018);
+        drawWrinkle(-0.44, 0.57, -0.06, 0.60, -0.20, 0.64, 0.020);
+        drawWrinkle(0.02, 0.62, 0.38, 0.62, 0.20, 0.65, 0.016);
+        drawWrinkle(0.40, 0.56, 0.68, 0.48, 0.56, 0.54, 0.018);
+
+        ctx.restore();
+        requestAnimationFrame(drawHead);
       }
 
-      function setSpeed(v) {
-        speed = v;
+      function setMotion(v) {
+        motion = v;
         speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
       }
 
@@ -589,7 +438,7 @@
         paused = !paused;
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
-      speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      speedInput.addEventListener('input', (e) => setMotion(parseFloat(e.target.value)));
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
@@ -599,8 +448,8 @@
       window.addEventListener('resize', resize);
 
       resize();
-      setSpeed(parseFloat(speedInput.value));
-      drawFrame(performance.now());
+      setMotion(parseFloat(speedInput.value));
+      drawHead();
     </script>
   </body>
 </html>
