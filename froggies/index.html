@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Froggies</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg0: #07120b;
+        --bg1: #102414;
+        --panel: rgba(8, 18, 10, 0.82);
+        --panel-strong: rgba(5, 12, 7, 0.95);
+        --ink: #f2ffee;
+        --muted: #bfd4c2;
+        --accent: #8cff97;
+        --accent2: #d6ff7a;
+        --border: rgba(184, 255, 190, 0.14);
+        --shadow: rgba(0, 0, 0, 0.32);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at 20% 15%, rgba(140,255,151,.13), transparent 24%),
+          radial-gradient(circle at 80% 20%, rgba(214,255,122,.10), transparent 22%),
+          linear-gradient(180deg, var(--bg1), var(--bg0));
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(transparent 0 49.5%, rgba(255,255,255,.025) 50%, transparent 50.5%),
+          linear-gradient(90deg, transparent 0 49.5%, rgba(255,255,255,.012) 50%, transparent 50.5%);
+        background-size: 100% 7px, 7px 100%;
+        opacity: .14;
+        pointer-events: none;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      .wrap {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 36px;
+      }
+      .hero {
+        background: linear-gradient(180deg, rgba(10, 25, 13, 0.88), rgba(6, 14, 8, 0.95));
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: 0 22px 60px var(--shadow);
+        overflow: hidden;
+      }
+      .heroTop {
+        padding: 30px 28px 18px;
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 22px;
+        align-items: start;
+      }
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 12px;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--accent2);
+        margin-bottom: 12px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(42px, 6vw, 72px);
+        line-height: .95;
+        letter-spacing: -0.05em;
+      }
+      .lede {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.65;
+        max-width: 62ch;
+      }
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .badge {
+        border: 1px solid rgba(184,255,190,.16);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        background: rgba(255,255,255,.03);
+        color: #e9ffe9;
+      }
+      .heroAside {
+        background: var(--panel-strong);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 18px;
+      }
+      .calloutLabel {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .16em;
+        color: var(--accent2);
+        margin-bottom: 8px;
+      }
+      .callout {
+        font-size: clamp(32px, 4.5vw, 54px);
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        line-height: 1;
+      }
+      .callout small {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.55;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.15fr .85fr;
+        gap: 18px;
+        padding: 0 28px 28px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 18px;
+        box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      }
+      .sectionTitle {
+        margin: 0 0 12px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .16em;
+        color: var(--accent2);
+      }
+      .traitTable {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .traitTable th,
+      .traitTable td {
+        text-align: left;
+        vertical-align: top;
+        padding: 12px 10px;
+        border-bottom: 1px solid rgba(184,255,190,.10);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .traitTable th {
+        width: 24%;
+        color: #ecffeb;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+      }
+      .traitTable tr:last-child th,
+      .traitTable tr:last-child td {
+        border-bottom: none;
+      }
+      .traitTable td {
+        color: var(--muted);
+      }
+      .swatchRow {
+        display: grid;
+        gap: 12px;
+      }
+      .swatch {
+        border-radius: 18px;
+        border: 1px solid rgba(184,255,190,.12);
+        background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+        padding: 14px;
+      }
+      .swatch strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+      .swatch span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .archetypes {
+        display: grid;
+        gap: 12px;
+      }
+      .frog {
+        border-radius: 18px;
+        border: 1px solid rgba(184,255,190,.12);
+        background: rgba(255,255,255,.025);
+        padding: 14px;
+      }
+      .frog h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+      .frog p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .footerBar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 6px;
+      }
+      .linkBtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(184,255,190,.18);
+        background: linear-gradient(180deg, rgba(140,255,151,.18), rgba(94,210,103,.06));
+        font-weight: 650;
+      }
+      .fineprint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      @media (max-width: 900px) {
+        .heroTop, .grid { grid-template-columns: 1fr; }
+        .wrap { width: min(100% - 20px, 1120px); }
+        .heroTop, .grid { padding-left: 18px; padding-right: 18px; }
+      }
+      @media (max-width: 700px) {
+        .heroTop { padding-top: 22px; }
+        .grid { padding-bottom: 18px; }
+        .traitTable th, .traitTable td { padding: 10px 8px; }
+        .traitTable th { width: 34%; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="hero" aria-labelledby="title">
+        <div class="heroTop">
+          <div>
+            <div class="eyebrow">Bitcoin-native • deterministic • kawaii</div>
+            <h1 id="title">Froggies</h1>
+            <p class="lede">
+              A little pond-built collection with a clean 2,016 supply target, where each frog is assembled from
+              deterministic Bitcoin-era traits. Cute first, collectible second, and weird enough to keep the set alive.
+            </p>
+            <div class="badges">
+              <span class="badge">Supply: 2,016</span>
+              <span class="badge">Trait-driven reveal</span>
+              <span class="badge">Bitcoin block data</span>
+              <span class="badge">Mid-century / editorial vibe</span>
+            </div>
+          </div>
+
+          <aside class="heroAside">
+            <div class="calloutLabel">Collection target</div>
+            <div class="callout">2,016<small>clean, memorable, Bitcoin-adjacent, and easy to anchor in the story.</small></div>
+          </aside>
+        </div>
+
+        <div class="grid">
+          <section class="card" aria-labelledby="matrix-title">
+            <h2 id="matrix-title" class="sectionTitle">Trait matrix</h2>
+            <table class="traitTable">
+              <tr>
+                <th>Body</th>
+                <td>Round / squat / lanky / plush</td>
+              </tr>
+              <tr>
+                <th>Eyes</th>
+                <td>Soft dots / sleepy lids / big shine / sideways stare</td>
+              </tr>
+              <tr>
+                <th>Mouth</th>
+                <td>Smirk / chirp / neutral / toothy grin</td>
+              </tr>
+              <tr>
+                <th>Headwear</th>
+                <td>None / cap / flower / visor / crown-ish accent</td>
+              </tr>
+              <tr>
+                <th>Outfit</th>
+                <td>Plain / scarf / raincoat / overalls / leaf wrap</td>
+              </tr>
+              <tr>
+                <th>Background</th>
+                <td>Pond dusk / lily pad / moonlit mist / pixel rain / warm paper</td>
+              </tr>
+              <tr>
+                <th>Signal</th>
+                <td>Reveal path keyed to block-era logic, keeping the collection deterministic rather than random</td>
+              </tr>
+            </table>
+          </section>
+
+          <section class="card" aria-labelledby="direction-title">
+            <h2 id="direction-title" class="sectionTitle">Direction notes</h2>
+            <div class="swatchRow">
+              <div class="swatch">
+                <strong>Visual language</strong>
+                <span>
+                  Lo-fi, mid-century modern, editorial-clean. The frogs should feel designed, not noisy.
+                </span>
+              </div>
+              <div class="swatch">
+                <strong>Collection logic</strong>
+                <span>
+                  Every piece should have a readable silhouette and a small number of high-signal traits that carry the
+                  personality.
+                </span>
+              </div>
+              <div class="swatch">
+                <strong>Why it works</strong>
+                <span>
+                  Frogs are instantly lovable, easy to stylize, and perfect for a compact trait matrix with strong
+                  visual variety.
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="archetypes-title">
+            <h2 id="archetypes-title" class="sectionTitle">Sample archetypes</h2>
+            <div class="archetypes">
+              <div class="frog">
+                <h3>Pond Scholar</h3>
+                <p>Round body, sleepy eyes, little bookish cap, and a calm dusk background.</p>
+              </div>
+              <div class="frog">
+                <h3>Lily Pad Captain</h3>
+                <p>Sharper stance, confident grin, tiny visor, and a moonlit water scene behind them.</p>
+              </div>
+              <div class="frog">
+                <h3>Raincoat Minimalist</h3>
+                <p>Simple silhouette, overalls or coat, clean colors, and almost no visual clutter.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="summary-title">
+            <h2 id="summary-title" class="sectionTitle">Summary</h2>
+            <p class="lede" style="margin-top: 0; font-size: 14px;">
+              The goal is a collection that feels native to Bitcoin timing and structure, while still reading like a
+              collectible art set people would want to keep seeing.
+            </p>
+            <div class="footerBar">
+              <a class="linkBtn" href="../">Back to home</a>
+              <div class="fineprint">Froggies lives at <code>/froggies/</code></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
