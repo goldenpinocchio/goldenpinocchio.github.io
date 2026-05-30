@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UNAT Node on Docker</title>
-    <meta name="description" content="Copy-paste Windows Docker setup for running a UNATRARE / UNAT Deep Node." />
+    <meta name="description" content="Copy-paste Windows Docker setup for running a UNATRARE / UNAT Node." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -68,6 +68,13 @@
         letter-spacing: -0.06em;
       }
 
+      .byline {
+        margin-top: 6px;
+        color: var(--green-dark);
+        font: 700 13px/1 var(--mono);
+        letter-spacing: 0.02em;
+      }
+
       .lede {
         max-width: 620px;
         margin: 12px 0 0;
@@ -88,8 +95,15 @@
         font-size: 13px;
         font-weight: 800;
         text-decoration: none;
+        transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+      .button:hover {
+        border-color: rgba(15, 81, 35, 0.34);
+        box-shadow: 0 0 0 3px rgba(15, 81, 35, 0.10), 0 10px 24px rgba(15, 81, 35, 0.18);
+        transform: translateY(-1px);
       }
       .button.primary { background: var(--green-dark); border-color: var(--green-dark); color: #f7ffe7; }
+      .button.primary:hover { box-shadow: 0 0 0 3px rgba(15, 81, 35, 0.16), 0 12px 28px rgba(15, 81, 35, 0.28); }
 
       .image-card {
         overflow: hidden;
@@ -105,6 +119,16 @@
         object-fit: cover;
         object-position: center top;
       }
+      .x-link {
+        display: block;
+        margin-top: 8px;
+        color: #1d9bf0;
+        font: 700 13px/1.2 var(--sans);
+        text-align: center;
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+      .x-link:hover { color: #0a66c2; text-decoration: underline; }
 
       main { padding: 4px 0 54px; }
       .section { margin-top: 18px; }
@@ -232,20 +256,61 @@
       <div>
         <div class="tag">Windows Docker setup</div>
         <h1>UNAT Node on Docker</h1>
+        <div class="byline">by Pinocchio</div>
         <p class="lede">
-          Simple copy/paste setup for running a UNATRARE Deep Node on a Windows PC with Docker Desktop.
+          Simple copy/paste setup for running a UNATRARE Node on a Windows PC with Docker Desktop.
         </p>
         <div class="hero-actions">
           <a class="button primary" href="#quickstart">Start setup</a>
           <a class="button" href="#safety">Safety notes</a>
+          <a class="button" href="#docker-setup">Docker setup</a>
         </div>
       </div>
-      <div class="image-card" aria-label="UNAT node character art">
-        <img src="unat-node-pepe.png" alt="Green UNAT node character holding coffee" />
+      <div>
+        <div class="image-card" aria-label="UNAT node character art">
+          <img src="unat-node-pepe.png" alt="Green UNAT node character holding coffee" />
+        </div>
+        <a class="x-link" href="https://x.com/TrustyPinocchio/">x.com/TrustyPinocchio</a>
       </div>
     </header>
 
     <main class="wrap">
+      <section class="section" id="commands">
+        <div class="section-head">
+          <p class="kicker">Later commands</p>
+          <h2>As simple as - Stop, restart, update</h2>
+        </div>
+        <div class="command-grid">
+          <article class="card">
+            <h3>Start</h3>
+            <p>Use after rebooting or reopening Docker.</p>
+            <br>
+            <div class="codebox">
+              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="resume-command">Copy</button></div>
+              <pre id="resume-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose up -d</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Stop</h3>
+            <p>Pauses heartbeats, keeps saved volumes.</p>
+            <br>
+            <div class="codebox">
+              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="stop-command">Copy</button></div>
+              <pre id="stop-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose down</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Update</h3>
+            <p>Pull latest code, rebuild, restart.</p>
+            <br>
+            <div class="codebox">
+              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="update-command">Copy</button></div>
+              <pre id="update-command"><code>cd "$env:USERPROFILE\unatrare-node"; git pull; docker compose build --no-cache; docker compose up -d</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section class="section" id="quickstart">
         <div class="section-head">
           <p class="kicker">Quickstart</p>
@@ -253,7 +318,7 @@
         </div>
 
         <div class="panel">
-          <div class="step">
+          <div class="step" id="docker-setup">
             <div class="num">01</div>
             <div>
               <h3>Install Docker Desktop</h3>
@@ -356,42 +421,6 @@ TAP_ADDRESS=your_tap_address</code></pre>
           <article class="card">
             <h3>Keep the PC awake</h3>
             <p>Heartbeats stop when Docker stops, the PC sleeps, or internet drops.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section" id="commands">
-        <div class="section-head">
-          <p class="kicker">Later commands</p>
-          <h2>Stop, restart, update</h2>
-        </div>
-        <div class="command-grid">
-          <article class="card">
-            <h3>Stop</h3>
-            <p>Pauses heartbeats, keeps saved volumes.</p>
-            <br>
-            <div class="codebox">
-              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="stop-command">Copy</button></div>
-              <pre id="stop-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose down</code></pre>
-            </div>
-          </article>
-          <article class="card">
-            <h3>Start again</h3>
-            <p>Use after rebooting or reopening Docker.</p>
-            <br>
-            <div class="codebox">
-              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="resume-command">Copy</button></div>
-              <pre id="resume-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose up -d</code></pre>
-            </div>
-          </article>
-          <article class="card">
-            <h3>Update</h3>
-            <p>Pull latest code, rebuild, restart.</p>
-            <br>
-            <div class="codebox">
-              <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="update-command">Copy</button></div>
-              <pre id="update-command"><code>cd "$env:USERPROFILE\unatrare-node"; git pull; docker compose build --no-cache; docker compose up -d</code></pre>
-            </div>
           </article>
         </div>
       </section>
