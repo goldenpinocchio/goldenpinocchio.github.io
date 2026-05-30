@@ -3,31 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UNATRARE Node Docker Setup for Windows</title>
-    <meta
-      name="description"
-      content="A simple, copy-paste Windows Docker setup guide for running a UNATRARE Deep Node."
-    />
+    <title>UNAT Node on Docker</title>
+    <meta name="description" content="Copy-paste Windows Docker setup for running a UNATRARE / UNAT Deep Node." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
       :root {
-        --ink: #102115;
-        --ink-soft: #36523b;
-        --muted: #6d806c;
-        --paper: #fffdf2;
-        --paper-2: #f4ffe9;
-        --card: rgba(255, 255, 248, 0.86);
-        --frog: #38cf5b;
-        --frog-deep: #15923a;
-        --frog-dark: #0b5a2a;
-        --lime: #b9ff69;
-        --gold: #f5c84b;
-        --peach: #ff9a5f;
-        --pond: #0d2a16;
-        --line: rgba(21, 146, 58, 0.16);
-        --shadow: 0 24px 70px rgba(13, 42, 22, 0.14);
+        --ink: #152016;
+        --muted: #536451;
+        --paper: #fff7dc;
+        --paper-2: #f7ffd9;
+        --green: #35b84a;
+        --green-dark: #0f5123;
+        --lime: #bbf45b;
+        --orange: #f5a034;
+        --red: #e92a2a;
+        --line: rgba(15, 81, 35, 0.16);
+        --card: rgba(255, 253, 239, 0.9);
         --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
@@ -37,412 +30,234 @@
       body {
         margin: 0;
         color: var(--ink);
-        font-family: var(--sans);
+        font: 14px/1.55 var(--sans);
         background:
-          radial-gradient(circle at 16% 0%, rgba(185, 255, 105, 0.55), transparent 26rem),
-          radial-gradient(circle at 86% 8%, rgba(56, 207, 91, 0.24), transparent 24rem),
-          linear-gradient(180deg, #faffed 0%, var(--paper) 45%, #efffe8 100%);
-        overflow-x: hidden;
+          radial-gradient(circle at 10% 0%, rgba(187, 244, 91, 0.48), transparent 26rem),
+          radial-gradient(circle at 90% 5%, rgba(245, 160, 52, 0.26), transparent 22rem),
+          linear-gradient(180deg, var(--paper-2), var(--paper));
       }
 
-      body::before,
-      body::after {
-        content: "";
-        position: fixed;
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      body::before {
-        width: 420px;
-        height: 420px;
-        right: -160px;
-        top: 160px;
-        border-radius: 46% 54% 52% 48%;
-        background: rgba(21, 146, 58, 0.08);
-        border: 1px solid rgba(21, 146, 58, 0.11);
-      }
-
-      body::after {
-        inset: 0;
-        background-image:
-          linear-gradient(rgba(21, 146, 58, 0.045) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(21, 146, 58, 0.035) 1px, transparent 1px);
-        background-size: 48px 48px;
-        mask-image: linear-gradient(to bottom, rgba(0,0,0,0.34), transparent 64%);
-      }
-
-      a { color: var(--frog-deep); }
-      .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
-
-      .nav {
-        position: sticky;
-        top: 14px;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin-top: 14px;
-        padding: 10px 10px 10px 14px;
-        border: 1px solid rgba(21, 146, 58, 0.12);
-        border-radius: 999px;
-        background: rgba(255, 253, 242, 0.76);
-        backdrop-filter: blur(18px);
-        box-shadow: 0 10px 34px rgba(13, 42, 22, 0.08);
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
-        color: var(--ink);
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        text-decoration: none;
-      }
-
-      .brand-mark {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--lime), var(--frog));
-        box-shadow: inset 0 -8px 12px rgba(11, 90, 42, 0.18), 0 8px 24px rgba(56, 207, 91, 0.28);
-      }
-
-      .nav-links { display: flex; align-items: center; gap: 6px; }
-      .nav-links a {
-        padding: 9px 12px;
-        border-radius: 999px;
-        color: var(--ink-soft);
-        font-size: 14px;
-        font-weight: 700;
-        text-decoration: none;
-      }
-      .nav-links a:hover { background: rgba(56, 207, 91, 0.1); color: var(--frog-dark); }
+      a { color: var(--green-dark); font-weight: 700; }
+      .wrap { width: min(980px, calc(100% - 32px)); margin: 0 auto; }
 
       .hero {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 330px;
-        gap: 28px;
+        grid-template-columns: minmax(0, 1fr) 230px;
+        gap: 24px;
         align-items: center;
-        padding: clamp(44px, 8vw, 96px) 0 42px;
+        padding: 32px 0 20px;
       }
 
-      .eyebrow {
+      .tag {
         display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 18px;
-        padding: 7px 12px;
-        border: 1px solid rgba(21, 146, 58, 0.13);
+        margin-bottom: 10px;
+        padding: 5px 9px;
+        border: 1px solid var(--line);
         border-radius: 999px;
-        background: rgba(255,255,255,0.62);
-        color: var(--frog-dark);
-        font: 600 12px/1 var(--mono);
+        background: rgba(255,255,255,0.56);
+        color: var(--green-dark);
+        font: 600 10px/1 var(--mono);
         letter-spacing: 0.05em;
         text-transform: uppercase;
       }
 
       h1 {
         margin: 0;
-        max-width: 800px;
-        font-size: clamp(44px, 7vw, 86px);
-        line-height: 0.92;
-        letter-spacing: -0.075em;
+        font-size: clamp(30px, 5.5vw, 48px);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
       }
 
       .lede {
-        max-width: 700px;
-        margin: 22px 0 0;
-        color: var(--ink-soft);
-        font-size: clamp(18px, 2.2vw, 22px);
-        line-height: 1.55;
+        max-width: 620px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15px;
       }
 
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 30px;
-      }
-
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
       .button {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        min-height: 46px;
-        padding: 12px 18px;
-        border: 1px solid rgba(16, 33, 21, 0.1);
+        min-height: 36px;
+        padding: 9px 12px;
         border-radius: 999px;
-        background: rgba(255,255,255,0.72);
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.68);
         color: var(--ink);
+        font-size: 13px;
         font-weight: 800;
         text-decoration: none;
-        box-shadow: 0 6px 18px rgba(13, 42, 22, 0.07);
       }
-      .button.primary {
-        border-color: transparent;
-        background: var(--pond);
-        color: #f7ffe8;
-      }
+      .button.primary { background: var(--green-dark); border-color: var(--green-dark); color: #f7ffe7; }
 
-      .frog-card {
-        position: relative;
-        min-height: 430px;
-        border: 1px solid var(--line);
-        border-radius: 34px;
-        background:
-          radial-gradient(circle at 50% 20%, rgba(185, 255, 105, 0.46), transparent 160px),
-          linear-gradient(180deg, rgba(255,255,255,0.78), rgba(232,255,219,0.82));
-        box-shadow: var(--shadow);
+      .image-card {
         overflow: hidden;
+        border: 1px solid rgba(15, 81, 35, 0.18);
+        border-radius: 22px;
+        background: #f6a72f;
+        box-shadow: 0 16px 42px rgba(15, 81, 35, 0.14);
+      }
+      .image-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        object-position: center top;
       }
 
-      .frog-face {
-        position: absolute;
-        left: 50%;
-        top: 52px;
-        width: 210px;
-        height: 186px;
-        transform: translateX(-50%);
-        border-radius: 48% 52% 44% 56% / 48% 49% 51% 52%;
-        background:
-          radial-gradient(circle at 31% 33%, #fff9d8 0 18px, transparent 19px),
-          radial-gradient(circle at 69% 33%, #fff9d8 0 18px, transparent 19px),
-          radial-gradient(circle at 31% 35%, #101810 0 6px, transparent 7px),
-          radial-gradient(circle at 69% 35%, #101810 0 6px, transparent 7px),
-          radial-gradient(ellipse at 50% 68%, rgba(11, 90, 42, 0.5) 0 30px, transparent 31px),
-          linear-gradient(145deg, #cbff72, #45c855 62%, #19913b);
-        box-shadow: inset 0 -24px 38px rgba(11, 90, 42, 0.2), 0 24px 48px rgba(56, 207, 91, 0.28);
-      }
-
-      .speech {
-        position: absolute;
-        left: 26px;
-        right: 26px;
-        bottom: 26px;
-        padding: 22px;
-        border: 1px solid rgba(21, 146, 58, 0.14);
-        border-radius: 24px;
-        background: rgba(255, 253, 242, 0.86);
-        box-shadow: 0 14px 40px rgba(13, 42, 22, 0.1);
-      }
-      .speech b { display: block; margin-bottom: 8px; font-size: 18px; letter-spacing: -0.03em; }
-      .speech span { color: var(--muted); line-height: 1.5; }
-
-      main { padding: 10px 0 80px; }
+      main { padding: 4px 0 54px; }
       .section { margin-top: 18px; }
-      .section-head { max-width: 760px; margin-bottom: 18px; }
+      .section-head { margin-bottom: 12px; }
       .kicker {
-        margin: 0 0 8px;
-        color: var(--frog-dark);
-        font: 600 12px/1 var(--mono);
+        margin: 0 0 6px;
+        color: var(--green-dark);
+        font: 600 10px/1 var(--mono);
         letter-spacing: 0.06em;
         text-transform: uppercase;
       }
-      h2 { margin: 0; font-size: clamp(30px, 4vw, 48px); line-height: 1; letter-spacing: -0.055em; }
-      h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -0.035em; }
-      p { color: var(--ink-soft); line-height: 1.65; }
+      h2 { margin: 0; font-size: clamp(24px, 4vw, 36px); line-height: 1; letter-spacing: -0.055em; }
+      h3 { margin: 0 0 4px; font-size: 16px; letter-spacing: -0.025em; }
+      p { color: var(--muted); margin: 0; }
+      code { font-family: var(--mono); }
 
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-      }
-      .card, .setup-panel, .warning {
+      .panel, .card, .warning {
         border: 1px solid var(--line);
-        border-radius: 26px;
+        border-radius: 22px;
         background: var(--card);
-        box-shadow: 0 16px 48px rgba(13, 42, 22, 0.08);
-        backdrop-filter: blur(14px);
+        box-shadow: 0 14px 36px rgba(15, 81, 35, 0.08);
       }
-      .card { padding: 24px; }
-      .icon {
-        width: 42px;
-        height: 42px;
-        display: grid;
-        place-items: center;
-        margin-bottom: 16px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, rgba(185,255,105,0.8), rgba(56,207,91,0.42));
-      }
-      .card p { margin-bottom: 0; }
+      .panel { padding: 20px; }
 
-      .setup-panel { padding: clamp(20px, 4vw, 34px); }
       .step {
         display: grid;
-        grid-template-columns: 44px minmax(0, 1fr);
-        gap: 16px;
-        padding: 20px 0;
-        border-top: 1px solid rgba(21, 146, 58, 0.12);
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 12px;
+        padding: 16px 0;
+        border-top: 1px solid rgba(15, 81, 35, 0.12);
       }
-      .step:first-child { border-top: 0; padding-top: 0; }
+      .step:first-child { padding-top: 0; border-top: 0; }
       .step:last-child { padding-bottom: 0; }
       .num {
-        width: 38px;
-        height: 38px;
+        width: 30px;
+        height: 30px;
         display: grid;
         place-items: center;
         border-radius: 50%;
-        background: var(--pond);
+        background: var(--green-dark);
         color: var(--lime);
-        font: 700 14px/1 var(--mono);
+        font: 700 11px/1 var(--mono);
       }
-      .step p { margin: 4px 0 12px; }
+      .step p { margin: 2px 0 9px; font-size: 13px; }
 
       .codebox {
         overflow: hidden;
-        border: 1px solid rgba(16, 33, 21, 0.09);
-        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
         background: #0b170d;
       }
       .codebar {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        gap: 12px;
-        padding: 10px 12px;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
-        background: rgba(185,255,105,0.08);
-        color: #c8eab7;
-        font: 600 11px/1 var(--mono);
-        letter-spacing: 0.06em;
+        background: rgba(187, 244, 91, 0.08);
+        color: #d3e9bd;
+        font: 600 10px/1 var(--mono);
+        letter-spacing: 0.05em;
         text-transform: uppercase;
       }
       .copy-btn {
         cursor: pointer;
-        border: 1px solid rgba(185,255,105,0.24);
+        border: 1px solid rgba(187,244,91,0.24);
         border-radius: 999px;
         background: rgba(255,255,255,0.06);
         color: var(--lime);
-        padding: 7px 10px;
-        font: 700 12px/1 var(--sans);
+        padding: 6px 9px;
+        font: 700 11px/1 var(--sans);
       }
       pre {
         margin: 0;
-        padding: 16px;
-        color: #efffdf;
+        padding: 13px;
         overflow-x: auto;
         white-space: pre-wrap;
         overflow-wrap: anywhere;
-        font: 13px/1.6 var(--mono);
+        color: #efffdf;
+        font: 12px/1.55 var(--mono);
       }
 
-      .command-grid {
+      .safety-grid, .command-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
+        gap: 12px;
       }
-      .mini { padding: 20px; }
-      .mini p { margin: 0 0 14px; color: var(--muted); }
+      .card { padding: 16px; }
+      .card p { font-size: 13px; }
 
       .warning {
         display: grid;
-        grid-template-columns: 54px minmax(0, 1fr);
-        gap: 16px;
-        padding: 24px;
-        background: linear-gradient(180deg, rgba(255,255,248,0.9), rgba(255,245,226,0.88));
-        border-color: rgba(255, 154, 95, 0.24);
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        padding: 18px;
+        background: rgba(255, 247, 220, 0.94);
+        border-color: rgba(233, 42, 42, 0.22);
       }
-      .warn-icon {
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        border-radius: 18px;
-        background: rgba(255, 154, 95, 0.18);
+      .rule {
+        color: var(--red);
+        font: 800 14px/1 var(--mono);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
-      .warning p { margin: 0; }
-      .refs { margin-top: 10px !important; color: var(--muted); font-size: 14px; }
+      .refs { margin-top: 8px; font-size: 12px; }
+      footer { padding: 20px 0 34px; color: var(--muted); text-align: center; font-size: 12px; }
 
-      footer {
-        padding: 36px 0 48px;
-        color: var(--muted);
-        text-align: center;
-        font-size: 14px;
+      @media (max-width: 760px) {
+        .hero { grid-template-columns: 1fr; padding-top: 24px; }
+        .image-card { max-width: 240px; }
+        .safety-grid, .command-grid { grid-template-columns: 1fr; }
       }
-
-      @media (max-width: 900px) {
-        .hero { grid-template-columns: 1fr; padding-top: 48px; }
-        .frog-card { min-height: 360px; }
-        .cards, .command-grid { grid-template-columns: 1fr; }
-      }
-      @media (max-width: 640px) {
-        .wrap { width: min(100% - 24px, 1120px); }
-        .nav { align-items: flex-start; border-radius: 24px; flex-direction: column; }
-        .nav-links { flex-wrap: wrap; }
-        h1 { font-size: clamp(40px, 14vw, 64px); }
-        .step, .warning { grid-template-columns: 1fr; }
+      @media (max-width: 560px) {
+        body { font-size: 13px; }
+        .wrap { width: min(100% - 22px, 980px); }
+        .step { grid-template-columns: 1fr; }
+        .hero-actions { align-items: stretch; flex-direction: column; }
+        .button { justify-content: center; }
       }
     </style>
   </head>
   <body>
-    <nav class="wrap nav" aria-label="Page navigation">
-      <a class="brand" href="#top"><span class="brand-mark">🐸</span><span>UNATRARE Docker Setup</span></a>
-      <div class="nav-links">
-        <a href="#quickstart">Quickstart</a>
-        <a href="#commands">Commands</a>
-        <a href="#safe">Safety</a>
-        <a href="https://unatrare.wtf/nodes/guide">Official guide</a>
-      </div>
-    </nav>
-
-    <header id="top" class="wrap hero">
+    <header class="wrap hero">
       <div>
-        <div class="eyebrow">Windows · Docker Desktop · copy/paste</div>
-        <h1>A softer landing for running a UNATRARE Deep Node.</h1>
+        <div class="tag">Windows Docker setup</div>
+        <h1>UNAT Node on Docker</h1>
         <p class="lede">
-          Docker can feel swampy. This guide keeps it simple: install Docker Desktop, clone the official node,
-          add public wallet addresses, and start heartbeating.
+          Simple copy/paste setup for running a UNATRARE Deep Node on a Windows PC with Docker Desktop.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#quickstart">Copy the setup commands</a>
-          <a class="button" href="#safe">Read safety notes</a>
+          <a class="button primary" href="#quickstart">Start setup</a>
+          <a class="button" href="#safety">Safety notes</a>
         </div>
       </div>
-      <aside class="frog-card" aria-label="Pepe themed node helper">
-        <div class="frog-face" aria-hidden="true"></div>
-        <div class="speech">
-          <b>Ribbit rule #1</b>
-          <span>Public addresses only. Never paste private keys, seed phrases, or wallet passwords into anything here.</span>
-        </div>
-      </aside>
+      <div class="image-card" aria-label="UNAT node character art">
+        <img src="unat-node-pepe.png" alt="Green UNAT node character holding coffee" />
+      </div>
     </header>
 
     <main class="wrap">
-      <section class="section cards" id="safe">
-        <article class="card">
-          <div class="icon">🪟</div>
-          <h3>What Docker does</h3>
-          <p>Docker runs a tiny Linux environment inside Windows so the Pear-based UNATRARE node can run cleanly.</p>
-        </article>
-        <article class="card">
-          <div class="icon">💾</div>
-          <h3>What gets saved</h3>
-          <p>Docker volumes keep the node identity and archive cache alive through restarts and normal updates.</p>
-        </article>
-        <article class="card">
-          <div class="icon">🌐</div>
-          <h3>What to expect</h3>
-          <p>Your PC needs to stay awake. Your IP may be visible to peers, like other P2P software.</p>
-        </article>
-      </section>
-
       <section class="section" id="quickstart">
         <div class="section-head">
           <p class="kicker">Quickstart</p>
-          <h2>Six steps, no Docker lore required.</h2>
+          <h2>Six step setup</h2>
         </div>
-        <div class="setup-panel">
+
+        <div class="panel">
           <div class="step">
             <div class="num">01</div>
             <div>
               <h3>Install Docker Desktop</h3>
-              <p>Use the official Docker download. Accept the WSL2/Hyper-V defaults, restart if prompted, then open Docker Desktop until the engine is running.</p>
+              <p>Install Docker, accept WSL2/Hyper-V defaults, restart if asked, then open Docker until the engine is running.</p>
               <div class="codebox">
                 <div class="codebar"><span>Official download</span><button class="copy-btn" data-copy="docker-url">Copy</button></div>
                 <pre id="docker-url"><code>https://www.docker.com/get-started/</code></pre>
@@ -454,7 +269,7 @@
             <div class="num">02</div>
             <div>
               <h3>Install Git if needed</h3>
-              <p>If PowerShell says <code>git</code> is not recognized, install Git for Windows from the official source.</p>
+              <p>If PowerShell says <code>git</code> is not recognized, install Git for Windows.</p>
               <div class="codebox">
                 <div class="codebar"><span>Official download</span><button class="copy-btn" data-copy="git-url">Copy</button></div>
                 <pre id="git-url"><code>https://git-scm.com/download/win</code></pre>
@@ -465,8 +280,8 @@
           <div class="step">
             <div class="num">03</div>
             <div>
-              <h3>Clone the official node</h3>
-              <p>Open PowerShell or Windows Terminal and paste this install line.</p>
+              <h3>Clone the node</h3>
+              <p>Open PowerShell or Windows Terminal and paste this.</p>
               <div class="codebox">
                 <div class="codebar"><span>PowerShell install line</span><button class="copy-btn" data-copy="clone-command">Copy</button></div>
                 <pre id="clone-command"><code>git clone --branch unatrare/phase-0 https://github.com/joeatang/unatrare-intercom "$env:USERPROFILE\unatrare-node"; cd "$env:USERPROFILE\unatrare-node"; copy .env.example .env</code></pre>
@@ -477,10 +292,10 @@
           <div class="step">
             <div class="num">04</div>
             <div>
-              <h3>Add your public addresses</h3>
-              <p>BTC address is required. XCP and TAP are optional, but useful for display and future reward logic.</p>
+              <h3>Add public addresses</h3>
+              <p>BTC is required. XCP and TAP are optional.</p>
               <div class="codebox">
-                <div class="codebar"><span>Open the config</span><button class="copy-btn" data-copy="notepad-command">Copy</button></div>
+                <div class="codebar"><span>Open config</span><button class="copy-btn" data-copy="notepad-command">Copy</button></div>
                 <pre id="notepad-command"><code>notepad .env</code></pre>
               </div>
               <br>
@@ -497,7 +312,7 @@ TAP_ADDRESS=your_tap_address</code></pre>
             <div class="num">05</div>
             <div>
               <h3>Start the node</h3>
-              <p>This builds the container and starts the node in the background.</p>
+              <p>Builds and starts the Docker container in the background.</p>
               <div class="codebox">
                 <div class="codebar"><span>Start command</span><button class="copy-btn" data-copy="start-command">Copy</button></div>
                 <pre id="start-command"><code>docker compose up -d</code></pre>
@@ -508,8 +323,8 @@ TAP_ADDRESS=your_tap_address</code></pre>
           <div class="step">
             <div class="num">06</div>
             <div>
-              <h3>Watch for registration</h3>
-              <p>Look for <code>[unatrare] Node registered...</code>. Once you see that, the frog is awake.</p>
+              <h3>Check logs</h3>
+              <p>Look for <code>[unatrare] Node registered...</code>.</p>
               <div class="codebox">
                 <div class="codebar"><span>Logs</span><button class="copy-btn" data-copy="logs-command">Copy</button></div>
                 <pre id="logs-command"><code>docker compose logs -f</code></pre>
@@ -519,31 +334,60 @@ TAP_ADDRESS=your_tap_address</code></pre>
         </div>
       </section>
 
+      <section class="section" id="safety">
+        <div class="section-head">
+          <p class="kicker">Safety</p>
+          <h2>Read before running</h2>
+        </div>
+        <div class="warning">
+          <div class="rule">Rule #1</div>
+          <p>Never paste a seed phrase, private key, wallet file, signing approval, or wallet password into this node setup.</p>
+          <p>The node should only need public wallet addresses for identity/reward tracking.</p>
+        </div>
+        <div class="safety-grid" style="margin-top:12px">
+          <article class="card">
+            <h3>Docker isolates it</h3>
+            <p>The node runs in a Linux container through Docker Desktop instead of directly on Windows.</p>
+          </article>
+          <article class="card">
+            <h3>Your IP may show</h3>
+            <p>This is P2P software. Your IP can be visible to peers. Use a VPN if that matters.</p>
+          </article>
+          <article class="card">
+            <h3>Keep the PC awake</h3>
+            <p>Heartbeats stop when Docker stops, the PC sleeps, or internet drops.</p>
+          </article>
+        </div>
+      </section>
+
       <section class="section" id="commands">
         <div class="section-head">
-          <p class="kicker">Daily commands</p>
-          <h2>Stop, restart, or update later.</h2>
+          <p class="kicker">Later commands</p>
+          <h2>Stop, restart, update</h2>
         </div>
         <div class="command-grid">
-          <article class="card mini">
-            <h3>Stop the node</h3>
+          <article class="card">
+            <h3>Stop</h3>
             <p>Pauses heartbeats, keeps saved volumes.</p>
+            <br>
             <div class="codebox">
               <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="stop-command">Copy</button></div>
               <pre id="stop-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose down</code></pre>
             </div>
           </article>
-          <article class="card mini">
+          <article class="card">
             <h3>Start again</h3>
             <p>Use after rebooting or reopening Docker.</p>
+            <br>
             <div class="codebox">
               <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="resume-command">Copy</button></div>
               <pre id="resume-command"><code>cd "$env:USERPROFILE\unatrare-node"; docker compose up -d</code></pre>
             </div>
           </article>
-          <article class="card mini">
+          <article class="card">
             <h3>Update</h3>
             <p>Pull latest code, rebuild, restart.</p>
+            <br>
             <div class="codebox">
               <div class="codebar"><span>PowerShell</span><button class="copy-btn" data-copy="update-command">Copy</button></div>
               <pre id="update-command"><code>cd "$env:USERPROFILE\unatrare-node"; git pull; docker compose build --no-cache; docker compose up -d</code></pre>
@@ -552,27 +396,17 @@ TAP_ADDRESS=your_tap_address</code></pre>
         </div>
       </section>
 
-      <section class="section warning">
-        <div class="warn-icon">⚠️</div>
-        <div>
-          <h2>Do not feed the frog your seed phrase.</h2>
-          <p>
-            The node uses public wallet addresses as identity/reward markers. It should never need a private key,
-            recovery phrase, wallet file, signing approval, or password.
-          </p>
-          <p class="refs">
-            Official references:
-            <a href="https://unatrare.wtf/nodes">node registry</a> ·
-            <a href="https://unatrare.wtf/nodes/guide">setup guide</a> ·
-            <a href="https://github.com/joeatang/unatrare-intercom">GitHub repo</a>
-          </p>
-        </div>
+      <section class="section">
+        <p class="refs">
+          Official references:
+          <a href="https://unatrare.wtf/nodes">node registry</a> ·
+          <a href="https://unatrare.wtf/nodes/guide">setup guide</a> ·
+          <a href="https://github.com/joeatang/unatrare-intercom">GitHub repo</a>
+        </p>
       </section>
     </main>
 
-    <footer class="wrap">
-      Built for GoldenPinocchio · Windows Docker setup for UNATRARE Deep Nodes · ribbit responsibly.
-    </footer>
+    <footer class="wrap">GoldenPinocchio · UNAT Docker setup · keep it simple.</footer>
 
     <script>
       document.querySelectorAll(".copy-btn").forEach((button) => {
@@ -583,10 +417,10 @@ TAP_ADDRESS=your_tap_address</code></pre>
             await navigator.clipboard.writeText(text);
             const old = button.textContent;
             button.textContent = "Copied";
-            setTimeout(() => { button.textContent = old; }, 1300);
+            setTimeout(() => { button.textContent = old; }, 1200);
           } catch (error) {
-            button.textContent = "Select text";
-            setTimeout(() => { button.textContent = "Copy"; }, 1500);
+            button.textContent = "Select";
+            setTimeout(() => { button.textContent = "Copy"; }, 1300);
           }
         });
       });
