@@ -63,55 +63,38 @@
 
       h1 {
         margin: 0;
-        font-size: clamp(30px, 5.5vw, 48px);
-        line-height: 0.98;
-        letter-spacing: -0.06em;
+        font-size: clamp(38px, 6.6vw, 62px);
+        line-height: 0.96;
+        letter-spacing: -0.065em;
       }
 
       .byline {
-        margin-top: 6px;
+        margin-top: 8px;
         color: var(--green-dark);
-        font: 700 13px/1 var(--mono);
+        font: 800 16px/1 var(--mono);
         letter-spacing: 0.02em;
       }
 
       .lede {
-        max-width: 620px;
-        margin: 12px 0 0;
+        max-width: 680px;
+        margin: 14px 0 0;
         color: var(--muted);
-        font-size: 15px;
+        font-size: 18px;
+        line-height: 1.45;
       }
 
-      .hero-actions {
-        grid-column: 1 / -1;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-        margin-top: -2px;
-      }
-      .button {
-        display: inline-flex;
-        align-items: center;
-        min-height: 36px;
-        padding: 9px 12px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.68);
-        color: var(--ink);
-        font-size: 13px;
-        font-weight: 800;
+
+      .image-link {
+        display: block;
+        border-radius: 22px;
         text-decoration: none;
-        transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease, background 180ms ease;
+        transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
       }
-      .button:hover {
-        border-color: rgba(15, 81, 35, 0.34);
-        box-shadow: 0 0 0 3px rgba(15, 81, 35, 0.10), 0 10px 24px rgba(15, 81, 35, 0.18);
-        transform: translateY(-1px);
+      .image-link:hover {
+        transform: translateY(-3px) rotate(-1deg);
+        filter: saturate(1.08);
+        box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.18);
       }
-      .button.primary { background: var(--green-dark); border-color: var(--green-dark); color: #f7ffe7; }
-      .button.primary:hover { box-shadow: 0 0 0 3px rgba(15, 81, 35, 0.16), 0 12px 28px rgba(15, 81, 35, 0.28); }
-
       .image-card {
         overflow: hidden;
         border: 1px solid rgba(15, 81, 35, 0.18);
@@ -241,7 +224,31 @@
         letter-spacing: 0.04em;
         text-transform: uppercase;
       }
-      .refs { margin-top: 8px; font-size: 12px; }
+      .refs {
+        margin-top: 8px;
+        padding: 18px;
+        border: 1px solid rgba(15, 81, 35, 0.18);
+        border-radius: 20px;
+        background:
+          linear-gradient(135deg, rgba(187, 244, 91, 0.28), rgba(255, 253, 239, 0.88)),
+          rgba(255, 253, 239, 0.9);
+        box-shadow: 0 14px 34px rgba(15, 81, 35, 0.08);
+        color: var(--green-dark);
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+      }
+      .refs a {
+        display: inline-flex;
+        margin: 4px 3px;
+        padding: 6px 10px;
+        border: 1px solid rgba(15, 81, 35, 0.14);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.62);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .refs a:hover { background: var(--green-dark); color: #f7ffe7; }
       footer { padding: 20px 0 34px; color: var(--muted); text-align: center; font-size: 12px; }
 
       @media (max-width: 760px) {
@@ -253,31 +260,26 @@
         body { font-size: 13px; }
         .wrap { width: min(100% - 22px, 980px); }
         .step { grid-template-columns: 1fr; }
-        .hero-actions { align-items: stretch; flex-direction: column; }
-        .button { justify-content: center; }
       }
     </style>
   </head>
   <body>
     <header class="wrap hero">
       <div>
-        <div class="tag">Windows Docker setup</div>
         <h1>UNAT Node on Docker</h1>
         <div class="byline">by Pinocchio</div>
         <p class="lede">
           Simple copy/paste setup for running a UNATRARE Node on a Windows PC with Docker Desktop.
         </p>
+        <div class="tag">Windows Docker setup</div>
       </div>
       <div>
-        <div class="image-card" aria-label="UNAT node character art">
-          <img src="unat-node-pepe.png" alt="Green UNAT node character holding coffee" />
-        </div>
+        <a class="image-link" href="https://x.com/TrustyPinocchio/" aria-label="Open Trusty Pinocchio on X">
+          <div class="image-card" aria-label="UNAT node character art">
+            <img src="unat-node-pepe.png" alt="Green UNAT node character holding coffee" />
+          </div>
+        </a>
         <a class="x-link" href="https://x.com/TrustyPinocchio/">x.com/TrustyPinocchio</a>
-      </div>
-      <div class="hero-actions">
-        <a class="button primary" href="#quickstart">Start setup</a>
-        <a class="button" href="#safety">Safety notes</a>
-        <a class="button" href="#docker-setup">Docker setup</a>
       </div>
     </header>
 
@@ -319,7 +321,6 @@
 
       <section class="section" id="quickstart">
         <div class="section-head">
-          <p class="kicker">Quickstart</p>
           <h2>6 Step - Setup for Docker + UNAT Node</h2>
         </div>
 
@@ -407,8 +408,7 @@ TAP_ADDRESS=your_tap_address</code></pre>
 
       <section class="section" id="safety">
         <div class="section-head">
-          <p class="kicker">Safety</p>
-          <h2>Read before running</h2>
+          <h2>Safety</h2>
         </div>
         <div class="warning">
           <div class="rule">Rule #1</div>
@@ -433,15 +433,15 @@ TAP_ADDRESS=your_tap_address</code></pre>
 
       <section class="section">
         <p class="refs">
-          Official references:
-          <a href="https://unatrare.wtf/nodes">node registry</a> ·
-          <a href="https://unatrare.wtf/nodes/guide">setup guide</a> ·
+          Official UNATRARE references:
+          <a href="https://unatrare.wtf/nodes">unatrare.wtf</a> ·
+          <a href="https://unatrare.wtf/nodes/guide">unatrare.wtf/nodes/guide</a> ·
           <a href="https://github.com/joeatang/unatrare-intercom">GitHub repo</a>
         </p>
       </section>
     </main>
 
-    <footer class="wrap">Pinocchio · UNAT Node Docker Setup · hey you, have a great day today</footer>
+    <footer class="wrap">pinocchio · UNAT Node Docker Setup · hey you, have a great day today</footer>
 
     <script>
       document.querySelectorAll(".copy-btn").forEach((button) => {
