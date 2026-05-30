@@ -3,30 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Froggies — FC Generator Logic</title>
+    <title>Froggies</title>
     <style>
       :root {
         color-scheme: dark;
         --bg: #06110a;
-        --bg2: #0d2012;
-        --card: rgba(9, 23, 13, 0.78);
-        --card2: rgba(4, 12, 7, 0.92);
-        --ink: #efffeb;
-        --muted: #b8cfba;
-        --soft: #78987c;
+        --bg2: #0e2314;
+        --panel: rgba(7, 20, 11, 0.82);
+        --panel2: rgba(3, 12, 6, 0.94);
+        --ink: #f2ffed;
+        --muted: #bdd4be;
+        --soft: #82a186;
+        --line: rgba(191, 255, 185, 0.15);
         --lime: #a7ff83;
-        --gold: #ffd86b;
-        --orange: #ff9c45;
-        --line: rgba(189, 255, 185, 0.14);
-        --shadow: rgba(0, 0, 0, 0.34);
+        --gold: #ffd66b;
+        --orange: #ff9f45;
       }
 
       * { box-sizing: border-box; }
       html, body { margin: 0; min-height: 100%; }
       body {
         background:
-          radial-gradient(circle at 12% 8%, rgba(167,255,131,.14), transparent 28%),
-          radial-gradient(circle at 80% 0%, rgba(255,156,69,.10), transparent 24%),
+          radial-gradient(circle at 12% 5%, rgba(167, 255, 131, 0.16), transparent 30%),
+          radial-gradient(circle at 88% 2%, rgba(255, 159, 69, 0.11), transparent 26%),
           linear-gradient(180deg, var(--bg2), var(--bg));
         color: var(--ink);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -36,143 +35,143 @@
         position: fixed;
         inset: 0;
         pointer-events: none;
-        background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+        background-image:
+          linear-gradient(rgba(255,255,255,.026) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
         background-size: 34px 34px;
-        mask-image: linear-gradient(to bottom, black, transparent 82%);
+        mask-image: linear-gradient(to bottom, black, transparent 80%);
       }
       a { color: inherit; }
-      code { color: #eaffc6; }
+      code {
+        color: #eaffc6;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
       .wrap {
         position: relative;
-        width: min(1180px, calc(100% - 32px));
+        width: min(1120px, calc(100% - 32px));
         margin: 0 auto;
         padding: 34px 0 42px;
       }
-      .hero {
+      .shell {
         border: 1px solid var(--line);
         border-radius: 30px;
-        background: linear-gradient(180deg, rgba(10, 26, 14, .88), rgba(5, 13, 8, .96));
-        box-shadow: 0 24px 70px var(--shadow);
+        background: linear-gradient(180deg, rgba(10, 27, 14, .88), rgba(4, 13, 7, .96));
+        box-shadow: 0 24px 70px rgba(0, 0, 0, .34);
         overflow: hidden;
       }
-      .top {
-        display: grid;
-        grid-template-columns: 1.25fr .75fr;
-        gap: 22px;
-        padding: 34px;
+      .hero {
+        padding: 38px;
         border-bottom: 1px solid var(--line);
       }
       .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
         color: var(--gold);
         text-transform: uppercase;
         letter-spacing: .18em;
         font-size: 12px;
-        font-weight: 750;
+        font-weight: 800;
         margin-bottom: 14px;
       }
       h1 {
         margin: 0;
-        font-size: clamp(44px, 7vw, 86px);
-        letter-spacing: -.065em;
-        line-height: .92;
+        font-size: clamp(50px, 9vw, 104px);
+        line-height: .9;
+        letter-spacing: -.07em;
       }
       .lede {
-        max-width: 68ch;
-        margin: 16px 0 0;
+        max-width: 760px;
+        margin: 18px 0 0;
         color: var(--muted);
-        font-size: 16px;
-        line-height: 1.68;
+        font-size: clamp(16px, 2vw, 20px);
+        line-height: 1.58;
       }
-      .pillRow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
       .pill {
         border: 1px solid var(--line);
         border-radius: 999px;
         background: rgba(255,255,255,.035);
-        color: #eaffdf;
-        padding: 8px 12px;
-        font-size: 12px;
-        font-weight: 650;
+        padding: 9px 13px;
+        color: #ebffe2;
+        font-size: 13px;
+        font-weight: 700;
       }
-      .status {
-        background: var(--card2);
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        padding: 18px;
+      .content {
+        display: grid;
+        gap: 18px;
+        padding: 28px 38px 36px;
       }
-      .statusLabel {
-        color: var(--gold);
-        letter-spacing: .16em;
-        text-transform: uppercase;
-        font-size: 11px;
-        font-weight: 800;
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
       }
-      .bigNum {
-        margin-top: 8px;
-        font-size: clamp(38px, 5vw, 64px);
-        font-weight: 900;
-        letter-spacing: -.06em;
-        line-height: .95;
-      }
-      .status p { margin: 10px 0 0; color: var(--muted); line-height: 1.55; font-size: 13px; }
-      .content { padding: 28px 34px 34px; display: grid; gap: 18px; }
-      .logicGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
       .card {
         border: 1px solid var(--line);
         border-radius: 22px;
-        background: var(--card);
+        background: var(--panel);
         padding: 18px;
       }
-      .card h2, .card h3 {
+      .card.dark { background: var(--panel2); }
+      h2, h3 {
         margin: 0 0 10px;
-        color: #f5ffed;
-        letter-spacing: -.02em;
+        color: #f7fff0;
+        letter-spacing: -.025em;
       }
-      .card h2 { font-size: 20px; }
-      .card h3 { font-size: 15px; }
-      .card p, .card li { color: var(--muted); line-height: 1.6; font-size: 14px; }
-      .card p { margin: 0; }
-      .card ul { margin: 0; padding-left: 18px; }
-      .windows { display: grid; gap: 10px; margin-top: 14px; }
+      h2 { font-size: 21px; }
+      h3 { font-size: 16px; }
+      p, li { color: var(--muted); line-height: 1.62; font-size: 14px; }
+      p { margin: 0; }
+      ul { margin: 0; padding-left: 18px; }
+      .windows {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
       .window {
         display: flex;
         justify-content: space-between;
         gap: 12px;
         padding: 12px;
-        border: 1px solid rgba(189,255,185,.10);
+        border: 1px solid rgba(191,255,185,.10);
         border-radius: 16px;
         background: rgba(255,255,255,.025);
         color: var(--muted);
         font-size: 13px;
       }
       .window strong { color: var(--ink); }
-      .traitGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-      .traitList { display: grid; gap: 7px; }
-      .trait {
+      .traits {
         display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 10px;
-        align-items: baseline;
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(189,255,185,.09);
-        font-size: 13px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
       }
-      .trait:last-child { border-bottom: none; }
-      .trait b { font-size: 13px; }
-      .range { color: var(--gold); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
-      .count { color: var(--muted); white-space: nowrap; }
-      .rare b { color: var(--gold); }
-      .footer {
+      .traitList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .trait {
+        border: 1px solid rgba(191,255,185,.12);
+        border-radius: 999px;
+        background: rgba(255,255,255,.03);
+        padding: 8px 10px;
+        color: #e8ffe1;
+        font-size: 13px;
+        font-weight: 650;
+      }
+      .rare { color: var(--gold); border-color: rgba(255, 214, 107, .28); }
+      .note {
+        color: var(--soft);
+        font-size: 12px;
         display: flex;
         justify-content: space-between;
         gap: 14px;
         flex-wrap: wrap;
-        color: var(--soft);
-        font-size: 12px;
       }
-      .footer a {
+      .note a {
         text-decoration: none;
         border: 1px solid var(--line);
         border-radius: 999px;
@@ -180,136 +179,99 @@
         color: var(--ink);
         background: rgba(255,255,255,.035);
       }
-      @media (max-width: 920px) {
-        .top, .logicGrid, .traitGrid { grid-template-columns: 1fr; }
-        .top, .content { padding-left: 20px; padding-right: 20px; }
+      @media (max-width: 900px) {
+        .grid, .traits { grid-template-columns: 1fr; }
+        .hero, .content { padding-left: 22px; padding-right: 22px; }
       }
       @media (max-width: 560px) {
-        .wrap { width: min(100% - 18px, 1180px); padding-top: 16px; }
-        .trait { grid-template-columns: 1fr; gap: 3px; }
+        .wrap { width: min(100% - 18px, 1120px); padding-top: 16px; }
         .window { flex-direction: column; }
       }
     </style>
   </head>
   <body>
     <main class="wrap">
-      <section class="hero" aria-labelledby="title">
-        <div class="top">
-          <div>
-            <div class="eyebrow">Froggies Generator Logic • Pending Approval</div>
-            <h1 id="title">FC block hash traits</h1>
-            <p class="lede">
-              Froggies are generated from the two Bitcoin difficulty windows where compact <code>nBits</code> contains
-              <code>fc</code>. Each block becomes one Froggie. The block hash is sliced into six rolls, and the ranges below
-              turn those rolls into traits.
-            </p>
-            <div class="pillRow">
-              <span class="pill">4032 total Froggies</span>
-              <span class="pill">2 × 2016-block windows</span>
-              <span class="pill">roll = hex slice % 4032</span>
-              <span class="pill">ranges end in 69</span>
-            </div>
+      <section class="shell" aria-labelledby="title">
+        <header class="hero">
+          <div class="eyebrow">Bitcoin-native pond creatures</div>
+          <h1 id="title">Froggies</h1>
+          <p class="lede">
+            Froggies are a 4,032-piece collection generated from the only Bitcoin difficulty periods where compact
+            <code>nBits</code> contains <code>fc</code>. Each selected block contributes one block hash; the hash rolls the frog's look.
+          </p>
+          <div class="stats" aria-label="Collection facts">
+            <span class="pill">4,032 total Froggies</span>
+            <span class="pill">2 × 2,016-block difficulty periods</span>
+            <span class="pill"><code>fc</code> in compact difficulty bits</span>
+            <span class="pill">block hash → trait rolls</span>
           </div>
-          <aside class="status">
-            <div class="statusLabel">Current status</div>
-            <div class="bigNum">Pending</div>
-            <p>This page is the working generator spec, not final art. No art mockup is included here.</p>
-          </aside>
-        </div>
+        </header>
 
         <div class="content">
-          <section class="logicGrid" aria-label="Generator basics">
-            <div class="card">
-              <h2>Source windows</h2>
-              <p>Only two difficulty windows match the <code>fc</code> nBits rule, producing a clean 4032 supply.</p>
+          <section class="grid" aria-label="FC bits difficulty logic">
+            <div class="card dark">
+              <h2>FC difficulty windows</h2>
+              <p>Bitcoin retargets difficulty every 2,016 blocks. Froggies use the two historical periods whose compact difficulty field includes <code>fc</code>.</p>
               <div class="windows">
-                <div class="window"><strong>266112–268127</strong><span>nBits 190afc85</span></div>
-                <div class="window"><strong>933408–935423</strong><span>nBits 1701fca1</span></div>
+                <div class="window"><strong>Blocks 266112–268127</strong><span><code>190afc85</code></span></div>
+                <div class="window"><strong>Blocks 933408–935423</strong><span><code>1701fca1</code></span></div>
               </div>
             </div>
             <div class="card">
-              <h2>Hash slicing</h2>
-              <ul>
-                <li>Remove leading zeroes from the block hash.</li>
-                <li>Split the remaining hash into six slices.</li>
-                <li>Map slices to body, eyes, mouth, headgear, accessory, and background.</li>
-              </ul>
+              <h2>Deterministic rolls</h2>
+              <p>Leading zeroes are removed from each block hash, then the remaining hash is split into slices. Each slice maps to one visual category.</p>
             </div>
             <div class="card">
-              <h2>Roll range</h2>
-              <p><code>value % 4032</code> returns rolls from <code>0</code> to <code>4031</code>. Lower rolls produce rarer traits.</p>
+              <h2>Rarity from rolls</h2>
+              <p>Each slice is converted into a roll with <code>value % 4032</code>. Low rolls unlock the rarer looks; higher rolls map to the more common pond traits.</p>
             </div>
           </section>
 
-          <section class="traitGrid" aria-label="Pending trait ranges">
-            <div class="card"><h3>Body Color</h3><div class="traitList">
-              <div class="trait"><b>swamp green</b><span class="range">3370–4031</span><span class="count">701 · 17.39%</span></div>
-              <div class="trait"><b>pastel green</b><span class="range">2770–3369</span><span class="count">585 · 14.51%</span></div>
-              <div class="trait"><b>turquoise</b><span class="range">2270–2769</span><span class="count">468 · 11.61%</span></div>
-              <div class="trait"><b>toxic yellow</b><span class="range">1770–2269</span><span class="count">496 · 12.30%</span></div>
-              <div class="trait"><b>neon pink</b><span class="range">1370–1769</span><span class="count">394 · 9.77%</span></div>
-              <div class="trait"><b>night black</b><span class="range">970–1369</span><span class="count">414 · 10.27%</span></div>
-              <div class="trait"><b>albino white</b><span class="range">670–969</span><span class="count">262 · 6.50%</span></div>
-              <div class="trait"><b>ghost</b><span class="range">370–669</span><span class="count">333 · 8.26%</span></div>
-              <div class="trait rare"><b>gold body</b><span class="range">170–369</span><span class="count">201 · 4.99%</span></div>
-              <div class="trait rare"><b>diamond body</b><span class="range">0–169</span><span class="count">178 · 4.41%</span></div>
-            </div></div>
+          <section class="traits" aria-label="Froggies trait list">
+            <div class="card">
+              <h3>Body colors</h3>
+              <div class="traitList">
+                <span class="trait">swamp green</span><span class="trait">pastel green</span><span class="trait">turquoise</span><span class="trait">toxic yellow</span><span class="trait">neon pink</span><span class="trait">night black</span><span class="trait">albino white</span><span class="trait">ghost</span><span class="trait rare">gold body</span><span class="trait rare">diamond body</span>
+              </div>
+            </div>
 
-            <div class="card"><h3>Eyes</h3><div class="traitList">
-              <div class="trait"><b>wide sleepy</b><span class="range">2570–4031</span><span class="count">1473 · 36.53%</span></div>
-              <div class="trait"><b>one-eye wink</b><span class="range">1670–2569</span><span class="count">904 · 22.42%</span></div>
-              <div class="trait"><b>bulging</b><span class="range">1070–1669</span><span class="count">598 · 14.83%</span></div>
-              <div class="trait"><b>hypnotic spiral</b><span class="range">670–1069</span><span class="count">397 · 9.85%</span></div>
-              <div class="trait"><b>gold eyes</b><span class="range">370–669</span><span class="count">291 · 7.22%</span></div>
-              <div class="trait rare"><b>diamond eyes</b><span class="range">170–369</span><span class="count">192 · 4.76%</span></div>
-              <div class="trait rare"><b>laser eyes</b><span class="range">0–169</span><span class="count">177 · 4.39%</span></div>
-            </div></div>
+            <div class="card">
+              <h3>Eyes</h3>
+              <div class="traitList">
+                <span class="trait">wide sleepy</span><span class="trait">one-eye wink</span><span class="trait">bulging</span><span class="trait">hypnotic spiral</span><span class="trait">gold eyes</span><span class="trait rare">diamond eyes</span><span class="trait rare">laser eyes</span>
+              </div>
+            </div>
 
-            <div class="card"><h3>Mouth / Expression</h3><div class="traitList">
-              <div class="trait"><b>grin</b><span class="range">2470–4031</span><span class="count">1551 · 38.47%</span></div>
-              <div class="trait"><b>croak</b><span class="range">1470–2469</span><span class="count">980 · 24.31%</span></div>
-              <div class="trait"><b>deadpan</b><span class="range">870–1469</span><span class="count">618 · 15.33%</span></div>
-              <div class="trait"><b>shocked</b><span class="range">470–869</span><span class="count">413 · 10.24%</span></div>
-              <div class="trait"><b>frog tongue</b><span class="range">170–469</span><span class="count">290 · 7.19%</span></div>
-              <div class="trait rare"><b>chewing bug</b><span class="range">0–169</span><span class="count">180 · 4.46%</span></div>
-            </div></div>
+            <div class="card">
+              <h3>Mouth / expression</h3>
+              <div class="traitList">
+                <span class="trait">grin</span><span class="trait">croak</span><span class="trait">deadpan</span><span class="trait">shocked</span><span class="trait">frog tongue</span><span class="trait rare">chewing bug</span>
+              </div>
+            </div>
 
-            <div class="card"><h3>Headgear / Props</h3><div class="traitList">
-              <div class="trait"><b>none</b><span class="range">3170–4031</span><span class="count">893 · 22.15%</span></div>
-              <div class="trait"><b>leaf cap</b><span class="range">2370–3169</span><span class="count">769 · 19.07%</span></div>
-              <div class="trait"><b>ribbit hoodie</b><span class="range">1770–2369</span><span class="count">604 · 14.98%</span></div>
-              <div class="trait"><b>bandana</b><span class="range">1370–1769</span><span class="count">399 · 9.90%</span></div>
-              <div class="trait"><b>goggles</b><span class="range">970–1369</span><span class="count">398 · 9.87%</span></div>
-              <div class="trait"><b>pirate hat</b><span class="range">670–969</span><span class="count">316 · 7.84%</span></div>
-              <div class="trait"><b>wizard hat</b><span class="range">370–669</span><span class="count">322 · 7.99%</span></div>
-              <div class="trait rare"><b>pin wheel hat</b><span class="range">170–369</span><span class="count">169 · 4.19%</span></div>
-              <div class="trait rare"><b>crown</b><span class="range">0–169</span><span class="count">162 · 4.02%</span></div>
-            </div></div>
+            <div class="card">
+              <h3>Headgear / props</h3>
+              <div class="traitList">
+                <span class="trait">none</span><span class="trait">leaf cap</span><span class="trait">ribbit hoodie</span><span class="trait">bandana</span><span class="trait">goggles</span><span class="trait">pirate hat</span><span class="trait">wizard hat</span><span class="trait rare">pin wheel hat</span><span class="trait rare">crown</span>
+              </div>
+            </div>
 
-            <div class="card"><h3>Swamp Accessories</h3><div class="traitList">
-              <div class="trait"><b>lily pad</b><span class="range">3170–4031</span><span class="count">823 · 20.41%</span></div>
-              <div class="trait"><b>fly</b><span class="range">2470–3169</span><span class="count">751 · 18.63%</span></div>
-              <div class="trait"><b>bubble</b><span class="range">1770–2469</span><span class="count">698 · 17.31%</span></div>
-              <div class="trait"><b>mushrooms</b><span class="range">1170–1769</span><span class="count">616 · 15.28%</span></div>
-              <div class="trait"><b>lightning bug</b><span class="range">670–1169</span><span class="count">469 · 11.63%</span></div>
-              <div class="trait"><b>bones</b><span class="range">370–669</span><span class="count">290 · 7.19%</span></div>
-              <div class="trait rare"><b>fishing hook</b><span class="range">170–369</span><span class="count">208 · 5.16%</span></div>
-              <div class="trait rare"><b>coin stack</b><span class="range">0–169</span><span class="count">177 · 4.39%</span></div>
-            </div></div>
+            <div class="card">
+              <h3>Swamp accessories</h3>
+              <div class="traitList">
+                <span class="trait">lily pad</span><span class="trait">fly</span><span class="trait">bubble</span><span class="trait">mushrooms</span><span class="trait">lightning bug</span><span class="trait">bones</span><span class="trait rare">fishing hook</span><span class="trait rare">coin stack</span>
+              </div>
+            </div>
 
-            <div class="card"><h3>Background / Aura</h3><div class="traitList">
-              <div class="trait"><b>murky pond</b><span class="range">3170–4031</span><span class="count">857 · 21.25%</span></div>
-              <div class="trait"><b>sunrise marsh</b><span class="range">2270–3169</span><span class="count">903 · 22.40%</span></div>
-              <div class="trait"><b>moonlit swamp</b><span class="range">1470–2269</span><span class="count">783 · 19.42%</span></div>
-              <div class="trait"><b>rainy night</b><span class="range">870–1469</span><span class="count">622 · 15.43%</span></div>
-              <div class="trait"><b>toxic swamp mist</b><span class="range">470–869</span><span class="count">368 · 9.13%</span></div>
-              <div class="trait rare"><b>Bitcoin orange glow</b><span class="range">170–469</span><span class="count">306 · 7.59%</span></div>
-              <div class="trait rare"><b>neon vapor</b><span class="range">0–169</span><span class="count">193 · 4.79%</span></div>
-            </div></div>
+            <div class="card">
+              <h3>Background / aura</h3>
+              <div class="traitList">
+                <span class="trait">murky pond</span><span class="trait">sunrise marsh</span><span class="trait">moonlit swamp</span><span class="trait">rainy night</span><span class="trait">toxic swamp mist</span><span class="trait rare">Bitcoin orange glow</span><span class="trait rare">neon vapor</span>
+              </div>
+            </div>
           </section>
 
-          <div class="footer">
-            <span>Pending approval draft saved locally from the FC hash parse.</span>
+          <div class="note">
             <a href="../">Back to home</a>
           </div>
         </div>
