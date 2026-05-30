@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ASCIIPEPE V2</title>
+    <title>ASCIIPEPE V3</title>
     <style>
       :root {
         color-scheme: dark;
@@ -233,19 +233,19 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE V2 — press <span class="kbd">Space</span> to pause</div>
+        <div class="note">ASCIIPEPE V3 — move your cursor to steer the eyes</div>
       </div>
       <aside class="panel">
         <div class="card">
-          <h1>ASCIIPEPE V2</h1>
+          <h1>ASCIIPEPE V3</h1>
           <p class="lede">
-            A more tightly framed Pepe portrait with cleaner edges, a sharper jawline, and richer tone mapping — still spinning, but less blob and more frog.
+            A still Pepe portrait with mouse-tracked eyes and the same ASCII texture, without the spin.
           </p>
 
           <div class="pillrow">
             <span class="pill">ASCII framebuffer</span>
-            <span class="pill">3D rotation</span>
-            <span class="pill">360° turntable</span>
+            <span class="pill">Mouse-tracked eyes</span>
+            <span class="pill">Static face</span>
             <span class="pill">Depth shading</span>
             <span class="pill">Pepe face</span>
           </div>
@@ -253,32 +253,24 @@
           <div class="controls">
             <button id="toggle" type="button">Pause</button>
             <div class="slider">
-              <label for="speed"><span>Spin speed</span><span id="speedValue">0.6×</span></label>
-              <input id="speed" type="range" min="0" max="2" step="0.05" value="0.6" />
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>More</h2>
-            <div class="meta">
-              <div>• <a href="/froggies/" style="color: var(--accent); font-weight: 650;">Froggies</a> — the deterministic pond collection page</div>
+              <label for="speed"><span>Gaze speed</span><span id="speedValue">1.0×</span></label>
+              <input id="speed" type="range" min="0" max="2" step="0.05" value="1" />
             </div>
           </div>
 
           <div class="section">
             <h2>About</h2>
             <div class="meta">
-              ASCIIPEPE V2 keeps the turntable spin, but pulls the portrait back so the full face fits the screen more
-              comfortably. The goal is a clearer read of the Pepe shape, eyes, mouth, and shading without the bust
-              feeling oversized.
+              ASCIIPEPE V3 keeps the portrait still, then lets the eyes follow your cursor for a more alive Pepe
+              read. The goal is to keep the face readable while making the gaze feel responsive.
             </div>
           </div>
 
           <div class="section">
             <h2>Quick controls</h2>
             <div class="meta">
-              <div>• <span class="kbd">Space</span> pause / resume</div>
-              <div>• Use the speed slider to slow down or speed up the 360° spin</div>
+              <div>• Move your cursor anywhere on the page and the eyes will track it</div>
+              <div>• <span class="kbd">Space</span> freezes / resumes the gaze</div>
               <div>• Resize the window — the ASCII grid adapts responsively</div>
             </div>
           </div>
@@ -301,10 +293,14 @@
       let charW = 10;
       let charH = 18;
       let paused = false;
-      let speed = 0.6;
+      let speed = 1;
       let rot = 0;
       let drift = 0;
       let raf = 0;
+      let lookX = 0;
+      let lookY = 0;
+      let targetLookX = 0;
+      let targetLookY = 0;
 
       const ramp = ' .,:;=!*#%@';
       const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
@@ -319,11 +315,6 @@
       const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
       const sat = (v) => clamp(v, 0, 1);
       const ellipse = (x, y, cx, cy, rx, ry) => (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2);
-      const superEllipse = (x, y, cx, cy, rx, ry, power = 1.7) => {
-        const dx = Math.abs((x - cx) / rx);
-        const dy = Math.abs((y - cy) / ry);
-        return dx ** power + dy ** power;
-      };
       const smooth = (a, b, x) => {
         const t = sat((x - a) / (b - a));
         return t * t * (3 - 2 * t);
@@ -370,50 +361,50 @@
       }
 
       function headField(x, y) {
-        const skull = 1 - superEllipse(x, y, -0.06, -0.10, 0.78, 0.68, 1.72);
-        const brow = 1 - superEllipse(x, y, 0.02, -0.28, 0.64, 0.23, 2.35);
-        const cheekL = 1 - superEllipse(x, y, -0.38, 0.10, 0.54, 0.40, 1.56);
-        const cheekR = 1 - superEllipse(x, y, 0.34, 0.08, 0.42, 0.33, 1.55);
-        const jaw = 1 - superEllipse(x, y, 0.02, 0.32, 0.70, 0.28, 1.42);
-        const chin = 1 - superEllipse(x, y, 0.08, 0.52, 0.22, 0.09, 2.00);
-        const snout = 1 - superEllipse(x, y, 0.16, 0.17, 0.46, 0.17, 2.10);
-        return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout);
+        const skull = 1 - ellipse(x, y, -0.01, -0.10, 0.88, 0.80);
+        const cheekL = 1 - ellipse(x, y, -0.31, 0.10, 0.67, 0.58);
+        const cheekR = 1 - ellipse(x, y, 0.33, 0.08, 0.73, 0.56);
+        const jaw = 1 - ellipse(x, y, 0.03, 0.31, 0.98, 0.48);
+        const chin = 1 - ellipse(x, y, 0.03, 0.52, 0.60, 0.19);
+        return Math.max(skull, cheekL, cheekR, jaw, chin);
       }
 
-      function featureAt(x, y, z, t, turn, light) {
+      function featureAt(x, y, z, t, turn, light, lookXInput, lookYInput) {
         const profile = headField(x, y);
         if (profile <= 0) return null;
 
-        const edge = smooth(0.05, 0.22, profile);
-        const ridge = clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
+        const edge = smooth(0.06, 0.28, profile);
+        const ridge = clamp(z * 0.75 + light * 0.72 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
         const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
         let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
         let color = skinTones[toneIdx];
         let priority = 1;
 
-        if (profile < 0.18) {
+        if (profile < 0.14) {
           ch = '#';
           color = rimTones[Math.floor(clamp((1 - profile) * (rimTones.length - 1), 0, rimTones.length - 1))];
           priority = 8;
         }
 
-        if (edge > 0.41 && priority < 7) {
+        if (edge > 0.42 && priority < 7) {
           ch = '%';
           color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
           priority = 7;
         }
 
-        const browLift = 0.020 * Math.sin(t * 1.8 + x * 5.5);
-        const eyeShift = turn * 0.06;
-        const eyeSquash = 1 - Math.min(0.14, Math.abs(turn) * 0.12);
-        const eyeL = ellipse(x, y, -0.14 + eyeShift, -0.06 + browLift, 0.30 * eyeSquash, 0.19);
-        const eyeR = ellipse(x, y, 0.22 + eyeShift, -0.05 - browLift, 0.24 * eyeSquash, 0.17);
-        const pupilL = ellipse(x, y, -0.08 + eyeShift, -0.03 + browLift, 0.055 * eyeSquash, 0.060);
-        const pupilR = ellipse(x, y, 0.22 + eyeShift, -0.02 - browLift, 0.050 * eyeSquash, 0.056);
-        const glintL = ellipse(x, y, -0.04 + eyeShift, -0.10 + browLift, 0.028, 0.035);
-        const glintR = ellipse(x, y, 0.26 + eyeShift, -0.09 - browLift, 0.024, 0.030);
-        const lidL = y < -0.10 && y > -0.32 && x < 0.10 && x > -0.44;
-        const lidR = y < -0.11 && y > -0.30 && x > 0.04 && x < 0.54;
+        const browLift = 0;
+        const eyeShift = 0;
+        const eyeSquash = 1;
+        const gazeX = clamp(lookXInput || 0, -0.16, 0.16);
+        const gazeY = clamp(lookYInput || 0, -0.12, 0.12);
+        const eyeL = ellipse(x, y, -0.26 + eyeShift, -0.09 + browLift, 0.29 * eyeSquash, 0.24);
+        const eyeR = ellipse(x, y, 0.30 + eyeShift, -0.06 - browLift, 0.28 * eyeSquash, 0.23);
+        const pupilL = ellipse(x, y, -0.14 + eyeShift + gazeX, -0.05 + browLift + gazeY, 0.070 * eyeSquash, 0.080);
+        const pupilR = ellipse(x, y, 0.38 + eyeShift + gazeX, -0.03 - browLift + gazeY, 0.068 * eyeSquash, 0.078);
+        const glintL = ellipse(x, y, -0.08 + eyeShift + gazeX * 0.7, -0.12 + browLift + gazeY * 0.7, 0.032, 0.040);
+        const glintR = ellipse(x, y, 0.42 + eyeShift + gazeX * 0.7, -0.10 - browLift + gazeY * 0.7, 0.03, 0.036);
+        const lidL = y < -0.12 && y > -0.35 && x < 0.14 && x > -0.52;
+        const lidR = y < -0.11 && y > -0.32 && x > 0.06 && x < 0.68;
 
         if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
         if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
@@ -423,26 +414,18 @@
         if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
         if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
 
-        const browBarL = y > -0.22 && y < -0.14 && x > -0.38 && x < 0.04;
-        const browBarR = y > -0.20 && y < -0.12 && x > 0.02 && x < 0.38;
-        if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[2]; priority = 7; }
-
-        const bridge = Math.abs(x - 0.12 - 0.14 * Math.tan(y * 0.95) - turn * 0.04) < 0.016 && y > -0.13 && y < 0.16;
+        const bridge = Math.abs(x - 0.02 - 0.16 * Math.tan(y * 1.05) - turn * 0.06) < 0.018 && y > -0.14 && y < 0.18;
         if (bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
 
-        const nose = ellipse(x, y, 0.10 + turn * 0.03, 0.05, 0.052, 0.046);
+        const nose = ellipse(x, y, 0.05 + turn * 0.03, 0.03, 0.06, 0.05);
         if (nose <= 1 && priority < 8) { ch = ch === ' ' ? ':' : ch; color = rimTones[1]; priority = 8; }
-        const nostrilL = ellipse(x, y, 0.06 + turn * 0.02, 0.08, 0.017, 0.013);
-        const nostrilR = ellipse(x, y, 0.12 + turn * 0.02, 0.08, 0.017, 0.013);
-        if (nostrilL <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
-        if (nostrilR <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
 
-        const foldL = Math.abs(y - (0.03 + 0.11 * Math.sin((x + 0.46) * 7 + turn))) < 0.022 && x < 0.10 && x > -0.50;
-        const foldR = Math.abs(y - (0.04 + 0.08 * Math.sin((x - 0.10) * 7.3 - turn))) < 0.022 && x > 0.02 && x < 0.58;
-        if ((foldL || foldR)) { ch = ch === ' ' ? '~' : ch; if (priority < 6) { color = rimTones[1]; priority = 6; } }
+        const foldL = Math.abs(y - (0.06 + 0.11 * Math.sin((x + 0.50) * 7 + turn))) < 0.022 && x < 0.14 && x > -0.56;
+        const foldR = Math.abs(y - (0.06 + 0.09 * Math.sin((x - 0.18) * 7.3 - turn))) < 0.022 && x > 0.02 && x < 0.64;
+        if ((foldL || foldR) && priority < 6) { ch = '~'; color = rimTones[1]; priority = 6; }
 
-        const cheekGlowL = ellipse(x, y, -0.28, 0.12, 0.18, 0.13);
-        const cheekGlowR = ellipse(x, y, 0.22, 0.10, 0.17, 0.12);
+        const cheekGlowL = ellipse(x, y, -0.30, 0.13, 0.27, 0.20);
+        const cheekGlowR = ellipse(x, y, 0.28, 0.11, 0.26, 0.19);
         if (cheekGlowL <= 1 && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
           color = cheekTones[clamp(3 - Math.floor(cheekGlowL * 3), 0, 3)];
@@ -454,14 +437,14 @@
           priority = 5;
         }
 
-        const mouthCurve = 0.39 + 0.04 * Math.cos((x + 0.08) * 2.6);
-        const mouthBand = Math.abs(y - mouthCurve) < 0.020 && x > -0.48 && x < 0.58;
-        const mouthShade = Math.abs(y - (mouthCurve + 0.045)) < 0.016 && x > -0.36 && x < 0.50;
-        const outerM = ellipse(x, y, 0.02 + turn * 0.03, 0.37, 0.72 * eyeSquash, 0.17);
-        const innerM = ellipse(x, y, 0.06 + turn * 0.04, 0.40, 0.60 * eyeSquash, 0.12);
-        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.44, 0.24 * eyeSquash, 0.070);
-        const toothM = ellipse(x, y, 0.31 + turn * 0.03, 0.40, 0.09, 0.040);
-        const gumLine = Math.abs(y - (0.29 + 0.08 * Math.cos((x + 0.10) * 2.8))) < 0.022 && x > -0.44 && x < 0.56;
+        const mouthCurve = 0.31 + 0.07 * Math.cos((x + 0.04) * 2.8);
+        const mouthBand = Math.abs(y - mouthCurve) < 0.026 && x > -0.54 && x < 0.68;
+        const mouthShade = Math.abs(y - (mouthCurve + 0.055)) < 0.020 && x > -0.44 && x < 0.58;
+        const outerM = ellipse(x, y, 0.00 + turn * 0.04, 0.33, 0.82 * eyeSquash, 0.22);
+        const innerM = ellipse(x, y, 0.02 + turn * 0.05, 0.36, 0.64 * eyeSquash, 0.13);
+        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.41, 0.24 * eyeSquash, 0.075);
+        const toothM = ellipse(x, y, 0.36 + turn * 0.03, 0.37, 0.10, 0.048);
+        const gumLine = Math.abs(y - (0.23 + 0.11 * Math.cos((x + 0.10) * 2.8))) < 0.026 && x > -0.52 && x < 0.68;
 
         if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
         if (innerM <= 1 && priority < 9) {
@@ -500,10 +483,10 @@
       }
 
       function drawFrame(time) {
-        const t = time * 0.001;
+        const t = 0;
         if (!paused) {
-          rot += 0.026 * speed;
-          drift += 0.010 * speed;
+          lookX += (targetLookX - lookX) * (0.08 + speed * 0.12);
+          lookY += (targetLookY - lookY) * (0.08 + speed * 0.12);
         }
 
         ctx.clearRect(0, 0, width, height);
@@ -529,12 +512,12 @@
         const baseX = padX + usableWidth * 0.5;
         const baseY = padY + usableHeight * 0.5;
         const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.60 : 0.66);
-        const spin = rot;
-        const yaw = spin;
-        const pitch = 0.18 * Math.sin(t * 0.54) - 0.08;
-        const roll = 0.10 * Math.sin(t * 0.38) + 0.02 * Math.sin(t * 1.3);
-        const turn = Math.sin(t * 0.55) * 0.32 + Math.sin(t * 1.15) * 0.06;
-        const sway = Math.sin(t * 0.36) * 0.06;
+        const spin = 0;
+        const yaw = 0;
+        const pitch = 0;
+        const roll = 0;
+        const turn = 0;
+        const sway = 0;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
@@ -566,7 +549,7 @@
             const depthValue = rz + localZ * 0.22;
             if (depthValue <= depth[screenIdx]) continue;
 
-            const feature = featureAt(x, y, localZ, t + drift, turn, lit);
+            const feature = featureAt(x, y, localZ, t + drift, turn, lit, lookX, lookY);
             if (!feature) continue;
             depth[screenIdx] = depthValue;
             chars[screenIdx] = feature.ch;
@@ -597,6 +580,18 @@
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
       speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      window.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const px = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const py = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+        targetLookX = clamp(px, -1, 1);
+        targetLookY = clamp(py, -1, 1);
+      });
+      window.addEventListener('pointerleave', () => {
+        targetLookX = 0;
+        targetLookY = 0;
+      });
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
