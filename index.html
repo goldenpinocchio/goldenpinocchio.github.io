@@ -150,25 +150,53 @@
       button:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
       button:active { transform: translateY(1px); }
       button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
-      .navPanel { display: flex; justify-content: center; }
-      .navButton {
-        appearance: none;
-        border: 1px solid rgba(183,255,189,.18);
-        background: linear-gradient(180deg, rgba(124,255,136,.16), rgba(94,210,103,.06));
-        color: var(--ink);
-        border-radius: 999px;
-        padding: 12px 18px;
-        font: inherit;
-        font-weight: 750;
-        letter-spacing: .04em;
-        text-decoration: none;
+      .projectLink {
+        position: absolute;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        padding: 18px 24px;
+        border: 14px solid #030603;
+        background: #fff;
+        color: #ff3f45;
+        font-size: clamp(22px, 2.2vw, 44px);
+        font-weight: 500;
+        line-height: 1.22;
         text-align: center;
-        min-width: 180px;
-        transition: transform 160ms ease, border-color 160ms ease;
+        text-decoration: none;
+        box-shadow: 0 18px 30px rgba(0, 0, 0, .45);
+        transition: transform 160ms ease, box-shadow 160ms ease;
       }
-      .navButton:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
-      .navButton:active { transform: translateY(1px); }
-      .navButton:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+      .projectLink:hover { box-shadow: 0 22px 38px rgba(0, 0, 0, .55); }
+      .projectLink:focus-visible { outline: 4px solid var(--accent2); outline-offset: 6px; }
+      .projectLink--ascii {
+        left: 3.8vw;
+        top: 5.5vh;
+        width: clamp(220px, 18.5vw, 500px);
+        height: clamp(150px, 13vw, 330px);
+      }
+      .projectLink--v3 {
+        right: 3.3vw;
+        top: 3.6vh;
+        width: clamp(260px, 22vw, 620px);
+        height: clamp(130px, 11vw, 300px);
+        border-radius: 999px;
+      }
+      .projectLink--unat {
+        left: 0;
+        bottom: 7.5vh;
+        width: clamp(230px, 17.5vw, 520px);
+        height: clamp(150px, 13vw, 330px);
+        transform: rotate(-14deg);
+        transform-origin: center;
+      }
+      .projectLink--unat:hover { transform: rotate(-14deg) translateY(-4px); }
+      .projectLink--froggies {
+        right: -1.3vw;
+        bottom: 4.8vh;
+        width: clamp(260px, 20vw, 600px);
+        height: clamp(150px, 13vw, 330px);
+      }
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
@@ -181,9 +209,44 @@
         }
 
         .sceneWrap {
-          min-height: 82svh;
+          min-height: 100svh;
           touch-action: manipulation;
           padding: 14px 14px 10px;
+        }
+
+        .projectLink {
+          border-width: 8px;
+          padding: 10px 14px;
+          font-size: clamp(15px, 4.5vw, 22px);
+          box-shadow: 0 10px 18px rgba(0, 0, 0, .42);
+        }
+
+        .projectLink--ascii {
+          left: 4vw;
+          top: 4.5vh;
+          width: 34vw;
+          height: 16vh;
+        }
+
+        .projectLink--v3 {
+          right: 4vw;
+          top: 4.5vh;
+          width: 42vw;
+          height: 14vh;
+        }
+
+        .projectLink--unat {
+          left: -3vw;
+          bottom: 8vh;
+          width: 40vw;
+          height: 15vh;
+        }
+
+        .projectLink--froggies {
+          right: -2vw;
+          bottom: 7vh;
+          width: 42vw;
+          height: 15vh;
         }
 
         .note {
@@ -252,10 +315,11 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
+        <a class="projectLink projectLink--ascii" href="https://goldenpinocchio.github.io/asciipepe/">ascii pepe</a>
+        <a class="projectLink projectLink--v3" href="https://goldenpinocchio.github.io/asciipepe/v3/">asciipepe/<br />v3</a>
+        <a class="projectLink projectLink--unat" href="https://goldenpinocchio.github.io/unatrare-node-docker-setup/">unat-node<br />on docker</a>
+        <a class="projectLink projectLink--froggies" href="https://goldenpinocchio.github.io/froggies/">froggies</a>
       </div>
-      <aside class="panel navPanel">
-        <a class="navButton" href="https://goldenpinocchio.github.io/asciipepe/">ASCIIPEPE</a>
-      </aside>
     </div>
 
     <script>
