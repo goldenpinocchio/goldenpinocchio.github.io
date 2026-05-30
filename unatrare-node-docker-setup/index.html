@@ -82,7 +82,14 @@
         font-size: 15px;
       }
 
-      .hero-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+      .hero-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: -2px;
+      }
       .button {
         display: inline-flex;
         align-items: center;
@@ -260,11 +267,6 @@
         <p class="lede">
           Simple copy/paste setup for running a UNATRARE Node on a Windows PC with Docker Desktop.
         </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#quickstart">Start setup</a>
-          <a class="button" href="#safety">Safety notes</a>
-          <a class="button" href="#docker-setup">Docker setup</a>
-        </div>
       </div>
       <div>
         <div class="image-card" aria-label="UNAT node character art">
@@ -272,13 +274,17 @@
         </div>
         <a class="x-link" href="https://x.com/TrustyPinocchio/">x.com/TrustyPinocchio</a>
       </div>
+      <div class="hero-actions">
+        <a class="button primary" href="#quickstart">Start setup</a>
+        <a class="button" href="#safety">Safety notes</a>
+        <a class="button" href="#docker-setup">Docker setup</a>
+      </div>
     </header>
 
     <main class="wrap">
       <section class="section" id="commands">
         <div class="section-head">
-          <p class="kicker">Later commands</p>
-          <h2>As simple as - Stop, restart, update</h2>
+          <h2>As simple as - Start, Stop, Update (once Docker is set up)</h2>
         </div>
         <div class="command-grid">
           <article class="card">
@@ -314,7 +320,7 @@
       <section class="section" id="quickstart">
         <div class="section-head">
           <p class="kicker">Quickstart</p>
-          <h2>Six step setup</h2>
+          <h2>6 Step - Setup for Docker + UNAT Node</h2>
         </div>
 
         <div class="panel">
@@ -435,7 +441,7 @@ TAP_ADDRESS=your_tap_address</code></pre>
       </section>
     </main>
 
-    <footer class="wrap">GoldenPinocchio · UNAT Docker setup · keep it simple.</footer>
+    <footer class="wrap">Pinocchio · UNAT Node Docker Setup · hey you, have a great day today</footer>
 
     <script>
       document.querySelectorAll(".copy-btn").forEach((button) => {
