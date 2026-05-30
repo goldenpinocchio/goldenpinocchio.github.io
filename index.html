@@ -150,6 +150,25 @@
       button:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
       button:active { transform: translateY(1px); }
       button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+      .navPanel { display: flex; justify-content: center; }
+      .navButton {
+        appearance: none;
+        border: 1px solid rgba(183,255,189,.18);
+        background: linear-gradient(180deg, rgba(124,255,136,.16), rgba(94,210,103,.06));
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        font-weight: 750;
+        letter-spacing: .04em;
+        text-decoration: none;
+        text-align: center;
+        min-width: 180px;
+        transition: transform 160ms ease, border-color 160ms ease;
+      }
+      .navButton:hover { transform: translateY(-1px); border-color: rgba(183,255,189,.35); }
+      .navButton:active { transform: translateY(1px); }
+      .navButton:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
@@ -233,48 +252,9 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE V3 — move your cursor to steer the eyes</div>
       </div>
-      <aside class="panel">
-        <div class="card">
-          <h1>ASCIIPEPE V3</h1>
-          <p class="lede">
-            A still Pepe portrait with mouse-tracked eyes and the same ASCII texture, without the spin.
-          </p>
-
-          <div class="pillrow">
-            <span class="pill">ASCII framebuffer</span>
-            <span class="pill">Mouse-tracked eyes</span>
-            <span class="pill">Static face</span>
-            <span class="pill">Depth shading</span>
-            <span class="pill">Pepe face</span>
-          </div>
-
-          <div class="controls">
-            <button id="toggle" type="button">Pause</button>
-            <div class="slider">
-              <label for="speed"><span>Gaze speed</span><span id="speedValue">1.0×</span></label>
-              <input id="speed" type="range" min="0" max="2" step="0.05" value="1" />
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>About</h2>
-            <div class="meta">
-              ASCIIPEPE V3 keeps the portrait still, then lets the eyes follow your cursor for a more alive Pepe
-              read. The goal is to keep the face readable while making the gaze feel responsive.
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Quick controls</h2>
-            <div class="meta">
-              <div>• Move your cursor anywhere on the page and the eyes will track it</div>
-              <div>• <span class="kbd">Space</span> freezes / resumes the gaze</div>
-              <div>• Resize the window — the ASCII grid adapts responsively</div>
-            </div>
-          </div>
-        </div>
+      <aside class="panel navPanel">
+        <a class="navButton" href="https://goldenpinocchio.github.io/asciipepe/">ASCIIPEPE</a>
       </aside>
     </div>
 
@@ -572,14 +552,16 @@
 
       function setSpeed(v) {
         speed = v;
-        speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
+        if (speedValue) speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
       }
 
-      toggleBtn.addEventListener('click', () => {
+      function togglePause() {
         paused = !paused;
-        toggleBtn.textContent = paused ? 'Resume' : 'Pause';
-      });
-      speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+        if (toggleBtn) toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+      }
+
+      if (toggleBtn) toggleBtn.addEventListener('click', togglePause);
+      if (speedInput) speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
       window.addEventListener('pointermove', (e) => {
         const rect = canvas.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
@@ -595,13 +577,13 @@
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
-          toggleBtn.click();
+          togglePause();
         }
       });
       window.addEventListener('resize', resize);
 
       resize();
-      setSpeed(parseFloat(speedInput.value));
+      setSpeed(parseFloat(speedInput ? speedInput.value : speed));
       drawFrame(performance.now());
     </script>
   </body>
