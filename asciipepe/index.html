@@ -268,50 +268,7 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE — press <span class="kbd">Space</span> to pause</div>
       </div>
-      <aside class="panel">
-        <div class="card">
-          <h1>ASCIIPEPE</h1>
-          <p class="lede">
-            A responsive ASCII portrait experiment that uses shading, motion, and color to turn Pepe into a readable
-            little terminal-style character study.
-          </p>
-
-          <div class="controls">
-            <button id="toggle" type="button">Pause</button>
-            <div class="slider">
-              <label for="speed"><span>Spin speed</span><span id="speedValue">0.6×</span></label>
-              <input id="speed" type="range" min="0" max="2" step="0.05" value="0.6" />
-            </div>
-          </div>
-
-          <div class="toggleGrid" aria-label="Render options">
-            <label class="toggleItem"><input id="framebufferToggle" type="checkbox" checked /> ASCII framebuffer</label>
-            <label class="toggleItem"><input id="rotationToggle" type="checkbox" checked /> 3D rotation</label>
-            <label class="toggleItem"><input id="turntableToggle" type="checkbox" checked /> 360° turntable</label>
-            <label class="toggleItem"><input id="depthToggle" type="checkbox" checked /> Depth shading</label>
-          </div>
-
-          <div class="section">
-            <h2>About</h2>
-            <div class="meta">
-              ASCIIPEPE explores how far a frog portrait can be pushed with text, tone, and motion. The render stays
-              playful and legible, with a live ASCII grid, layered shading, and enough movement to keep the face
-              feeling alive.
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Quick controls</h2>
-            <div class="meta">
-              <div>• <span class="kbd">Space</span> pause / resume</div>
-              <div>• Use the speed slider to slow down or speed up the 360° spin</div>
-              <div>• Resize the window — the ASCII grid adapts responsively</div>
-            </div>
-          </div>
-        </div>
-      </aside>
     </div>
 
     <script>
@@ -368,10 +325,10 @@
       };
 
       function syncFeatureState() {
-        showFramebuffer = framebufferToggle.checked;
-        showRotation = rotationToggle.checked;
-        showTurntable = turntableToggle.checked;
-        showDepth = depthToggle.checked;
+        showFramebuffer = framebufferToggle ? framebufferToggle.checked : true;
+        showRotation = rotationToggle ? rotationToggle.checked : true;
+        showTurntable = turntableToggle ? turntableToggle.checked : true;
+        showDepth = depthToggle ? depthToggle.checked : true;
       }
 
       function resize() {
@@ -633,29 +590,30 @@
 
       function setSpeed(v) {
         speed = v;
-        speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
+        if (speedValue) speedValue.textContent = `${Number(v).toFixed(2).replace(/\.00$/, '.0')}×`;
       }
 
-      toggleBtn.addEventListener('click', () => {
+      function togglePause() {
         paused = !paused;
         if (paused) frozenT = performance.now() * 0.001;
-        toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+        if (toggleBtn) toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+      }
+
+      if (toggleBtn) toggleBtn.addEventListener('click', togglePause);
+      if (speedInput) speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
+      [framebufferToggle, rotationToggle, turntableToggle, depthToggle].forEach((control) => {
+        if (control) control.addEventListener('change', () => { syncFeatureState(); resize(); });
       });
-      speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
-      framebufferToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
-      rotationToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
-      turntableToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
-      depthToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
-          toggleBtn.click();
+          togglePause();
         }
       });
       window.addEventListener('resize', resize);
       syncFeatureState();
       resize();
-      setSpeed(parseFloat(speedInput.value));
+      setSpeed(parseFloat(speedInput ? speedInput.value : speed));
       drawFrame(performance.now());
     </script>
   </body>
