@@ -7,15 +7,15 @@
     <style>
       :root {
         color-scheme: dark;
-        --bg0: #071006;
-        --bg1: #0e2210;
+        --bg0: #5d9d3d;
+        --bg1: #6aad44;
         --panel: rgba(8, 16, 9, 0.78);
         --panel-strong: rgba(6, 13, 7, 0.92);
         --ink: #f0ffee;
-        --muted: #bbd4bf;
-        --accent: #7dff89;
-        --accent2: #d6ff7a;
-        --border: rgba(176, 255, 190, 0.12);
+        --muted: #d7efcb;
+        --accent: #d8ff9f;
+        --accent2: #f4ffcf;
+        --border: rgba(18, 38, 2, 0.20);
         --shadow: rgba(0, 0, 0, 0.28);
       }
 
@@ -58,7 +58,7 @@
         min-height: 100svh;
         padding: 20px 20px 12px;
       }
-      canvas { width: 100%; flex: 1 1 auto; min-height: 72svh; display: block; }
+      canvas { width: 100%; flex: 1 1 auto; min-height: 840px; display: block; }
       .note {
         position: static;
         margin-top: 14px;
@@ -68,15 +68,15 @@
         border-radius: 14px;
         background: var(--panel-strong);
         border: 1px solid var(--border);
-        color: #eaffec;
+        color: #f4ffe7;
         font-size: 12px;
         letter-spacing: 0.02em;
         backdrop-filter: blur(10px);
         box-shadow: 0 12px 34px var(--shadow);
       }
       .kbd {
-        color: #d9ffd9;
-        border: 1px solid rgba(183,255,189,.14);
+        color: #f4ffe7;
+        border: 1px solid rgba(18, 38, 2, .18);
         background: rgba(255,255,255,.03);
         padding: 2px 6px;
         border-radius: 6px;
@@ -84,7 +84,7 @@
       }
       .panel {
         padding: 24px;
-        background: linear-gradient(180deg, rgba(8,18,10,.82), rgba(4,10,6,.94));
+        background: linear-gradient(180deg, rgba(96, 158, 61, .92), rgba(78, 129, 48, .95));
         border-top: 1px solid var(--border);
         box-shadow: 0 -20px 80px rgba(0,0,0,.2);
         overflow: auto;
@@ -114,7 +114,7 @@
       }
       .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       .pill {
-        border: 1px solid rgba(183,255,189,.16);
+        border: 1px solid rgba(18, 38, 2, .18);
         border-radius: 999px;
         padding: 7px 10px;
         font-size: 12px;
@@ -152,6 +152,41 @@
       button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
       .slider { display: grid; gap: 6px; min-width: 170px; flex: 1 1 170px; }
       .slider label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); }
+      .toggleGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        margin-top: 12px;
+      }
+      .toggleItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        user-select: none;
+      }
+      .toggleItem input {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 6px;
+        border: 1px solid rgba(183,255,189,.25);
+        background: rgba(255,255,255,.03);
+        display: inline-grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .toggleItem input:checked {
+        background: linear-gradient(180deg, rgba(124,255,136,.22), rgba(94,210,103,.10));
+        border-color: rgba(183,255,189,.45);
+      }
+      .toggleItem input:checked::after {
+        content: '✓';
+        color: var(--ink);
+        font-size: 12px;
+        line-height: 1;
+      }
       input[type="range"] { width: 100%; accent-color: var(--accent); }
       @media (max-width: 980px) {
         .sceneWrap { padding: 16px 16px 10px; }
@@ -162,10 +197,12 @@
         }
 
         .sceneWrap {
-          min-height: 82svh;
+          min-height: 92svh;
           touch-action: manipulation;
           padding: 14px 14px 10px;
         }
+
+        canvas { min-height: 420px; }
 
         .note {
           margin-top: 12px;
@@ -233,44 +270,43 @@
     <div class="shell">
       <div class="sceneWrap">
         <canvas id="scene" aria-label="Animated ASCII Pepe" role="img"></canvas>
-        <div class="note">ASCIIPEPE V3 — move your cursor to steer the eyes</div>
+        <div class="note">ASCIIPEPE V3 — press <span class="kbd">Space</span> to pause</div>
       </div>
       <aside class="panel">
         <div class="card">
           <h1>ASCIIPEPE V3</h1>
           <p class="lede">
-            A still Pepe portrait with mouse-tracked eyes and the same ASCII texture, without the spin.
+            A taller, denser Pepe study that pushes ASCII shading, motion, and color a little further for fun.
           </p>
-
-          <div class="pillrow">
-            <span class="pill">ASCII framebuffer</span>
-            <span class="pill">Mouse-tracked eyes</span>
-            <span class="pill">Static face</span>
-            <span class="pill">Depth shading</span>
-            <span class="pill">Pepe face</span>
-          </div>
 
           <div class="controls">
             <button id="toggle" type="button">Pause</button>
             <div class="slider">
-              <label for="speed"><span>Gaze speed</span><span id="speedValue">1.0×</span></label>
-              <input id="speed" type="range" min="0" max="2" step="0.05" value="1" />
+              <label for="speed"><span>Spin speed</span><span id="speedValue">0.6×</span></label>
+              <input id="speed" type="range" min="0" max="2" step="0.05" value="0.6" />
             </div>
+          </div>
+
+          <div class="toggleGrid" aria-label="Render options">
+            <label class="toggleItem"><input id="framebufferToggle" type="checkbox" checked /> ASCII framebuffer</label>
+            <label class="toggleItem"><input id="rotationToggle" type="checkbox" checked /> 3D rotation</label>
+            <label class="toggleItem"><input id="turntableToggle" type="checkbox" checked /> 360° turntable</label>
+            <label class="toggleItem"><input id="depthToggle" type="checkbox" checked /> Depth shading</label>
           </div>
 
           <div class="section">
             <h2>About</h2>
             <div class="meta">
-              ASCIIPEPE V3 keeps the portrait still, then lets the eyes follow your cursor for a more alive Pepe
-              read. The goal is to keep the face readable while making the gaze feel responsive.
+              ASCIIPEPE V3 is a playful, high-density ASCII portrait experiment. It uses a live character grid,
+              layered shading, and a greener Pepe palette to keep the face readable while still feeling animated.
             </div>
           </div>
 
           <div class="section">
             <h2>Quick controls</h2>
             <div class="meta">
-              <div>• Move your cursor anywhere on the page and the eyes will track it</div>
-              <div>• <span class="kbd">Space</span> freezes / resumes the gaze</div>
+              <div>• <span class="kbd">Space</span> pause / resume</div>
+              <div>• Use the speed slider to slow down or speed up the 360° spin</div>
               <div>• Resize the window — the ASCII grid adapts responsively</div>
             </div>
           </div>
@@ -284,6 +320,10 @@
       const toggleBtn = document.getElementById('toggle');
       const speedInput = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
+      const framebufferToggle = document.getElementById('framebufferToggle');
+      const rotationToggle = document.getElementById('rotationToggle');
+      const turntableToggle = document.getElementById('turntableToggle');
+      const depthToggle = document.getElementById('depthToggle');
 
       let width = 0;
       let height = 0;
@@ -293,32 +333,46 @@
       let charW = 10;
       let charH = 18;
       let paused = false;
-      let speed = 1;
+      let speed = 0.6;
       let rot = 0;
       let drift = 0;
+      let frozenT = 0;
       let raf = 0;
-      let lookX = 0;
-      let lookY = 0;
-      let targetLookX = 0;
-      let targetLookY = 0;
+      let showFramebuffer = true;
+      let showRotation = true;
+      let showTurntable = true;
+      let showDepth = true;
 
       const ramp = ' .,:;=!*#%@';
-      const skinTones = ['#081408', '#102010', '#173217', '#1d441b', '#275b25', '#32722f', '#438a3d', '#5ea951', '#86c96d', '#c8f79f'];
-      const rimTones = ['#081408', '#102010', '#173217', '#204320'];
-      const cheekTones = ['#6c3b25', '#915030', '#b86d42', '#d99859'];
-      const eyeWhite = '#f7f6ef';
-      const black = '#111111';
-      const lip = '#9a5f31';
+      const skinTones = ['#080604', '#182700', '#233800', '#304a00', '#488000', '#5a8928', '#709638', '#88ab46', '#a0bb53', '#b8ca66', '#d0db82'];
+      const rimTones = ['#080604', '#241100', '#3d1900', '#5a2700', '#7a3900', '#964400'];
+      const cheekTones = ['#7a4a22', '#99561f', '#b06a26', '#c07b3b', '#d08c59', '#e0ad87'];
+      const eyeWhite = '#f2f4df';
+      const black = '#080604';
+      const lip = '#964400';
+      const mouthTones = ['#5f2700', '#7e3900', '#964400', '#b36214', '#cf8a2f'];
       const tongue = '#ef1a67';
-      const highlight = '#f6ffe7';
+      const highlight = '#fff8ef';
 
       const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
       const sat = (v) => clamp(v, 0, 1);
       const ellipse = (x, y, cx, cy, rx, ry) => (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2);
+      const superEllipse = (x, y, cx, cy, rx, ry, power = 1.7) => {
+        const dx = Math.abs((x - cx) / rx);
+        const dy = Math.abs((y - cy) / ry);
+        return dx ** power + dy ** power;
+      };
       const smooth = (a, b, x) => {
         const t = sat((x - a) / (b - a));
         return t * t * (3 - 2 * t);
       };
+
+      function syncFeatureState() {
+        showFramebuffer = framebufferToggle.checked;
+        showRotation = rotationToggle.checked;
+        showTurntable = turntableToggle.checked;
+        showDepth = depthToggle.checked;
+      }
 
       function resize() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -331,10 +385,13 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const compact = width <= 720 || height <= 680;
-        charH = Math.max(compact ? 13 : 16, Math.min(compact ? 22 : 30, Math.floor(Math.min(width, height) / (compact ? 26 : 22))));
-        charW = Math.max(8, Math.floor(charH * 0.6));
-        cols = Math.max(compact ? 30 : 44, Math.floor(width / charW));
-        rows = Math.max(compact ? 18 : 24, Math.floor(height / charH));
+        const targetRows = 100;
+        const targetCols = compact ? 140 : 260;
+        const frameBias = showFramebuffer ? 1 : 0.92;
+        charH = Math.max(1, Math.floor(height / targetRows));
+        charW = Math.max(1, Math.floor((width / targetCols) * frameBias));
+        cols = Math.max(targetCols, Math.floor((width / charW) * frameBias));
+        rows = targetRows;
         ctx.font = `${charH}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
         ctx.textBaseline = 'top';
       }
@@ -361,51 +418,55 @@
       }
 
       function headField(x, y) {
-        const skull = 1 - ellipse(x, y, -0.01, -0.10, 0.88, 0.80);
-        const cheekL = 1 - ellipse(x, y, -0.31, 0.10, 0.67, 0.58);
-        const cheekR = 1 - ellipse(x, y, 0.33, 0.08, 0.73, 0.56);
-        const jaw = 1 - ellipse(x, y, 0.03, 0.31, 0.98, 0.48);
-        const chin = 1 - ellipse(x, y, 0.03, 0.52, 0.60, 0.19);
-        return Math.max(skull, cheekL, cheekR, jaw, chin);
+        const skull = 1 - superEllipse(x, y, -0.06, -0.10, 0.78, 0.68, 1.72);
+        const brow = 1 - superEllipse(x, y, 0.02, -0.28, 0.64, 0.23, 2.35);
+        const cheekL = 1 - superEllipse(x, y, -0.38, 0.10, 0.54, 0.40, 1.56);
+        const cheekR = 1 - superEllipse(x, y, 0.34, 0.08, 0.42, 0.33, 1.55);
+        const jaw = 1 - superEllipse(x, y, 0.02, 0.32, 0.70, 0.28, 1.42);
+        const chin = 1 - superEllipse(x, y, 0.08, 0.52, 0.22, 0.09, 2.00);
+        const snout = 1 - superEllipse(x, y, 0.16, 0.17, 0.46, 0.17, 2.10);
+        return Math.max(skull, brow, cheekL, cheekR, jaw, chin, snout);
       }
 
-      function featureAt(x, y, z, t, turn, light, lookXInput, lookYInput) {
+      function featureAt(x, y, z, t, turn, light) {
         const profile = headField(x, y);
         if (profile <= 0) return null;
 
-        const edge = smooth(0.06, 0.28, profile);
-        const ridge = clamp(z * 0.75 + light * 0.72 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1);
+        const edge = smooth(0.05, 0.22, profile);
+        const ridge = showDepth ? clamp(z * 0.78 + light * 0.70 + 0.05 * Math.sin(t * 0.75 + x * 3.0), 0, 1) : 0.56;
         const toneIdx = Math.floor(clamp(ridge * (skinTones.length - 1), 0, skinTones.length - 1));
         let ch = ramp[Math.floor(ridge * (ramp.length - 1))];
-        let color = skinTones[toneIdx];
+        let color = showDepth ? skinTones[toneIdx] : skinTones[5];
         let priority = 1;
 
-        if (profile < 0.14) {
+        if (profile < 0.18) {
           ch = '#';
           color = rimTones[Math.floor(clamp((1 - profile) * (rimTones.length - 1), 0, rimTones.length - 1))];
           priority = 8;
         }
 
-        if (edge > 0.42 && priority < 7) {
+        if (showDepth && edge > 0.41 && priority < 7) {
           ch = '%';
-          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 1)];
+          color = skinTones[Math.min(skinTones.length - 1, toneIdx + 2)];
           priority = 7;
         }
 
         const browLift = 0;
         const eyeShift = 0;
-        const eyeSquash = 1;
-        const gazeX = clamp(lookXInput || 0, -0.16, 0.16);
-        const gazeY = clamp(lookYInput || 0, -0.12, 0.12);
-        const eyeL = ellipse(x, y, -0.26 + eyeShift, -0.09 + browLift, 0.29 * eyeSquash, 0.24);
-        const eyeR = ellipse(x, y, 0.30 + eyeShift, -0.06 - browLift, 0.28 * eyeSquash, 0.23);
-        const pupilL = ellipse(x, y, -0.14 + eyeShift + gazeX, -0.05 + browLift + gazeY, 0.070 * eyeSquash, 0.080);
-        const pupilR = ellipse(x, y, 0.38 + eyeShift + gazeX, -0.03 - browLift + gazeY, 0.068 * eyeSquash, 0.078);
-        const glintL = ellipse(x, y, -0.08 + eyeShift + gazeX * 0.7, -0.12 + browLift + gazeY * 0.7, 0.032, 0.040);
-        const glintR = ellipse(x, y, 0.42 + eyeShift + gazeX * 0.7, -0.10 - browLift + gazeY * 0.7, 0.03, 0.036);
-        const lidL = y < -0.12 && y > -0.35 && x < 0.14 && x > -0.52;
-        const lidR = y < -0.11 && y > -0.32 && x > 0.06 && x < 0.68;
+        const eyeSquash = 1 - Math.min(0.08, Math.abs(turn) * 0.05);
+        const eyeSocketL = ellipse(x, y, -0.14 + eyeShift, -0.16 + browLift, 0.35 * eyeSquash, 0.23);
+        const eyeSocketR = ellipse(x, y, 0.23 + eyeShift, -0.15 - browLift, 0.30 * eyeSquash, 0.20);
+        const eyeL = ellipse(x, y, -0.14 + eyeShift, -0.16 + browLift, 0.25 * eyeSquash, 0.16);
+        const eyeR = ellipse(x, y, 0.22 + eyeShift, -0.15 - browLift, 0.21 * eyeSquash, 0.14);
+        const pupilL = ellipse(x, y, -0.07 + eyeShift, -0.13 + browLift, 0.048 * eyeSquash, 0.054);
+        const pupilR = ellipse(x, y, 0.22 + eyeShift, -0.12 - browLift, 0.044 * eyeSquash, 0.050);
+        const glintL = ellipse(x, y, -0.04 + eyeShift, -0.20 + browLift, 0.026, 0.032);
+        const glintR = ellipse(x, y, 0.26 + eyeShift, -0.19 - browLift, 0.022, 0.028);
+        const lidL = y < -0.10 && y > -0.32 && x < 0.06 && x > -0.46;
+        const lidR = y < -0.11 && y > -0.30 && x > 0.04 && x < 0.56;
 
+        if (eyeSocketL <= 1 && priority < 8) { ch = '('; color = rimTones[4]; priority = 8; }
+        if (eyeSocketR <= 1 && priority < 8) { ch = ')'; color = rimTones[4]; priority = 8; }
         if (eyeL <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
         if (eyeR <= 1 && priority < 9) { ch = 'O'; color = eyeWhite; priority = 9; }
         if (pupilL <= 1 && priority < 10) { ch = '@'; color = black; priority = 10; }
@@ -414,42 +475,52 @@
         if (glintR <= 1 && priority < 11) { ch = '.'; color = highlight; priority = 11; }
         if ((lidL || lidR) && priority < 6) { ch = '-'; color = rimTones[1]; priority = 6; }
 
-        const bridge = Math.abs(x - 0.02 - 0.16 * Math.tan(y * 1.05) - turn * 0.06) < 0.018 && y > -0.14 && y < 0.18;
-        if (bridge && priority < 7) { ch = '/'; color = rimTones[2]; priority = 7; }
+        const browBarL = y > -0.22 && y < -0.14 && x > -0.38 && x < 0.02;
+        const browBarR = y > -0.20 && y < -0.12 && x > 0.02 && x < 0.42;
+        if ((browBarL || browBarR) && priority < 7) { ch = '='; color = rimTones[3]; priority = 7; }
 
-        const nose = ellipse(x, y, 0.05 + turn * 0.03, 0.03, 0.06, 0.05);
+        const bridge = Math.abs(x - 0.12 - 0.14 * Math.tan(y * 0.95) - turn * 0.04) < 0.014 && y > -0.13 && y < 0.16;
+        if (bridge && priority < 7) { ch = '/'; color = rimTones[3]; priority = 7; }
+
+        const nose = ellipse(x, y, 0.10 + turn * 0.03, 0.05, 0.052, 0.046);
         if (nose <= 1 && priority < 8) { ch = ch === ' ' ? ':' : ch; color = rimTones[1]; priority = 8; }
+        const nostrilL = ellipse(x, y, 0.06 + turn * 0.02, 0.08, 0.017, 0.013);
+        const nostrilR = ellipse(x, y, 0.12 + turn * 0.02, 0.08, 0.017, 0.013);
+        if (nostrilL <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
+        if (nostrilR <= 1 && priority < 9) { ch = '.'; color = black; priority = 9; }
 
-        const foldL = Math.abs(y - (0.06 + 0.11 * Math.sin((x + 0.50) * 7 + turn))) < 0.022 && x < 0.14 && x > -0.56;
-        const foldR = Math.abs(y - (0.06 + 0.09 * Math.sin((x - 0.18) * 7.3 - turn))) < 0.022 && x > 0.02 && x < 0.64;
-        if ((foldL || foldR) && priority < 6) { ch = '~'; color = rimTones[1]; priority = 6; }
+        const foldL = Math.abs(y - (0.03 + 0.11 * Math.sin((x + 0.46) * 7 + turn))) < 0.022 && x < 0.10 && x > -0.50;
+        const foldR = Math.abs(y - (0.04 + 0.08 * Math.sin((x - 0.10) * 7.3 - turn))) < 0.022 && x > 0.02 && x < 0.58;
+        if ((foldL || foldR)) { ch = ch === ' ' ? '~' : ch; if (priority < 6) { color = rimTones[1]; priority = 6; } }
 
-        const cheekGlowL = ellipse(x, y, -0.30, 0.13, 0.27, 0.20);
-        const cheekGlowR = ellipse(x, y, 0.28, 0.11, 0.26, 0.19);
+        const cheekGlowL = ellipse(x, y, -0.28, 0.12, 0.18, 0.13);
+        const cheekGlowR = ellipse(x, y, 0.22, 0.10, 0.17, 0.12);
         if (cheekGlowL <= 1 && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowL * 3), 0, 3)];
+          color = cheekTones[clamp(5 - Math.floor(cheekGlowL * 5), 0, 5)];
           priority = 5;
         }
         if (cheekGlowR <= 1 && priority < 5) {
           ch = ch === ' ' ? '.' : ch;
-          color = cheekTones[clamp(3 - Math.floor(cheekGlowR * 3), 0, 3)];
+          color = cheekTones[clamp(5 - Math.floor(cheekGlowR * 5), 0, 5)];
           priority = 5;
         }
 
-        const mouthCurve = 0.31 + 0.07 * Math.cos((x + 0.04) * 2.8);
-        const mouthBand = Math.abs(y - mouthCurve) < 0.026 && x > -0.54 && x < 0.68;
-        const mouthShade = Math.abs(y - (mouthCurve + 0.055)) < 0.020 && x > -0.44 && x < 0.58;
-        const outerM = ellipse(x, y, 0.00 + turn * 0.04, 0.33, 0.82 * eyeSquash, 0.22);
-        const innerM = ellipse(x, y, 0.02 + turn * 0.05, 0.36, 0.64 * eyeSquash, 0.13);
-        const tongueM = ellipse(x, y, -0.01 + turn * 0.03, 0.41, 0.24 * eyeSquash, 0.075);
-        const toothM = ellipse(x, y, 0.36 + turn * 0.03, 0.37, 0.10, 0.048);
-        const gumLine = Math.abs(y - (0.23 + 0.11 * Math.cos((x + 0.10) * 2.8))) < 0.026 && x > -0.52 && x < 0.68;
+        const mouthCurve = 0.258 + 0.072 * ((x - 0.03) * (x - 0.03) * 4.4 - 0.34);
+        const mouthBand = Math.abs(y - mouthCurve) < 0.023 && x > -0.50 && x < 0.60;
+        const mouthShade = Math.abs(y - (mouthCurve + 0.038)) < 0.018 && x > -0.38 && x < 0.52;
+        const mouthRim = ellipse(x, y, 0.03, 0.258, 0.77 * eyeSquash, 0.19);
+        const outerM = ellipse(x, y, 0.02, 0.250, 0.66 * eyeSquash, 0.16);
+        const innerM = ellipse(x, y, 0.04, 0.272, 0.58 * eyeSquash, 0.108);
+        const tongueM = ellipse(x, y, -0.01, 0.322, 0.24 * eyeSquash, 0.066);
+        const toothM = ellipse(x, y, 0.35, 0.273, 0.09, 0.040);
+        const gumLine = Math.abs(y - (0.176 + 0.078 * Math.cos((x + 0.06) * 2.8))) < 0.020 && x > -0.44 && x < 0.56;
 
+        if (mouthRim <= 1 && priority < 7) { ch = mouthRim < 0.7 ? ')' : '('; color = rimTones[4]; priority = 7; }
         if (outerM <= 1 && priority < 8) { ch = ')'; color = lip; priority = 8; }
         if (innerM <= 1 && priority < 9) {
           ch = '_';
-          color = innerM < 0.72 ? (innerM > 0.55 ? '#f1cddc' : innerM > 0.38 ? tongue : '#ef7aaa') : '#eadfd8';
+          color = mouthTones[Math.min(mouthTones.length - 1, Math.max(0, 4 - Math.floor(innerM * 4)))];
           priority = 9;
         }
         if (tongueM <= 1 && priority < 10) { ch = '~'; color = tongue; priority = 10; }
@@ -458,8 +529,8 @@
         if (mouthBand && priority < 8) { ch = x < 0 ? '_' : '-'; color = lip; priority = 8; }
         if (mouthShade && priority < 7) { ch = ch === ' ' ? '.' : ch; color = lip; priority = 7; }
 
-        const cornerL = ellipse(x, y, -0.34 + turn * 0.03, 0.33, 0.11, 0.08);
-        const cornerR = ellipse(x, y, 0.40 + turn * 0.03, 0.33, 0.12, 0.085);
+        const cornerL = ellipse(x, y, -0.38 + turn * 0.03, 0.286, 0.12, 0.088);
+        const cornerR = ellipse(x, y, 0.44 + turn * 0.03, 0.282, 0.13, 0.090);
         if (cornerL <= 1 && priority < 9) { ch = '('; color = lip; priority = 9; }
         if (cornerR <= 1 && priority < 9) { ch = ')'; color = lip; priority = 9; }
 
@@ -470,7 +541,7 @@
           priority = 3;
         }
 
-        const lowerLip = Math.abs(y - (0.40 + 0.06 * Math.cos((x + 0.16) * 4.2))) < 0.018 && x > -0.24 && x < 0.56;
+        const lowerLip = Math.abs(y - (0.39 + 0.06 * Math.cos((x + 0.16) * 4.2))) < 0.018 && x > -0.24 && x < 0.58;
         if (lowerLip && priority < 7) { ch = '_'; color = lip; priority = 7; }
 
         if (priority < 4 && ridge > 0.95) {
@@ -483,17 +554,18 @@
       }
 
       function drawFrame(time) {
-        const t = 0;
-        if (!paused) {
-          lookX += (targetLookX - lookX) * (0.08 + speed * 0.12);
-          lookY += (targetLookY - lookY) * (0.08 + speed * 0.12);
+        const t = time * 0.001;
+        const animT = paused ? frozenT : t;
+        if (!paused && showTurntable) {
+          rot += 0.026 * speed;
+          drift += 0.010 * speed;
         }
 
         ctx.clearRect(0, 0, width, height);
         const bloom = ctx.createRadialGradient(width * 0.52, height * 0.46, 20, width * 0.52, height * 0.46, Math.max(width, height) * 0.64);
-        bloom.addColorStop(0, 'rgba(255,255,248,0.12)');
-        bloom.addColorStop(0.28, 'rgba(104,165,90,0.12)');
-        bloom.addColorStop(0.58, 'rgba(46,89,48,0.10)');
+        bloom.addColorStop(0, 'rgba(248,255,240,0.12)');
+        bloom.addColorStop(0.28, 'rgba(165,207,98,0.12)');
+        bloom.addColorStop(0.58, 'rgba(92,145,52,0.10)');
         bloom.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = bloom;
         ctx.fillRect(0, 0, width, height);
@@ -512,12 +584,11 @@
         const baseX = padX + usableWidth * 0.5;
         const baseY = padY + usableHeight * 0.5;
         const scale = Math.min(usableWidth, usableHeight) * (compact ? 0.60 : 0.66);
-        const spin = 0;
-        const yaw = 0;
-        const pitch = 0;
-        const roll = 0;
-        const turn = 0;
-        const sway = 0;
+        const spin = showTurntable ? rot : 0;
+        const yaw = showRotation ? spin : 0;
+        const pitch = showRotation ? (0.18 * Math.sin(animT * 0.54) - 0.08) : 0;
+        const roll = showRotation ? (0.10 * Math.sin(animT * 0.38) + 0.02 * Math.sin(animT * 1.3)) : 0;
+        const turn = showTurntable ? (Math.sin(animT * 0.55) * 0.32 + Math.sin(animT * 1.15) * 0.06) : 0;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
@@ -525,19 +596,16 @@
             const nx = (col / (cols - 1)) * 2 - 1;
             const ny = (row / (rows - 1)) * 2 - 1;
 
-            let x = nx * 1.08 + 0.08 * Math.sin(t * 0.65 + ny * 3.2);
-            let y = ny * 1.02 + 0.04 * Math.cos(t * 0.9 + nx * 4.1);
+            let x = nx * 1.08;
+            let y = ny * 1.02;
             x *= 1 - Math.min(0.16, Math.abs(nx) * 0.08);
             y *= 1 - Math.min(0.08, Math.abs(ny) * 0.05);
 
             const profile = headField(x, y);
             if (profile <= 0) continue;
             const localZ = Math.sqrt(profile) * 0.98;
-            const lit = clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1);
-            let [rx, ry, rz] = rotate3D(x, y, localZ, yaw, pitch, roll);
-            rx += 0.03 * Math.sin(t * 0.4 + y * 2.4);
-            ry += sway * rx;
-            rz += 0.02 * Math.cos(t * 0.3 + x * 2.1);
+            const lit = showDepth ? clamp(0.58 + localZ * 0.36 - x * 0.12 - y * 0.08 + Math.cos(yaw) * 0.05, 0, 1) : 0.55;
+            let [rx, ry, rz] = showRotation ? rotate3D(x, y, localZ, yaw, pitch, roll) : [x, y, localZ];
 
             const sx = baseX + rx * scale;
             const sy = baseY + ry * scale * (compact ? 0.88 : 0.93);
@@ -549,7 +617,7 @@
             const depthValue = rz + localZ * 0.22;
             if (depthValue <= depth[screenIdx]) continue;
 
-            const feature = featureAt(x, y, localZ, t + drift, turn, lit, lookX, lookY);
+            const feature = featureAt(x, y, localZ, animT + drift, turn, lit);
             if (!feature) continue;
             depth[screenIdx] = depthValue;
             chars[screenIdx] = feature.ch;
@@ -577,21 +645,14 @@
 
       toggleBtn.addEventListener('click', () => {
         paused = !paused;
+        if (paused) frozenT = performance.now() * 0.001;
         toggleBtn.textContent = paused ? 'Resume' : 'Pause';
       });
       speedInput.addEventListener('input', (e) => setSpeed(parseFloat(e.target.value)));
-      window.addEventListener('pointermove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const px = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        const py = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-        targetLookX = clamp(px, -1, 1);
-        targetLookY = clamp(py, -1, 1);
-      });
-      window.addEventListener('pointerleave', () => {
-        targetLookX = 0;
-        targetLookY = 0;
-      });
+      framebufferToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      rotationToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      turntableToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
+      depthToggle.addEventListener('change', () => { syncFeatureState(); resize(); });
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
@@ -599,7 +660,7 @@
         }
       });
       window.addEventListener('resize', resize);
-
+      syncFeatureState();
       resize();
       setSpeed(parseFloat(speedInput.value));
       drawFrame(performance.now());
