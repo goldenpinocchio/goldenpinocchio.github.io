@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — SellWebsites</title>
+  <meta name="description" content="Transparent pricing for web design services. Launch, Growth, and Scale packages to fit every budget.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f7f7f7;
+      --bg-tertiary: #efefef;
+      --text-primary: #0a0a0a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #dbeafe;
+      --border: #e5e5e5;
+      --success: #10b981;
+      --font-heading: 'DM Sans', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-heading);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary); line-height: 1.2; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: background 0.3s, padding 0.3s;
+    }
+    .nav.scrolled { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 24px; font-weight: 700; color: var(--text-primary); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--text-secondary); transition: color 0.2s; position: relative; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.2s; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-links a.active::after { width: 100%; }
+    .nav-cta { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background 0.2s, transform 0.2s; }
+    .nav-cta:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 2px; background: var(--text-primary); }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--bg-primary); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.active { display: flex; }
+    .mobile-menu a { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--text-primary); }
+    .mobile-menu-close { position: absolute; top: 24px; right: 24px; font-size: 32px; color: var(--text-primary); cursor: pointer; }
+
+    /* HERO */
+    .hero { padding: 160px 0 80px; text-align: center; }
+    .hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 20px; color: var(--text-secondary); max-width: 550px; margin: 0 auto; }
+
+    /* TOGGLE */
+    .pricing-toggle { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 48px 0; }
+    .pricing-toggle span { font-size: 15px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; }
+    .pricing-toggle span.active { color: var(--text-primary); }
+    .toggle-switch { width: 56px; height: 28px; background: var(--bg-tertiary); border-radius: 14px; position: relative; cursor: pointer; border: 1px solid var(--border); transition: background 0.2s; }
+    .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; transition: transform 0.2s; }
+    .toggle-switch.annual::after { transform: translateX(28px); }
+    .save-badge { background: var(--success); color: white; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 4px; margin-left: 8px; }
+
+    /* PRICING GRID */
+    .pricing-section { padding: 0 0 100px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+    .pricing-card { background: var(--bg-primary); border: 2px solid var(--border); border-radius: 16px; padding: 40px 32px; transition: transform 0.3s, box-shadow 0.3s; position: relative; }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .pricing-card.featured { border-color: var(--accent); background: var(--bg-primary); }
+    .pricing-card.featured::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: var(--accent); border-radius: 18px; z-index: -1; opacity: 0.1; }
+    .pricing-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; padding: 6px 16px; border-radius: 6px; }
+    .pricing-name { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+    .pricing-price { margin-bottom: 8px; }
+    .pricing-price strong { font-size: 56px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+    .pricing-price span { font-size: 16px; color: var(--text-muted); }
+    .pricing-tagline { font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .pricing-features { list-style: none; margin-bottom: 32px; }
+    .pricing-features li { font-size: 15px; color: var(--text-secondary); padding: 10px 0; display: flex; align-items: center; gap: 12px; }
+    .pricing-features li::before { content: '✓'; color: var(--success); font-weight: 600; }
+    .pricing-features li.missing::before { content: '–'; color: var(--text-muted); }
+    .pricing-features li.missing { color: var(--text-muted); }
+    .pricing-cta { width: 100%; padding: 16px; border-radius: 10px; font-weight: 600; font-size: 15px; transition: all 0.2s; }
+    .pricing-card.featured .pricing-cta { background: var(--accent); color: white; }
+    .pricing-card.featured .pricing-cta:hover { background: var(--accent-hover); }
+    .pricing-card:not(.featured) .pricing-cta { background: var(--bg-secondary); color: var(--text-primary); }
+    .pricing-card:not(.featured) .pricing-cta:hover { background: var(--bg-tertiary); }
+
+    /* ADD-ONS */
+    .addons { padding: 80px 0; background: var(--bg-secondary); }
+    .addons-header { text-align: center; margin-bottom: 48px; }
+    .addons-header h2 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+    .addons-header p { font-size: 16px; color: var(--text-secondary); }
+    .addons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .addon-card { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+    .addon-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .addon-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .addon-price { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent); }
+
+    /* FAQ */
+    .faq { padding: 100px 0; }
+    .faq-header { text-align: center; margin-bottom: 60px; }
+    .faq-header h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+    .faq-header p { font-size: 18px; color: var(--text-secondary); }
+    .faq-list { max-width: 700px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-question { width: 100%; padding: 24px 0; display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 600; color: var(--text-primary); text-align: left; transition: color 0.2s; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { width: 24px; height: 24px; position: relative; flex-shrink: 0; }
+    .faq-icon::before, .faq-icon::after { content: ''; position: absolute; top: 50%; left: 50%; background: var(--text-muted); transition: transform 0.3s; }
+    .faq-icon::before { width: 16px; height: 2px; transform: translate(-50%, -50%); }
+    .faq-icon::after { width: 2px; height: 16px; transform: translate(-50%, -50%); }
+    .faq-item.active .faq-icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-answer-inner { padding: 0 0 24px; font-size: 15px; color: var(--text-secondary); line-height: 1.8; }
+    .faq-item.active .faq-answer { max-height: 300px; }
+
+    /* GUARANTEE */
+    .guarantee { padding: 80px 0; background: var(--bg-secondary); }
+    .guarantee-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .guarantee-content h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
+    .guarantee-content p { font-size: 17px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.8; }
+    .guarantee-content ul { list-style: none; }
+    .guarantee-content li { font-size: 16px; color: var(--text-secondary); padding: 8px 0; display: flex; align-items: center; gap: 12px; }
+    .guarantee-content li::before { content: '✓'; color: var(--success); font-weight: 600; }
+    .guarantee-visual { background: var(--bg-primary); border-radius: 16px; padding: 48px; text-align: center; border: 1px solid var(--border); }
+    .guarantee-visual svg { width: 64px; height: 64px; stroke: var(--accent); margin-bottom: 16px; }
+    .guarantee-visual h4 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .guarantee-visual p { font-size: 15px; color: var(--text-secondary); }
+
+    /* CTA */
+    .cta { padding: 100px 0; text-align: center; }
+    .cta h2 { font-size: 40px; font-weight: 700; margin-bottom: 16px; }
+    .cta p { font-size: 18px; color: var(--text-secondary); margin-bottom: 32px; }
+    .btn-primary { background: var(--accent); color: white; padding: 16px 32px; border-radius: 10px; font-weight: 600; font-size: 16px; transition: background 0.2s, transform 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .btn-secondary { background: transparent; color: var(--text-primary); padding: 16px 32px; border-radius: 10px; font-weight: 600; font-size: 16px; border: 2px solid var(--border); transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; margin-left: 16px; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* FOOTER */
+    .footer { padding: 60px 0 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand p { font-size: 15px; color: var(--text-secondary); margin-top: 16px; line-height: 1.7; }
+    .footer-col h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 14px; color: var(--text-secondary); transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1024px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-card:last-child { display: none; }
+      .addons-grid { grid-template-columns: repeat(2, 1fr); }
+      .guarantee-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-card:last-child { display: block; }
+      .addons-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="pricing.html" class="active">Pricing</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="contact.html" class="nav-cta">Start Project</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Simple, <span>Transparent</span> Pricing</h1>
+      <p>No hidden fees. No surprises. Pick a package that fits your goals and budget.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="pricing-toggle reveal">
+      <span class="active" id="monthlyLabel">Monthly</span>
+      <div class="toggle-switch" id="pricingToggle"></div>
+      <span id="annualLabel">Annual <span class="save-badge">Save 20%</span></span>
+    </div>
+  </div>
+
+  <section class="pricing-section">
+    <div class="container">
+      <div class="pricing-grid">
+        <div class="pricing-card reveal">
+          <div class="pricing-name">Launch</div>
+          <div class="pricing-price"><strong>$1,500</strong> <span>one-time</span></div>
+          <p class="pricing-tagline">Perfect for launching your presence and capturing early interest.</p>
+          <ul class="pricing-features">
+            <li>Single-page website</li>
+            <li>5-day delivery</li>
+            <li>Mobile responsive</li>
+            <li>Contact form</li>
+            <li>Basic SEO setup</li>
+            <li>2 revision rounds</li>
+            <li class="missing">CMS integration</li>
+            <li class="missing">Custom animations</li>
+            <li class="missing">Analytics setup</li>
+          </ul>
+          <a href="contact.html" class="pricing-cta">Start Launch</a>
+        </div>
+        <div class="pricing-card featured reveal">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-name">Growth</div>
+          <div class="pricing-price"><strong>$4,500</strong> <span>one-time</span></div>
+          <p class="pricing-tagline">For businesses ready to scale with a full marketing site.</p>
+          <ul class="pricing-features">
+            <li>Up to 8 pages</li>
+            <li>3-week delivery</li>
+            <li>Mobile responsive</li>
+            <li>Advanced forms</li>
+            <li>Full SEO setup</li>
+            <li>5 revision rounds</li>
+            <li>CMS integration</li>
+            <li>Custom animations</li>
+            <li>Analytics + tracking</li>
+          </ul>
+          <a href="contact.html" class="pricing-cta">Start Growth</a>
+        </div>
+        <div class="pricing-card reveal">
+          <div class="pricing-name">Scale</div>
+          <div class="pricing-price"><strong>$12,000</strong> <span>one-time</span></div>
+          <p class="pricing-tagline">Full-scale web applications built for growth and scale.</p>
+          <ul class="pricing-features">
+            <li>Unlimited pages</li>
+            <li>4+ week delivery</li>
+            <li>Custom functionality</li>
+            <li>E-commerce or membership</li>
+            <li>API integrations</li>
+            <li>Unlimited revisions</li>
+            <li>Dedicated project manager</li>
+            <li>3 months priority support</li>
+            <li>Performance optimization</li>
+          </ul>
+          <a href="contact.html" class="pricing-cta">Start Scale</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="addons">
+    <div class="container">
+      <div class="addons-header reveal">
+        <h2>Add-Ons</h2>
+        <p>Extend your package with these popular extras.</p>
+      </div>
+      <div class="addons-grid">
+        <div class="addon-card reveal">
+          <h4>Extra Revisions</h4>
+          <p>Additional round of design changes</p>
+          <div class="addon-price">$250</div>
+        </div>
+        <div class="addon-card reveal">
+          <h4>Copywriting</h4>
+          <p>Professional website copy</p>
+          <div class="addon-price">$750</div>
+        </div>
+        <div class="addon-card reveal">
+          <h4>Logo Design</h4>
+          <p>Custom logo with 3 concepts</p>
+          <div class="addon-price">$1,200</div>
+        </div>
+        <div class="addon-card reveal">
+          <h4>Monthly Support</h4>
+          <p>Ongoing updates & maintenance</p>
+          <div class="addon-price">$99/mo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="container">
+      <div class="faq-header reveal">
+        <h2>Common Questions</h2>
+        <p>Honest answers to the questions we get asked most.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            How long does a typical project take?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Launch sites: 1-2 weeks. Growth sites: 3-4 weeks. Scale sites: 4-8 weeks depending on complexity. We always agree on a timeline before starting, and we don't miss deadlines.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            What if I need more revisions?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Every package includes revision rounds. Starter includes 2 rounds, Growth includes 5, and Scale includes unlimited. Additional revision rounds can be purchased for $250 each.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Do you handle hosting and domain?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We can set everything up on your behalf using your existing accounts, or help you set up new ones. Hosting typically runs $20-100/month depending on traffic needs. We don't mark up hosting — you pay directly to the provider.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            What's your payment process?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">50% deposit to start, 50% upon completion. For larger Scale projects, we split into milestones. We accept bank transfer, credit card, or crypto.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Can I upgrade packages mid-project?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Absolutely. If scope expands during the project, we can upgrade your package and adjust the quote accordingly. No one gets locked into the wrong tier.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            What happens after the site launches?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">You get full ownership of the site, all documentation, and 30 days of free support. After that, we offer optional maintenance plans at $99/month if you want ongoing updates, security monitoring, and priority support.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guarantee">
+    <div class="container">
+      <div class="guarantee-inner">
+        <div class="guarantee-content reveal">
+          <h2>Our Guarantee</h2>
+          <p>We're so confident in our work that we offer a unique promise: if you're not satisfied with the final result, we work with you until we're both happy — at no extra cost.</p>
+          <ul>
+            <li>Fixed pricing — no surprise invoices</li>
+            <li>90-day free support after launch</li>
+            <li>Full ownership — no lock-in</li>
+            <li>Source files delivered on completion</li>
+          </ul>
+        </div>
+        <div class="guarantee-visual reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <h4>100% Satisfaction</h4>
+          <p>We don't consider a project done until you're thrilled with the result.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container reveal">
+      <h2>Ready to Get Started?</h2>
+      <p>Tell us about your project and we'll send you a detailed proposal within 24 hours.</p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="contact.html" class="btn-primary">
+          Start Your Project
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="about.html" class="btn-secondary">
+          Meet the Team
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+          <p>Building websites that actually sell since 2018. Based in Austin, TX.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="index.html#services">Launch Sites</a></li>
+            <li><a href="index.html#services">Growth Sites</a></li>
+            <li><a href="index.html#services">Scale Sites</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:goldenpinocchio@gmail.com">goldenpinocchio@gmail.com</a></li>
+            <li><a href="contact.html">Start a Project</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SellWebsites. All rights reserved.</span>
+        <span>Made with purpose in Austin, TX.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('active'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
+    const pricingToggle = document.getElementById('pricingToggle');
+    const monthlyLabel = document.getElementById('monthlyLabel');
+    const annualLabel = document.getElementById('annualLabel');
+    let isAnnual = false;
+    pricingToggle.addEventListener('click', () => {
+      isAnnual = !isAnnual;
+      pricingToggle.classList.toggle('annual', isAnnual);
+      monthlyLabel.classList.toggle('active', !isAnnual);
+      annualLabel.classList.toggle('active', isAnnual);
+    });
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+      });
+    });
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 100); revealObserver.unobserve(entry.target); }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>
