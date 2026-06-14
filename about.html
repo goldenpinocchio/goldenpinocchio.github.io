@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — SellWebsites</title>
+  <meta name="description" content="Meet the team behind SellWebsites. We're a small studio obsessed with building websites that actually convert.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-secondary: #f4f1ec;
+      --bg-tertiary: #ebe7e0;
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --accent: #c45d3a;
+      --accent-hover: #a84d2e;
+      --border: #ddd8d0;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Sans 3', -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary); line-height: 1.2; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 24px 0;
+      transition: background 0.3s, padding 0.3s;
+    }
+    .nav.scrolled { background: rgba(250,248,245,0.95); backdrop-filter: blur(10px); padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 24px; font-weight: 700; color: var(--text-primary); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--text-secondary); transition: color 0.2s; position: relative; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.2s; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-links a.active::after { width: 100%; }
+    .nav-cta { background: var(--accent); color: white; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: background 0.2s, transform 0.2s; }
+    .nav-cta:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 2px; background: var(--text-primary); transition: transform 0.3s, opacity 0.3s; }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--bg-primary); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.active { display: flex; }
+    .mobile-menu a { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--text-primary); }
+    .mobile-menu-close { position: absolute; top: 24px; right: 24px; font-size: 32px; color: var(--text-primary); cursor: pointer; }
+
+    /* HERO */
+    .hero { min-height: 70vh; display: flex; align-items: center; padding: 140px 0 80px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(196,93,58,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-content { max-width: 700px; position: relative; z-index: 1; }
+    .hero-label { font-family: var(--font-body); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); margin-bottom: 24px; }
+    .hero h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 500; margin-bottom: 24px; letter-spacing: -1px; }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 20px; color: var(--text-secondary); line-height: 1.8; max-width: 550px; }
+
+    /* STORY */
+    .story { padding: 100px 0; }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .story-content { }
+    .story-tag { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 16px; }
+    .story h2 { font-size: 40px; font-weight: 500; margin-bottom: 24px; }
+    .story p { font-size: 17px; color: var(--text-secondary); margin-bottom: 20px; }
+    .story-image { border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+    .story-image img { width: 100%; height: 500px; object-fit: cover; }
+
+    /* VALUES */
+    .values { padding: 100px 0; background: var(--bg-secondary); }
+    .values-header { text-align: center; margin-bottom: 60px; }
+    .values-header h2 { font-size: 40px; font-weight: 500; margin-bottom: 16px; }
+    .values-header p { font-size: 18px; color: var(--text-secondary); max-width: 500px; margin: 0 auto; }
+    .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .value-card { text-align: center; padding: 40px 32px; }
+    .value-icon { width: 64px; height: 64px; background: var(--bg-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .value-icon svg { width: 28px; height: 28px; stroke: var(--accent); }
+    .value-card h4 { font-size: 22px; font-weight: 600; margin-bottom: 12px; }
+    .value-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* TEAM */
+    .team { padding: 100px 0; }
+    .team-header { text-align: center; margin-bottom: 60px; }
+    .team-header h2 { font-size: 40px; font-weight: 500; margin-bottom: 16px; }
+    .team-header p { font-size: 18px; color: var(--text-secondary); max-width: 500px; margin: 0 auto; }
+    .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .team-card { text-align: center; }
+    .team-photo { width: 100%; aspect-ratio: 1; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: var(--bg-secondary); position: relative; }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .team-card:hover .team-photo img { transform: scale(1.05); }
+    .team-card h4 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .team-card span { font-size: 14px; color: var(--accent); font-weight: 500; }
+    .team-role { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
+
+    /* TIMELINE */
+    .timeline { padding: 100px 0; background: var(--bg-secondary); }
+    .timeline-header { text-align: center; margin-bottom: 60px; }
+    .timeline-header h2 { font-size: 40px; font-weight: 500; margin-bottom: 16px; }
+    .timeline-header p { font-size: 18px; color: var(--text-secondary); }
+    .timeline-list { max-width: 700px; margin: 0 auto; position: relative; }
+    .timeline-list::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .timeline-item { padding-left: 40px; position: relative; margin-bottom: 48px; }
+    .timeline-item::before { content: ''; position: absolute; left: -5px; top: 8px; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; }
+    .timeline-year { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+    .timeline-item h4 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .timeline-item p { font-size: 15px; color: var(--text-secondary); }
+
+    /* CTA */
+    .cta { padding: 100px 0; }
+    .cta-inner { text-align: center; max-width: 600px; margin: 0 auto; }
+    .cta h2 { font-size: 40px; font-weight: 500; margin-bottom: 16px; }
+    .cta p { font-size: 18px; color: var(--text-secondary); margin-bottom: 32px; }
+    .btn-primary { background: var(--accent); color: white; padding: 16px 32px; border-radius: 6px; font-weight: 600; font-size: 16px; transition: background 0.2s, transform 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: var(--accent-hover); transform: scale(1.02); }
+
+    /* FOOTER */
+    .footer { padding: 60px 0 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand p { font-size: 15px; color: var(--text-secondary); margin-top: 16px; line-height: 1.7; }
+    .footer-col h4 { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 14px; color: var(--text-secondary); transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1024px) {
+      .story-grid { grid-template-columns: 1fr; gap: 48px; }
+      .values-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .values-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="contact.html" class="nav-cta">Start Project</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-label">Our Story</div>
+        <h1>We believe every business deserves a website that <em>actually works.</em></h1>
+        <p class="hero-sub">Founded in 2018, SellWebsites started with a simple frustration: too many businesses had beautiful websites that converted nobody. We set out to change that.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-content reveal">
+          <div class="story-tag">The Beginning</div>
+          <h2>From a garage startup to a full studio</h2>
+          <p>SellWebsites began when our founder, Alex Chen, was running a small SaaS startup. He spent $15,000 on a "premium" website that looked stunning but generated exactly zero leads.</p>
+          <p>He knew the problem wasn't the design — it was the approach. So he built his own site, focused entirely on conversion. It worked. His trial signups tripled within two months.</p>
+          <p>Friends started asking for help. Then friends of friends. By 2018, Alex had quit his job and started SellWebsites — a studio dedicated to one thing: building websites that actually sell.</p>
+        </div>
+        <div class="story-image reveal">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&h=500&fit=crop" alt="Our studio workspace">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="values">
+    <div class="container">
+      <div class="values-header reveal">
+        <h2>What We Stand For</h2>
+        <p>Three principles that guide every project we take on.</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card reveal">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          </div>
+          <h4>Conversion First</h4>
+          <p>Beautiful is nice. Converting is necessary. Every decision we make starts with "will this help the client get more customers?"</p>
+        </div>
+        <div class="value-card reveal">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h4>True Partnership</h4>
+          <p>We're not a vendor you hand a brief to. We become an extension of your team — invested in your success like you are.</p>
+        </div>
+        <div class="value-card reveal">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h4>Honest Timeline</h4>
+          <p>We don't overpromise. If something takes 3 weeks, we say 3 weeks. You'll never be surprised by delays we "didn't see coming."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="team">
+    <div class="container">
+      <div class="team-header reveal">
+        <h2>The Team</h2>
+        <p>Small by choice. Every person here is someone we'd trust with our own business.</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Alex Chen">
+          </div>
+          <h4>Alex Chen</h4>
+          <span>Founder & Lead Designer</span>
+          <p class="team-role">10 years in product & web design. Obsessed with conversion psychology.</p>
+        </div>
+        <div class="team-card reveal">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face" alt="Maya Rodriguez">
+          </div>
+          <h4>Maya Rodriguez</h4>
+          <span>Design Director</span>
+          <p class="team-role">Former design lead at Spotify. Specializes in brand systems.</p>
+        </div>
+        <div class="team-card reveal">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face" alt="James Park">
+          </div>
+          <h4>James Park</h4>
+          <span>Lead Developer</span>
+          <p class="team-role">Full-stack wizard. Writes code that's clean, fast, and maintainable.</p>
+        </div>
+        <div class="team-card reveal">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face" alt="Sarah Kim">
+          </div>
+          <h4>Sarah Kim</h4>
+          <span>Project Manager</span>
+          <p class="team-role">Keeps everything on track. Clients love her communication style.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="timeline">
+    <div class="container">
+      <div class="timeline-header reveal">
+        <h2>Our Journey</h2>
+      </div>
+      <div class="timeline-list">
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2018</div>
+          <h4>The Garage Days</h4>
+          <p>Started as a one-person shop. First project: a landing page for a local bakery. It doubled their online orders.</p>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2019</div>
+          <h4>Hired First Teammate</h4>
+          <p>Too many projects, not enough hours. Brought on Maya to handle design while Alex focused on strategy and development.</p>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2020</div>
+          <h4>Weathered the Storm</h4>
+          <p>Pandemic hit. We pivoted hard into e-commerce and launched 12 online stores in 6 months. Survival mode became growth mode.</p>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2021</div>
+          <h4>50 Sites Milestone</h4>
+          <p>Hit our 50th launched website. Threw a small party. Started turning down projects that weren't the right fit.</p>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2023</div>
+          <h4>Expanded to SaaS</h4>
+          <p>Launched our first full-scale SaaS application. James joined to lead development. Began taking on more complex projects.</p>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-year">2026</div>
+          <h4>150+ Sites Later</h4>
+          <p>Today we're a tight 4-person team who's helped businesses generate millions in new revenue. And we're just getting started.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <div class="cta-inner reveal">
+        <h2>Want to work with us?</h2>
+        <p>We'd love to hear about your project. Let's grab a coffee (virtual or real) and see if we're the right fit.</p>
+        <a href="contact.html" class="btn-primary">
+          Get in Touch
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+          <p>A small studio building websites that actually sell. Based in Austin, TX. Working globally.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="index.html#services">Launch Sites</a></li>
+            <li><a href="index.html#services">Growth Sites</a></li>
+            <li><a href="index.html#services">Scale Sites</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:goldenpinocchio@gmail.com">goldenpinocchio@gmail.com</a></li>
+            <li><a href="contact.html">Start a Project</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SellWebsites. All rights reserved.</span>
+        <span>Made with purpose in Austin, TX.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('active'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 100); revealObserver.unobserve(entry.target); }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>

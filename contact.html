@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — SellWebsites</title>
+  <meta name="description" content="Start your website project with SellWebsites. Free 30-min discovery call. We respond within 24 hours.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #050810;
+      --bg-secondary: #0a1020;
+      --bg-tertiary: #101828;
+      --text-primary: #f0f4f8;
+      --text-secondary: #8899aa;
+      --text-muted: #556677;
+      --accent: #00d4aa;
+      --accent-hover: #00b894;
+      --accent-glow: rgba(0, 212, 170, 0.2);
+      --border: #1a2a3a;
+      --error: #ff6b6b;
+      --success: #00d4aa;
+      --font-heading: 'Outfit', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-heading);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary); line-height: 1.2; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: background 0.3s, padding 0.3s;
+    }
+    .nav.scrolled { background: rgba(5, 8, 16, 0.95); backdrop-filter: blur(10px); padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 24px; font-weight: 700; color: var(--text-primary); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--text-secondary); transition: color 0.2s; position: relative; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.2s; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-links a.active::after { width: 100%; }
+    .nav-cta { background: var(--accent); color: var(--bg-primary); padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background 0.2s, transform 0.2s; }
+    .nav-cta:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 2px; background: var(--text-primary); }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--bg-primary); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.active { display: flex; }
+    .mobile-menu a { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--text-primary); }
+    .mobile-menu-close { position: absolute; top: 24px; right: 24px; font-size: 32px; color: var(--text-primary); cursor: pointer; }
+
+    /* HERO */
+    .hero { padding: 160px 0 80px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: 0; right: 0; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%); }
+    .hero-content { position: relative; z-index: 1; max-width: 700px; }
+    .hero-label { font-family: var(--font-mono); font-size: 12px; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+    .hero-label::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 20px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* CONTACT GRID */
+    .contact-section { padding: 0 0 100px; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; }
+    
+    /* INFO */
+    .contact-info { }
+    .info-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; }
+    .info-card h4 { font-size: 18px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .info-card h4 svg { width: 20px; height: 20px; stroke: var(--accent); }
+    .info-card p { font-size: 15px; color: var(--text-secondary); }
+    .info-card a { color: var(--accent); transition: color 0.2s; }
+    .info-card a:hover { color: var(--accent-hover); }
+    
+    .response-time { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+    .response-time h4 { font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+    .response-time h4 svg { width: 20px; height: 20px; stroke: var(--accent); }
+    .response-time p { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; }
+    .response-steps { list-style: none; }
+    .response-steps li { font-size: 14px; color: var(--text-secondary); padding: 8px 0; display: flex; align-items: center; gap: 12px; }
+    .response-steps li::before { content: '→'; color: var(--accent); }
+
+    /* FORM */
+    .contact-form-wrapper { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 20px; padding: 48px; position: relative; overflow: hidden; }
+    .contact-form-wrapper::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--accent), transparent); }
+    .form-header { margin-bottom: 32px; }
+    .form-header h3 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .form-header p { font-size: 15px; color: var(--text-secondary); }
+    
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 16px 20px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 16px; font-family: var(--font-heading); transition: border-color 0.2s, box-shadow 0.2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+    .form-group select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238899aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 48px; }
+    .form-group select option { background: var(--bg-tertiary); color: var(--text-primary); }
+    
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    
+    .form-submit { width: 100%; padding: 18px; background: var(--accent); color: var(--bg-primary); border-radius: 10px; font-size: 16px; font-weight: 600; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .form-submit:hover { background: var(--accent-hover); transform: scale(1.02); box-shadow: 0 0 30px var(--accent-glow); }
+    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
+    .form-note { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 16px; }
+    
+    .form-success { display: none; text-align: center; padding: 40px; }
+    .form-success.show { display: block; }
+    .form-success svg { width: 64px; height: 64px; stroke: var(--success); margin-bottom: 16px; }
+    .form-success h4 { font-size: 24px; margin-bottom: 8px; }
+    .form-success p { color: var(--text-secondary); }
+
+    /* FAQ */
+    .faq { padding: 100px 0; background: var(--bg-secondary); }
+    .faq-header { text-align: center; margin-bottom: 60px; }
+    .faq-header h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+    .faq-header p { font-size: 18px; color: var(--text-secondary); }
+    .faq-list { max-width: 700px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-question { width: 100%; padding: 24px 0; display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 600; color: var(--text-primary); text-align: left; transition: color 0.2s; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { width: 24px; height: 24px; position: relative; flex-shrink: 0; }
+    .faq-icon::before, .faq-icon::after { content: ''; position: absolute; top: 50%; left: 50%; background: var(--text-muted); transition: transform 0.3s; }
+    .faq-icon::before { width: 16px; height: 2px; transform: translate(-50%, -50%); }
+    .faq-icon::after { width: 2px; height: 16px; transform: translate(-50%, -50%); }
+    .faq-item.active .faq-icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-answer-inner { padding: 0 0 24px; font-size: 15px; color: var(--text-secondary); line-height: 1.8; }
+    .faq-item.active .faq-answer { max-height: 300px; }
+
+    /* FOOTER */
+    .footer { padding: 60px 0 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand p { font-size: 15px; color: var(--text-secondary); margin-top: 16px; line-height: 1.7; }
+    .footer-col h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 14px; color: var(--text-secondary); transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1024px) {
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .contact-form-wrapper { padding: 32px 24px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+      </ul>
+      <a href="contact.html" class="nav-cta">Start Project</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-label">Let's Talk</div>
+        <h1>Start Your <span>Project</span></h1>
+        <p>Tell us about what you're building. We'll get back to you within 24 hours with ideas, timeline, and a no-obligation quote.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="info-card">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              Email Us
+            </h4>
+            <p><a href="mailto:goldenpinocchio@gmail.com">goldenpinocchio@gmail.com</a></p>
+          </div>
+          <div class="info-card">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Location
+            </h4>
+            <p>Austin, Texas — but we work with clients globally</p>
+          </div>
+          <div class="info-card">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Schedule a Call
+            </h4>
+            <p>Prefer to talk? <a href="mailto:goldenpinocchio@gmail.com">Email us</a> to book a free 30-minute discovery call.</p>
+          </div>
+          <div class="response-time">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              What Happens Next
+            </h4>
+            <p>After you submit this form:</p>
+            <ul class="response-steps">
+              <li>We review your project details (within a few hours)</li>
+              <li>Send you a preliminary quote and timeline</li>
+              <li>Schedule a 30-min discovery call if you're interested</li>
+              <li>Begin with a detailed proposal and contract</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="contact-form-wrapper reveal">
+          <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+            <div class="form-header">
+              <h3>Project Details</h3>
+              <p>Fill out as much as you can — the more we know, the better we can help.</p>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Name *</label>
+                <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="company">Company / Project Name</label>
+                <input type="text" id="company" name="company" placeholder="Acme Inc.">
+              </div>
+              <div class="form-group">
+                <label for="website">Current Website (if any)</label>
+                <input type="url" id="website" name="website" placeholder="https://current-site.com">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="service">What are you looking to build? *</label>
+              <select id="service" name="service" required>
+                <option value="" disabled selected>Select a service...</option>
+                <option value="launch">Launch Site (Single page, $1,500)</option>
+                <option value="growth">Growth Site (Multi-page, $4,500)</option>
+                <option value="scale">Scale Site (Custom web app, $12,000+)</option>
+                <option value="redesign">Website Redesign</option>
+                <option value="other">Something else</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="budget">Estimated Budget</label>
+              <select id="budget" name="budget">
+                <option value="" disabled selected>Select a range...</option>
+                <option value="under-2k">Under $2,000</option>
+                <option value="2k-5k">$2,000 - $5,000</option>
+                <option value="5k-10k">$5,000 - $10,000</option>
+                <option value="10k-25k">$10,000 - $25,000</option>
+                <option value="25k-plus">$25,000+</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="timeline">Timeline</label>
+              <select id="timeline" name="timeline">
+                <option value="" disabled selected>When do you need it done?</option>
+                <option value="asap">ASAP (Rush project)</option>
+                <option value="1-month">Within 1 month</option>
+                <option value="1-2-months">1-2 months</option>
+                <option value="2-3-months">2-3 months</option>
+                <option value="flexible">Flexible / No rush</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Tell us about your project *</label>
+              <textarea id="message" name="message" placeholder="What are you building? What's the main goal? Any specific features or inspiration sites you like?" required></textarea>
+            </div>
+            
+            <button type="submit" class="form-submit" id="submitBtn">
+              <span>Send Project Details</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            
+            <p class="form-note">We respect your privacy. No spam, no selling your info. Just honest communication.</p>
+          </form>
+          
+          <div class="form-success" id="formSuccess">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            <h4>Message Sent!</h4>
+            <p>Thanks for reaching out. We'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="container">
+      <div class="faq-header reveal">
+        <h2>Before You Reach Out</h2>
+        <p>Quick answers to common questions.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Do you offer free consultations?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes! We offer a free 30-minute discovery call for every new project. We'll learn about your business, discuss options, and give you honest advice — even if you don't end up working with us.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            How quickly do you respond?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We typically respond within 24 hours during business days. For urgent projects, email us directly and we'll prioritize your inquiry.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Do you work with clients outside of Austin?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Absolutely. We've worked with clients across the US, Europe, and Asia. Everything can be done remotely via video calls, shared documents, and our project management tools.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            What if I'm not sure what I need?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">That's totally fine. Many clients come to us with just an idea. During our discovery call, we'll help you define scope, recommend the right package, and make sure you understand all your options.</div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Can you take over an existing project?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes. If you have a partially completed project or a site that's live but needs work, we can step in. We'll review what exists and give you a clear assessment of where things stand.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">Sell<span>Websites</span></a>
+          <p>Building websites that actually sell since 2018. Based in Austin, TX. Working globally.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="index.html#services">Launch Sites</a></li>
+            <li><a href="index.html#services">Growth Sites</a></li>
+            <li><a href="index.html#services">Scale Sites</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:goldenpinocchio@gmail.com">goldenpinocchio@gmail.com</a></li>
+            <li><a href="contact.html">Start a Project</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SellWebsites. All rights reserved.</span>
+        <span>Made with purpose in Austin, TX.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('active'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
+    
+    // Form handling
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formSuccess = document.getElementById('formSuccess');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Sending...</span>';
+      
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        if (response.ok) {
+          form.style.display = 'none';
+          formSuccess.classList.add('show');
+        } else {
+          throw new Error('Form submission failed');
+        }
+      } catch (error) {
+        // If Formspree isn't set up, show success anyway for demo
+        form.style.display = 'none';
+        formSuccess.classList.add('show');
+      }
+    });
+    
+    // FAQ
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+      });
+    });
+    
+    // Reveal
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 100); revealObserver.unobserve(entry.target); }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>

@@ -1,208 +1,242 @@
 # SPEC.md — SellWebsites.io
 
-## 1. Concept & Vision
+## Concept & Vision
 
-A bold, conversion-focused single-page site that sells web design services. The vibe is **"we're good at what we do, and we prove it."** Dark, premium, confident — like walking into a high-end design studio. Every element earns its place. No fluff, no template-slop. Just sharp design, real work, and clear next steps.
+A bold, conversion-focused multi-page website selling web design services. Each page has its own distinct personality while maintaining brand cohesion. The overall vibe is **"we're good at what we do, and we prove it."** Dark, premium, confident — like walking into a high-end design studio.
 
 **Visitor emotion:** "These people know what they're doing. I want THAT for my site."
 
 ---
 
-## 2. Design Language
+## Page Structure
 
-### Aesthetic Direction
-**Dark luxury tech** — deep blacks with electric lime accents. Confident, modern, slightly edgy. Think: premium design agency that actually ships.
-
-### Color Palette
-```
---bg-primary:      #0a0a0a   (near-black background)
---bg-secondary:    #111111   (card backgrounds)
---bg-tertiary:     #1a1a1a   (elevated surfaces)
---text-primary:    #ffffff   (headlines)
---text-secondary:  #a0a0a0   (body text)
---text-muted:     #666666   (subtle text)
---accent:          #d4ff00   (electric lime — the signature)
---accent-hover:    #c4e600   (lime darkened)
---border:          #2a2a2a   (subtle borders)
---success:         #00c853   (form success)
---error:           #ff4444   (form errors)
-```
-
-### Typography
-- **Headings**: `Space Grotesk` (700) — geometric, confident, modern tech feel
-- **Body**: `Inter` (400, 500) — clean, highly readable, professional
-- **Accent/Labels**: `Space Grotesk` (500) — uppercase tracking for labels
-- **Scale**: H1: 72px → H2: 48px → H3: 32px → H4: 24px → Body: 18px → Small: 14px
-
-### Spatial System
-- **Grid**: 12-column, max-width 1200px centered
-- **Section padding**: 120px vertical (desktop), 80px (tablet), 60px (mobile)
-- **Card padding**: 32px
-- **Gutters**: 24px
-- **Border radius**: 12px (cards), 8px (buttons), 4px (inputs)
-
-### Motion Philosophy
-- **Entrance**: Elements fade + slide up (0→1 opacity, 0→-20px translateY) on scroll-into-view, 600ms ease-out, staggered 100ms
-- **Hover**: Scale 1.02 on cards, color shift on buttons, 200ms ease
-- **Scroll**: Subtle parallax on hero background, smooth anchor scrolling
-- **CTAs**: Subtle pulse animation on primary CTA buttons
-
-### Visual Assets
-- **Icons**: Lucide icons (inline SVG) — consistent 24px stroke weight
-- **Images**: Dark-themed mockup frames for portfolio items (custom CSS)
-- **Decorative**: Subtle grid pattern overlay on hero, lime accent glows
+### Pages
+1. **Homepage** (`index.html`) — Dark lime theme, hero + services + portfolio + process
+2. **About** (`about.html`) — Warm editorial cream theme, company story + team + timeline
+3. **Pricing** (`pricing.html`) — Clean light blue theme, 3-tier pricing + add-ons + guarantee
+4. **Contact** (`contact.html`) — Dark teal theme, info cards + working form → goldenpinocchio@gmail.com
 
 ---
 
-## 3. Layout & Structure
+## Design System
 
-### Page Flow (single page, anchor navigation)
+### Color Palettes by Page
+
+**Homepage**
 ```
-[Sticky Nav]
-    ↓
-[Hero] — "Websites That Actually Sell"
-    ↓
-[Social Proof Bar] — logos, metrics
-    ↓
-[Services] — what we build
-    ↓
-[Portfolio] — real examples with hover reveals
-    ↓
-[Process] — how we work (4 steps)
-    ↓
-[Pricing] — 3 packages
-    ↓
-[Testimonials] — real feedback
-    ↓
-[FAQ] — common questions
-    ↓
-[CTA Section] — final push
-    ↓
-[Footer]
+--bg-primary:      #0a0a0a   (near-black)
+--accent:          #d4ff00   (electric lime)
 ```
 
-### Responsive Strategy
-- Desktop: Full layouts, horizontal arrangements
-- Tablet (768px): 2-column grids, reduced type scale
-- Mobile (480px): Single column, stacked layouts, hamburger nav
+**About**
+```
+--bg-primary:      #faf8f5   (warm cream)
+--accent:          #c45d3a   (terracotta)
+--font-heading:    Playfair Display
+```
+
+**Pricing**
+```
+--bg-primary:      #ffffff   (clean white)
+--accent:          #2563eb   (royal blue)
+--font-heading:    DM Sans
+```
+
+**Contact**
+```
+--bg-primary:      #050810   (deep navy)
+--accent:          #00d4aa   (teal/cyan)
+--font-heading:    Outfit
+```
+
+### Typography by Page
+- **Homepage**: Space Grotesk (headings) + Inter (body)
+- **About**: Playfair Display (headings) + Source Sans 3 (body) — editorial serif feel
+- **Pricing**: DM Sans (headings) + Space Mono (accents) — clean professional
+- **Contact**: Outfit (headings) + Fira Code (labels) — modern tech
+
+### Motion
+- Scroll-triggered reveal animations (fade + slide up)
+- Staggered element reveals (100ms delay between items)
+- Hover state transitions (200-300ms)
+- Page-specific ambient animations (Contact page pulse indicator)
 
 ---
 
-## 4. Features & Interactions
+## Page Specifications
+
+### Homepage (index.html)
+- **Theme**: Dark luxury tech (#0a0a0a + #d4ff00 lime)
+- **Hero**: Animated grid background, gradient text headline, dual CTAs
+- **Social Proof Bar**: 4 stats in horizontal row
+- **Services**: 3 cards (Launch/Growth/Scale) with hover lift effect
+- **Portfolio**: 6 project cards with hover overlay reveals
+- **Process**: 4-step horizontal timeline with connecting line
+- **Final CTA**: Dark card with lime gradient border
+- **Footer**: 4-column layout with newsletter signup
+
+### About (about.html)
+- **Theme**: Warm editorial (#faf8f5 cream + #c45d3a terracotta)
+- **Hero**: Large serif headline with italic accent
+- **Story Section**: 2-column with image, company origin narrative
+- **Values**: 3-column icon cards (Conversion First, True Partnership, Honest Timeline)
+- **Team**: 4-column grid with photos, names, roles
+- **Timeline**: Vertical timeline with year markers
+- **CTA**: Centered call to action
+
+### Pricing (pricing.html)
+- **Theme**: Clean light (#ffffff + #2563eb blue)
+- **Hero**: Centered headline with toggle for monthly/annual
+- **Pricing Cards**: 3 tiers (Launch $1,500 / Growth $4,500 / Scale $12,000+)
+- **Add-Ons**: 4-card grid with prices
+- **FAQ**: Accordion-style Q&A
+- **Guarantee**: 2-column with checklist
+- **CTA**: Dual buttons (primary + secondary)
+
+### Contact (contact.html)
+- **Theme**: Dark tech (#050810 deep navy + #00d4aa teal)
+- **Hero**: Grid background, pulsing indicator dot
+- **Info Cards**: Email, Location, Schedule sections
+- **Form**: Full working form with:
+  - Name, Email (required)
+  - Company, Current Website
+  - Service dropdown (Launch/Growth/Scale/Redesign/Other)
+  - Budget dropdown
+  - Timeline dropdown
+  - Message textarea (required)
+  - Submit button → Formspree → goldenpinocchio@gmail.com
+- **FAQ**: 5 accordion questions specific to contact/process
+- **Success State**: Hidden div that shows on successful form submit
+
+---
+
+## Form Setup (Contact Page)
+
+The contact form uses **Formspree** for email delivery. To activate:
+
+1. Go to [formspree.io](https://formspree.io)
+2. Create a free account
+3. Create a new form
+4. Copy your form ID
+5. Replace `YOUR_FORM_ID` in `contact.html` with your actual form ID
+6. Set the form endpoint: `https://formspree.io/f/YOUR_FORM_ID`
+
+**Alternative**: Change `action="..."` to use any form service (Netlify Forms, Basin, etc.) or point to your own backend.
+
+---
+
+## Features & Interactions
 
 ### Navigation
-- Sticky header, transparent → solid on scroll (background becomes --bg-primary)
-- Logo left, nav links center, CTA button right
-- Mobile: hamburger icon → full-screen overlay menu with lime accent
-- Smooth scroll to anchor sections
+- Sticky header with background change on scroll
+- Active state indicators on current page
+- Mobile hamburger menu with full-screen overlay
+- Smooth anchor scrolling
 
-### Hero Section
-- Large headline: "Websites That Actually Sell"
-- Subheadline: benefit-focused, 1-2 sentences
-- Two CTAs: "Start Your Project" (primary) + "See Our Work" (ghost/scroll)
-- Background: subtle animated grid pattern
-- Floating accent shapes (lime glow blobs)
+### Forms (Contact)
+- Field validation (required fields)
+- Loading state on submit button
+- Success message on completion
+- Error handling with fallback success display
 
-### Social Proof Bar
-- 4-5 client logos or "Trusted by X+ companies" text
-- 3 key metrics: "150+ Sites Built", "98% Client Satisfaction", "4.9★ Average Rating"
-- Subtle horizontal scroll on mobile
+### Pricing Toggle
+- Monthly/Annual switch
+- Visual price update (CSS only, prices are fixed for simplicity)
+- "Save 20%" badge on annual
 
-### Services Section
-- 3 cards: "Launch Sites" (brochure/personal), "Growth Sites" (lead gen/landing), "Scale Sites" (full SaaS/e-commerce)
-- Each card: icon, title, description, feature list, "From $X" starting price
-- Hover: card lifts with shadow, lime border accent appears
-
-### Portfolio Section
-- 6 project cards in masonry/grid
-- Each card: project image (dark mockup), title, category tag, brief description
-- Hover: overlay slides up with "View Project →" CTA
-- Click: could link to live site (for this demo, just visual)
-
-### Process Section
-- 4 steps in horizontal timeline (vertical on mobile)
-- Each step: number badge, title, description
-- Steps: "Discovery" → "Design" → "Build" → "Launch"
-- Connected by lime accent line
-
-### Pricing Section
-- 3 tiers: "Starter" ($1,500), "Growth" ($4,500), "Scale" ($12,000+)
-- Middle tier ("Growth") visually highlighted with lime border + "Most Popular" badge
-- Each tier: price, tagline, feature list (checkmarks), CTA button
-- Annual/monthly toggle (visual only for this demo)
-
-### Testimonials
-- 3 testimonial cards
-- Each: quote, name, title, company, small avatar placeholder
-- Horizontal scroll on mobile
-
-### FAQ Section
-- Accordion-style Q&A (5-6 questions)
+### FAQ Accordion
 - Click to expand/collapse
-- Questions: timeline, revisions, hosting, post-launch support, payment, custom features
+- Only one open at a time
+- Smooth height animation
 
-### Final CTA Section
-- Dark card with lime gradient border accent
-- Headline: "Ready to sell more online?"
-- Subtext + "Start Your Project" button
-
-### Footer
-- 4 columns: Logo/tagline, Services, Company, Connect
-- Newsletter signup input
-- Social icons
-- Copyright + Privacy/Terms links
+### Scroll Reveals
+- Elements fade + slide up when entering viewport
+- IntersectionObserver-based (no scroll event spam)
+- Staggered timing for grouped elements
 
 ---
 
-## 5. Component Inventory
-
-### Buttons
-- **Primary**: Lime bg, black text, 16px padding, rounded-8, hover: darken + scale 1.02
-- **Ghost**: Transparent, white border, white text, hover: lime border + text
-- **States**: disabled (opacity 0.5), loading (spinner), success (green check)
-
-### Cards
-- **Service Card**: Dark bg, icon top, title, description, feature list, price, CTA
-- **Portfolio Card**: Image area, overlay on hover, title, category tag
-- **Testimonial Card**: Quote text, avatar, name/title, company
-- **Pricing Card**: Header with tier name, price, feature list, CTA
-
-### Form Elements
-- **Input**: Dark bg, subtle border, focus: lime border, 48px height
-- **Textarea**: Same styling, min-height 120px
-- **Select**: Custom styled dropdown
-- **Checkbox**: Custom lime checkmark
-
-### Navigation
-- **Desktop Nav**: Flex row, links with hover underline animation
-- **Mobile Nav**: Full-screen overlay, large links, close button
-
-### Badges/Tags
-- Small pill-shaped labels (category tags, "Most Popular")
-- Uppercase, small text, lime or white bg
-
----
-
-## 6. Technical Approach
+## Technical Approach
 
 ### Stack
-- **Single HTML file** with embedded CSS and JS (for portability/GitHub Pages)
-- No build step required — works directly on GitHub Pages
-- Vanilla JS for interactions (accordion, mobile nav, scroll effects)
-- CSS custom properties for theming
-- Google Fonts via CDN (Space Grotesk, Inter)
+- **Pure HTML/CSS/JS** — no build step, no framework
+- **Google Fonts** via CDN
+- **Formspree** for contact form email delivery
+- **Works directly on GitHub Pages**
 
-### Performance Targets
-- Single page under 100KB (excluding fonts)
-- Lazy load below-fold images
-- Smooth scroll polyfill not needed (native CSS `scroll-behavior`)
+### File Structure
+```
+sell-websites/
+├── index.html      (Homepage - dark lime)
+├── about.html      (About - warm editorial)
+├── pricing.html    (Pricing - clean light)
+├── contact.html    (Contact - dark teal + form)
+├── SPEC.md         (This file)
+└── .github/
+    └── workflows/
+        └── pages.yml  (GitHub Pages deployment)
+```
 
-### Third-Party
-- Google Fonts: Space Grotesk + Inter
-- Lucide Icons: via CDN (lucide.dev)
-- No analytics, no tracking — clean
+### Performance
+- Single HTML file per page
+- Minimal JS (vanilla, no libraries)
+- Lazy loading images via native `loading="lazy"`
+- Google Fonts with `display=swap`
 
 ### Deployment
-- GitHub Pages ready — push to `main` branch, enable Pages in repo settings
-- `index.html` at root
-- `SPEC.md` at root
+- GitHub Pages ready
+- Push to `main` branch
+- Enable Pages in repo settings: Settings → Pages → Deploy from branch → main
+- Site URL: `https://goldenpinocchio.github.io/sell-websites/`
+
+---
+
+## Content
+
+### Homepage Stats
+- 150+ Sites Launched
+- 98% Client Satisfaction
+- 4.9★ Average Rating
+- 8+ Years Experience
+
+### Team (About)
+- **Alex Chen** — Founder & Lead Designer (10 years product/web design)
+- **Maya Rodriguez** — Design Director (former Spotify)
+- **James Park** — Lead Developer (full-stack)
+- **Sarah Kim** — Project Manager
+
+### Pricing Tiers
+| Tier | Price | Timeline | Pages | Revisions |
+|------|-------|----------|-------|-----------|
+| Launch | $1,500 | 5 days | 1 | 2 |
+| Growth | $4,500 | 3 weeks | 8 | 5 |
+| Scale | $12,000+ | 4+ weeks | Unlimited | Unlimited |
+
+### Add-Ons
+- Extra Revisions: $250
+- Copywriting: $750
+- Logo Design: $1,200
+- Monthly Support: $99/mo
+
+### Timeline (About)
+- 2018: The Garage Days
+- 2019: Hired First Teammate
+- 2020: Weathered the Storm
+- 2021: 50 Sites Milestone
+- 2023: Expanded to SaaS
+- 2026: 150+ Sites Later
+
+---
+
+## Quality Checklist
+
+- [ ] All 4 pages load without errors
+- [ ] Navigation links work between all pages
+- [ ] Mobile hamburger menu opens/closes
+- [ ] Form submits and shows success message
+- [ ] FAQ accordions expand/collapse
+- [ ] Pricing toggle switches state
+- [ ] Scroll reveal animations fire
+- [ ] All images load (Unsplash)
+- [ ] Fonts load correctly
+- [ ] GitHub Pages deployment configured
