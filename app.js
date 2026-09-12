@@ -2,7 +2,7 @@ const projects = [
   {
     title: "About / Info",
     kind: "info",
-    accent: "#c5dcff",
+    accent: "#8ddcff",
     tx: "0px",
     ty: "-296px",
     rot: "0deg",
@@ -12,7 +12,7 @@ const projects = [
   {
     title: "Donkey Kong Archive",
     kind: "donkey",
-    accent: "#ff867c",
+    accent: "#6fdb65",
     tx: "-270px",
     ty: "-176px",
     rot: "-5deg",
@@ -22,7 +22,7 @@ const projects = [
   {
     title: "Weekly Habit Tracker",
     kind: "habit",
-    accent: "#88c6ff",
+    accent: "#47bdd2",
     tx: "270px",
     ty: "-176px",
     rot: "4deg",
@@ -32,7 +32,7 @@ const projects = [
   {
     title: "PixelCrafted Websites",
     kind: "pixel",
-    accent: "#ffbd73",
+    accent: "#8ef0b6",
     tx: "-270px",
     ty: "176px",
     rot: "4deg",
@@ -42,7 +42,7 @@ const projects = [
   {
     title: "Pinocchio Artist Page",
     kind: "artist",
-    accent: "#f0a9e0",
+    accent: "#b8ffd9",
     tx: "270px",
     ty: "176px",
     rot: "-4deg",
@@ -277,15 +277,25 @@ function iconArtistAlt() {
   `;
 }
 
+function getIconPair(kind) {
+  switch (kind) {
+    case "info":
+      return [iconInfoDefault(), iconInfoAlt()];
+    case "donkey":
+      return [iconDonkeyDefault(), iconDonkeyAlt()];
+    case "habit":
+      return [iconHabitDefault(), iconHabitAlt()];
+    case "pixel":
+      return [iconPixelDefault(), iconPixelAlt()];
+    case "artist":
+      return [iconArtistDefault(), iconArtistAlt()];
+    default:
+      return [iconInfoDefault(), iconInfoAlt()];
+  }
+}
+
 function buildPortal(project) {
-  const iconPairs = {
-    info: [iconInfoDefault(), iconInfoAlt()],
-    donkey: [iconDonkeyDefault(), iconDonkeyAlt()],
-    habit: [iconHabitDefault(), iconHabitAlt()],
-    pixel: [iconPixelDefault(), iconPixelAlt()],
-    artist: [iconArtistDefault(), iconArtistAlt()],
-  };
-  const [defaultSvg, altSvg] = iconPairs[project.kind];
+  const [defaultSvg, altSvg] = getIconPair(project.kind);
 
   if (project.action === "dialog") {
     return `
@@ -412,26 +422,25 @@ function closeInfoDialog() {
 }
 
 function bindInteractions() {
-  document.querySelectorAll(".portal").forEach((portal) => {
-    portal.addEventListener("click", (event) => {
-      if (portal.hasAttribute("data-open-info")) return;
-      const href = portal.dataset.href || "";
-      if (href) return;
-      event.preventDefault();
-      openStubPortal({
-        title: portal.dataset.title || "Project",
-        description: portal.dataset.description || "",
-      });
-    });
-  });
+  orbit.addEventListener("click", (event) => {
+    const portal = event.target.closest(".portal");
+    if (!portal) return;
 
-  document.querySelectorAll("[data-open-info]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
+    if (portal.hasAttribute("data-open-info")) {
       event.preventDefault();
       event.stopPropagation();
       if (infoDialog && typeof infoDialog.showModal === "function") {
         infoDialog.showModal();
       }
+      return;
+    }
+
+    const href = portal.dataset.href || "";
+    if (href) return;
+    event.preventDefault();
+    openStubPortal({
+      title: portal.dataset.title || "Project",
+      description: portal.dataset.description || "",
     });
   });
 }
