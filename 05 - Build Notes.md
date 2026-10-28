@@ -8,6 +8,8 @@
 - Link behavior: external destinations open in a new tab
 - About/info: small modal portal instead of a full biography section
 - Background personality pass: add froggy pond doodles, lily pads, flies, bubbles, and scribble shapes behind the existing rotating project icons
+- Mobile direction: a full-screen, no-scroll “project pond” using the same static frog background; the narrow crop is biased left to keep the full standing frog visible, while five enlarged glossy project bubbles drift and gently bounce off one another. The desktop orbit layout remains unchanged.
+- Mobile interaction/performance: use a tiny requestAnimationFrame collision loop for five DOM bubbles only (no canvas, physics library, video, or network requests); respect `prefers-reduced-motion` with a static composition.
 
 ## Working assumptions used for the mockup
 - The homepage should stay modular so more projects can be added later
@@ -23,4 +25,4 @@
 - Whether the orbit spacing or icon scale should be pushed even closer to the reference
 
 ## Next likely step
-Wire the actual project destinations into the portal data and do a browser polish pass.
+Continue adding project destinations and polish only after reviewing the published homepage build.

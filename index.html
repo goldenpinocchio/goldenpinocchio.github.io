@@ -9,7 +9,7 @@
     />
     <title>GoldenPinocchio — Pinocchio Portal</title>
     <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="%23fff5d8"/><circle cx="32" cy="32" r="18" fill="%23ff867c" stroke="%231f1d1b" stroke-width="3"/><path d="M20 18h24v10H20z" fill="%23ffd25a" stroke="%231f1d1b" stroke-width="3"/><circle cx="26" cy="31" r="2" fill="%231f1d1b"/><circle cx="38" cy="31" r="2" fill="%231f1d1b"/><path d="M26 38c4 3 8 3 12 0" fill="none" stroke="%231f1d1b" stroke-width="3" stroke-linecap="round"/></svg>' />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=sprout-social-greeting" />
     <style>
       html, body {
         background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12)), url("Assets/Homepage Background Image.png");
@@ -19,21 +19,42 @@
         background-attachment: fixed;
       }
     </style>
-    <script defer src="app.js"></script>
+    <script defer src="app.js?v=sprout-social-greeting"></script>
   </head>
   <body>
     <main class="page">
       <section class="hero" aria-label="GoldenPinocchio homepage">
         <div class="scene" aria-label="Project orbit composition">
 <div class="core">
-            <h1>Pinocchio</h1>
-            <p class="core__line">Hey you, have a great day today!</p>
-          </div>
+  <h1 class="wordmark">
+    <span class="wordmark__text">Pinocchio</span>
+    <svg class="wordmark__sprout" viewBox="0 0 92 76" aria-hidden="true">
+      <path class="wordmark__stem" d="M46 68V37" />
+      <path class="wordmark__leaf" d="M44 36C26 36 12 25 10 8c18-2 33 8 36 27Z" />
+      <path class="wordmark__leaf" d="M48 36C65 35 79 24 82 7 64 5 50 16 46 34Z" />
+      <path class="wordmark__vein" d="M42 32 20 14M50 31 72 13" />
+    </svg>
+  </h1>
+</div>
 
-          <div id="project-orbit" class="project-orbit" aria-label="Project portals"></div>
+<aside id="project-peek" class="project-peek" aria-live="polite" hidden>
+  <button id="project-peek-close" class="project-peek__close" type="button" aria-label="Close project preview">×</button>
+  <p class="project-peek__eyebrow">project preview</p>
+  <h2 id="project-peek-title"></h2>
+  <p id="project-peek-description" class="project-peek__description"></p>
+  <button id="project-peek-visit" class="project-peek__visit" type="button">Visit site</button>
+</aside>
+
+<div id="project-orbit" class="project-orbit" aria-label="Project portals"></div>
         </div>
       </section>
 
+      <button id="social-trigger" class="social-trigger" type="button" aria-haspopup="dialog" aria-controls="info-dialog">
+        <span>Hey you, have a great day today!</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.8 8.7c0 5.2-8.8 10.1-8.8 10.1S3.2 13.9 3.2 8.7C3.2 6.1 5.1 4.2 7.6 4.2c1.5 0 2.9.8 4.4 2.3 1.5-1.5 2.9-2.3 4.4-2.3 2.5 0 4.4 1.9 4.4 4.5Z" />
+        </svg>
+      </button>
       <footer class="footer">
         <a href="https://github.com/goldenpinocchio" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="https://x.com/TrustyPinocchio" target="_blank" rel="noopener noreferrer">X / @TrustyPinocchio</a>
@@ -43,16 +64,13 @@
     <dialog id="info-dialog" class="info-dialog">
       <form method="dialog" class="info-dialog__panel">
         <button class="dialog-close" value="cancel" aria-label="Close information panel">×</button>
-        <p class="info-dialog__eyebrow">about / info</p>
-        <h2>Pinocchio Portal</h2>
-        <p>
-          This version keeps the homepage focused on the Pinocchio identity, the background artwork, and the orbiting project portals.
-        </p>
-        <ul>
-          <li>Each icon represents one project display.</li>
-          <li>Hovering swaps to a slightly different icon state for a playful feel.</li>
-          <li>Project links can be wired later without changing the layout.</li>
-        </ul>
+        <p class="info-dialog__eyebrow">come say hello</p>
+        <h2>Find Pinocchio online</h2>
+        <p class="info-dialog__intro">See more projects on GitHub or follow along on X.</p>
+        <nav class="social-links" aria-label="Pinocchio social profiles">
+          <a href="https://github.com/goldenpinocchio" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://x.com/TrustyPinocchio" target="_blank" rel="noopener noreferrer">X / @TrustyPinocchio</a>
+        </nav>
       </form>
     </dialog>
   </body>

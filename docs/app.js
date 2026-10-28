@@ -1,18 +1,8 @@
 const projects = [
   {
-    title: "About / Info",
-    kind: "info",
-    accent: "#c5dcff",
-    tx: "0px",
-    ty: "-296px",
-    rot: "0deg",
-    description: "A short note about the Pinocchio portal and how the layout works.",
-    action: "dialog",
-  },
-  {
     title: "Donkey Kong Archive",
     kind: "donkey",
-    accent: "#ff867c",
+    accent: "#6fdb65",
     tx: "-270px",
     ty: "-176px",
     rot: "-5deg",
@@ -22,7 +12,7 @@ const projects = [
   {
     title: "Weekly Habit Tracker",
     kind: "habit",
-    accent: "#88c6ff",
+    accent: "#47bdd2",
     tx: "270px",
     ty: "-176px",
     rot: "4deg",
@@ -32,7 +22,7 @@ const projects = [
   {
     title: "PixelCrafted Websites",
     kind: "pixel",
-    accent: "#ffbd73",
+    accent: "#8ef0b6",
     tx: "-270px",
     ty: "176px",
     rot: "4deg",
@@ -42,7 +32,7 @@ const projects = [
   {
     title: "Pinocchio Artist Page",
     kind: "artist",
-    accent: "#f0a9e0",
+    accent: "#b8ffd9",
     tx: "270px",
     ty: "176px",
     rot: "-4deg",
@@ -53,6 +43,14 @@ const projects = [
 
 const orbit = document.getElementById("project-orbit");
 const infoDialog = document.getElementById("info-dialog");
+const projectPeek = document.getElementById("project-peek");
+const projectPeekTitle = document.getElementById("project-peek-title");
+const projectPeekDescription = document.getElementById("project-peek-description");
+const projectPeekVisit = document.getElementById("project-peek-visit");
+const projectPeekClose = document.getElementById("project-peek-close");
+const socialTrigger = document.getElementById("social-trigger");
+const mobilePeekQuery = window.matchMedia("(max-width: 700px)");
+let activePortal = null;
 
 function esc(value) {
   return String(value)
@@ -277,15 +275,25 @@ function iconArtistAlt() {
   `;
 }
 
+function getIconPair(kind) {
+  switch (kind) {
+    case "info":
+      return [iconInfoDefault(), iconInfoAlt()];
+    case "donkey":
+      return [iconDonkeyDefault(), iconDonkeyAlt()];
+    case "habit":
+      return [iconHabitDefault(), iconHabitAlt()];
+    case "pixel":
+      return [iconPixelDefault(), iconPixelAlt()];
+    case "artist":
+      return [iconArtistDefault(), iconArtistAlt()];
+    default:
+      return [iconInfoDefault(), iconInfoAlt()];
+  }
+}
+
 function buildPortal(project) {
-  const iconPairs = {
-    info: [iconInfoDefault(), iconInfoAlt()],
-    donkey: [iconDonkeyDefault(), iconDonkeyAlt()],
-    habit: [iconHabitDefault(), iconHabitAlt()],
-    pixel: [iconPixelDefault(), iconPixelAlt()],
-    artist: [iconArtistDefault(), iconArtistAlt()],
-  };
-  const [defaultSvg, altSvg] = iconPairs[project.kind];
+  const [defaultSvg, altSvg] = getIconPair(project.kind);
 
   if (project.action === "dialog") {
     return `
@@ -295,8 +303,10 @@ function buildPortal(project) {
         data-open-info
         data-title="${esc(project.title)}"
         data-description="${esc(project.description)}"
+        data-action="dialog"
         style="--tx:${project.tx}; --ty:${project.ty}; --rot:${project.rot}; --accent:${project.accent};"
         aria-label="Open ${esc(project.title)}"
+        aria-expanded="false"
       >
         <div class="portal__frame">
           ${iconWrap(defaultSvg, altSvg, project.title)}
@@ -318,8 +328,10 @@ function buildPortal(project) {
       ${target}
       data-href="${esc(project.href || "")}" data-title="${esc(project.title)}"
       data-description="${esc(project.description)}"
+      data-action="project"
       style="--tx:${project.tx}; --ty:${project.ty}; --rot:${project.rot}; --accent:${project.accent};"
       aria-label="Open ${esc(project.title)}"
+      aria-expanded="false"
     >
       <div class="portal__frame">
         ${iconWrap(defaultSvg, altSvg, project.title)}
@@ -411,35 +423,235 @@ function closeInfoDialog() {
   }
 }
 
-function bindInteractions() {
-  document.querySelectorAll(".portal").forEach((portal) => {
-    portal.addEventListener("click", (event) => {
-      if (portal.hasAttribute("data-open-info")) return;
-      const href = portal.dataset.href || "";
-      if (href) return;
-      event.preventDefault();
-      openStubPortal({
-        title: portal.dataset.title || "Project",
-        description: portal.dataset.description || "",
-      });
-    });
-  });
+function closeProjectPeek() {
+  if (!projectPeek) return;
+  if (activePortal) {
+    activePortal.classList.remove("portal--selected");
+    activePortal.setAttribute("aria-expanded", "false");
+  }
+  activePortal = null;
+  projectPeek.classList.remove("project-peek--open");
+  projectPeek.hidden = true;
+}
 
-  document.querySelectorAll("[data-open-info]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
+function openProjectPeek(portal) {
+  if (!projectPeek || !projectPeekTitle || !projectPeekDescription || !projectPeekVisit) return;
+
+  if (activePortal && activePortal !== portal) {
+    activePortal.classList.remove("portal--selected");
+    activePortal.setAttribute("aria-expanded", "false");
+  }
+
+  activePortal = portal;
+  activePortal.classList.add("portal--selected");
+  activePortal.setAttribute("aria-expanded", "true");
+
+  projectPeekTitle.textContent = portal.dataset.title || "Project";
+  projectPeekDescription.textContent = portal.dataset.description || "Take a closer look at this project.";
+  projectPeekVisit.textContent = portal.dataset.action === "dialog" ? "View details" : "Visit site";
+  projectPeek.hidden = false;
+  requestAnimationFrame(() => projectPeek.classList.add("project-peek--open"));
+}
+
+function visitActiveProject() {
+  if (!activePortal) return;
+
+  if (activePortal.dataset.action === "dialog") {
+    closeProjectPeek();
+    if (infoDialog && typeof infoDialog.showModal === "function") infoDialog.showModal();
+    return;
+  }
+
+  const href = activePortal.dataset.href || "";
+  if (href) {
+    window.open(href, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  openStubPortal({
+    title: activePortal.dataset.title || "Project",
+    description: activePortal.dataset.description || "",
+  });
+}
+
+function bindInteractions() {
+  orbit.addEventListener("click", (event) => {
+    const portal = event.target.closest(".portal");
+    if (!portal) return;
+
+    if (mobilePeekQuery.matches) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (activePortal === portal) closeProjectPeek();
+      else openProjectPeek(portal);
+      return;
+    }
+
+    if (portal.hasAttribute("data-open-info")) {
       event.preventDefault();
       event.stopPropagation();
       if (infoDialog && typeof infoDialog.showModal === "function") {
         infoDialog.showModal();
       }
+      return;
+    }
+
+    const href = portal.dataset.href || "";
+    if (href) return;
+    event.preventDefault();
+    openStubPortal({
+      title: portal.dataset.title || "Project",
+      description: portal.dataset.description || "",
     });
   });
 }
 
+projectPeekClose?.addEventListener("click", closeProjectPeek);
+projectPeekVisit?.addEventListener("click", visitActiveProject);
+mobilePeekQuery.addEventListener("change", closeProjectPeek);
+socialTrigger?.addEventListener("click", () => {
+  closeProjectPeek();
+  if (infoDialog && typeof infoDialog.showModal === "function") infoDialog.showModal();
+});
+
+let bubblePhysics;
+
+function initBubblePhysics() {
+  const mobileQuery = window.matchMedia("(max-width: 700px)");
+  const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let rafId = 0;
+  let bubbles = [];
+  let lastTime = 0;
+
+  const stop = () => {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  };
+
+  const reset = () => {
+    stop();
+    bubbles = [];
+    orbit.classList.remove("bubble-field--active");
+    orbit.querySelectorAll(".portal").forEach((portal) => {
+      portal.style.removeProperty("transform");
+    });
+  };
+
+  const start = () => {
+    reset();
+    if (!mobileQuery.matches || reduceMotionQuery.matches) return;
+
+    const bounds = orbit.getBoundingClientRect();
+    const portals = [...orbit.querySelectorAll(".portal")];
+    const safeTop = 86;
+    const safeBottom = 96;
+    const placements = [
+      [0.19, 0.25],
+      [0.76, 0.22],
+      [0.74, 0.65],
+      [0.2, 0.69],
+    ];
+
+    bubbles = portals.map((element, index) => {
+      const size = element.getBoundingClientRect().width;
+      const [xRatio, yRatio] = placements[index] || [0.5, 0.5];
+      return {
+        element,
+        size,
+        x: Math.max(8, Math.min(bounds.width - size - 8, bounds.width * xRatio - size / 2)),
+        y: Math.max(safeTop, Math.min(bounds.height - size - safeBottom, bounds.height * yRatio - size / 2)),
+        vx: (index % 2 ? -1 : 1) * (15 + index * 1.7),
+        vy: (index < 2 ? 1 : -1) * (12 + index * 1.5),
+      };
+    });
+
+    orbit.classList.add("bubble-field--active");
+    lastTime = performance.now();
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const tick = (now) => {
+    const delta = Math.min((now - lastTime) / 1000, 0.04);
+    lastTime = now;
+    const width = orbit.clientWidth;
+    const height = orbit.clientHeight;
+    const top = 86;
+    const bottom = 96;
+
+    bubbles.forEach((bubble) => {
+      bubble.x += bubble.vx * delta;
+      bubble.y += bubble.vy * delta;
+
+      if (bubble.x <= 6 || bubble.x + bubble.size >= width - 6) {
+        bubble.vx *= -1;
+        bubble.x = Math.max(6, Math.min(width - bubble.size - 6, bubble.x));
+      }
+      if (bubble.y <= top || bubble.y + bubble.size >= height - bottom) {
+        bubble.vy *= -1;
+        bubble.y = Math.max(top, Math.min(height - bubble.size - bottom, bubble.y));
+      }
+    });
+
+    for (let i = 0; i < bubbles.length; i += 1) {
+      for (let j = i + 1; j < bubbles.length; j += 1) {
+        const a = bubbles[i];
+        const b = bubbles[j];
+        const ax = a.x + a.size / 2;
+        const ay = a.y + a.size / 2;
+        const bx = b.x + b.size / 2;
+        const by = b.y + b.size / 2;
+        const dx = bx - ax;
+        const dy = by - ay;
+        const distance = Math.hypot(dx, dy) || 0.01;
+        const minimum = (a.size + b.size) / 2;
+
+        if (distance < minimum) {
+          const nx = dx / distance;
+          const ny = dy / distance;
+          const overlap = (minimum - distance) / 2;
+          a.x -= nx * overlap;
+          a.y -= ny * overlap;
+          b.x += nx * overlap;
+          b.y += ny * overlap;
+
+          const relativeVelocity = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+          if (relativeVelocity > 0) {
+            const impulse = relativeVelocity * 0.94;
+            a.vx -= impulse * nx;
+            a.vy -= impulse * ny;
+            b.vx += impulse * nx;
+            b.vy += impulse * ny;
+          }
+        }
+      }
+    }
+
+    bubbles.forEach((bubble) => {
+      bubble.element.style.transform = `translate3d(${bubble.x.toFixed(2)}px, ${bubble.y.toFixed(2)}px, 0)`;
+    });
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const restart = () => window.requestAnimationFrame(start);
+  window.addEventListener("resize", restart, { passive: true });
+  mobileQuery.addEventListener("change", restart);
+  reduceMotionQuery.addEventListener("change", restart);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stop();
+    else restart();
+  });
+  start();
+
+  return { reset };
+}
+
 function render() {
   closeInfoDialog();
+  closeProjectPeek();
+  if (bubblePhysics) bubblePhysics.reset();
   orbit.innerHTML = projects.map(buildPortal).join("");
   bindInteractions();
+  bubblePhysics = initBubblePhysics();
 }
 
 render();

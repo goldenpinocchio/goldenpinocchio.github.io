@@ -25,6 +25,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow: hidden;
 }
 
 body {
@@ -37,7 +38,7 @@ body {
     radial-gradient(circle at 82% 22%, rgba(80, 198, 226, 0.28), transparent 20%),
     radial-gradient(circle at 48% 78%, rgba(168, 239, 232, 0.34), transparent 24%),
     linear-gradient(180deg, #f7fff9 0%, #dffbf4 48%, var(--bg) 100%);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 body::before,
@@ -450,11 +451,54 @@ body::before {
 
 .core h1 {
   margin: 0;
-  font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+  font-family: ui-rounded, "Arial Rounded MT Bold", "Avenir Next Rounded", "Nunito", "Trebuchet MS", sans-serif;
   font-size: clamp(3rem, 7vw, 6rem);
   line-height: 0.88;
-  letter-spacing: -0.06em;
+  font-weight: 900;
+  letter-spacing: -0.075em;
   text-wrap: balance;
+}
+
+.wordmark {
+  position: relative;
+  display: inline-block;
+  color: #073f35;
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.7));
+}
+
+.wordmark__text {
+  position: relative;
+  z-index: 1;
+}
+
+.wordmark__sprout {
+  position: absolute;
+  left: 59%;
+  top: -0.74em;
+  z-index: 2;
+  width: 0.74em;
+  height: auto;
+  overflow: visible;
+  transform: translateX(-50%) rotate(1deg);
+}
+
+.wordmark__stem,
+.wordmark__leaf,
+.wordmark__vein {
+  stroke: #10251c;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wordmark__stem,
+.wordmark__vein {
+  fill: none;
+  stroke-width: 5;
+}
+
+.wordmark__leaf {
+  fill: #8bea28;
+  stroke-width: 5;
 }
 
 .core__line {
@@ -633,6 +677,62 @@ body::before {
   z-index: 4;
 }
 
+.social-trigger {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 6;
+  width: min(760px, calc(100vw - 40px));
+  min-height: 68px;
+  padding: 15px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  border: 2px solid rgba(139, 220, 205, 0.76);
+  border-radius: 999px;
+  background: rgba(235, 255, 248, 0.82);
+  color: #073f35;
+  font-family: ui-rounded, "Arial Rounded MT Bold", "Avenir Next Rounded", "Nunito", "Trebuchet MS", sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(18, 89, 70, 0.14), 0 0 0 3px rgba(230, 255, 249, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transform: translateX(-50%);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.social-trigger svg {
+  flex: 0 0 auto;
+  width: 1.15em;
+  height: 1.15em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.social-trigger:hover,
+.social-trigger:focus-visible {
+  transform: translateX(-50%) translateY(-2px);
+  background: rgba(245, 255, 251, 0.94);
+  box-shadow: 0 12px 28px rgba(18, 89, 70, 0.19), 0 0 0 3px rgba(230, 255, 249, 0.5);
+}
+
+.social-trigger:active {
+  transform: translateX(-50%);
+}
+
+.social-trigger:focus-visible {
+  outline: 3px solid #4d7cff;
+  outline-offset: 3px;
+}
+
 .info-dialog {
   border: none;
   padding: 0;
@@ -673,6 +773,52 @@ body::before {
   padding-left: 18px;
 }
 
+.info-dialog__intro {
+  margin: 14px 0 18px;
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.social-links a {
+  min-height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid rgba(26, 129, 91, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(232, 255, 240, 0.98), rgba(199, 246, 218, 0.92));
+  color: #173126;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 7px 16px rgba(18, 89, 70, 0.1);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.social-links a:last-child {
+  flex: 1 1 auto;
+}
+
+.social-links a:hover,
+.social-links a:focus-visible {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #f2fff6, #d4f8e2);
+  box-shadow: 0 10px 22px rgba(18, 89, 70, 0.16);
+}
+
+.social-links a:focus-visible {
+  outline: 3px solid #4d7cff;
+  outline-offset: 3px;
+}
+
 .dialog-close {
   position: absolute;
   top: 14px;
@@ -686,6 +832,14 @@ body::before {
   font-size: 1.45rem;
   cursor: pointer;
   box-shadow: var(--shadow-soft);
+}
+
+.project-peek {
+  display: none;
+}
+
+.project-peek[hidden] {
+  display: none !important;
 }
 
 @keyframes orbitSpin {
@@ -719,6 +873,43 @@ body::before {
   to { transform: translate(-50%, -50%) rotate(0deg); }
 }
 
+/* Keep the orbit composition intact on short desktop/laptop screens instead of
+   letting the large cards run beyond the viewport. */
+@media (min-width: 1081px) and (max-height: 800px) {
+  .core h1 {
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+  }
+
+  .core__line {
+    margin-top: 8px;
+    font-size: 0.92rem;
+  }
+
+  .portal {
+    width: 185px;
+    min-width: 0;
+  }
+
+  .portal__icon {
+    height: 132px;
+  }
+
+  .portal__frame {
+    border-radius: 22px;
+    padding: 9px 9px 11px;
+  }
+
+  .portal__name {
+    font-size: 0.88rem;
+  }
+
+  .portal--donkey { --tx: -214px; --ty: -132px; }
+  .portal--habit { --tx: 214px; --ty: -132px; }
+  .portal--pixel { --tx: -214px; --ty: 132px; }
+  .portal--artist { --tx: 214px; --ty: 132px; }
+  .portal--info { --tx: 0px !important; --ty: -132px !important; }
+}
+
 @media (max-width: 1080px) {
   .scene {
     min-height: 920px;
@@ -735,15 +926,84 @@ body::before {
   .portal--artist { --tx: 220px; --ty: 186px; }
 }
 
+@media (min-width: 761px) and (max-width: 1080px) {
+  .page {
+    width: 100%;
+    padding: 18px 24px 0;
+  }
+
+  .hero,
+  .scene {
+    min-height: auto;
+  }
+
+  .scene {
+    padding: 0;
+  }
+
+  .core {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: min(460px, 100%);
+    margin: 0 auto 22px;
+  }
+
+  .project-orbit {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 16px;
+    animation: none;
+  }
+
+  .portal {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    min-width: 0;
+    transform: none;
+  }
+
+  .portal__frame {
+    animation: none;
+  }
+
+  .portal:hover,
+  .portal:focus-visible {
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .footer {
+    position: static;
+    transform: none;
+    width: 100%;
+    padding: 18px 0 12px;
+  }
+
+  .portal--donkey,
+  .portal--habit,
+  .portal--pixel,
+  .portal--artist,
+  .portal--info {
+    --tx: 0px;
+    --ty: 0px;
+    --rot: 0deg;
+  }
+}
+
 @media (max-width: 760px) {
   .page {
-    width: min(100vw - 16px, 1180px);
-    padding-top: 10px;
+    width: 100%;
+    padding-top: 0;
   }
 
   .hero {
+    min-height: auto;
     padding: 12px;
-    border-radius: 30px;
+    border-radius: 0;
   }
 
   .scene {
@@ -795,6 +1055,19 @@ body::before {
   .portal:focus-visible {
     transform: translateY(-4px) scale(1.01);
     filter: drop-shadow(0 14px 18px rgba(31, 29, 27, 0.12));
+  }
+
+  .footer {
+    position: static;
+    transform: none;
+    width: 100%;
+    padding: 16px 4px 8px;
+    gap: 10px;
+  }
+
+  .footer a {
+    min-height: 40px;
+    padding: 0.64rem 0.86rem;
   }
 
   .portal__icon {
@@ -857,4 +1130,311 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Mobile: a single-screen project pond. The desktop orbit intentionally remains unchanged. */
+@media (max-width: 700px) {
+  html,
+  body {
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* The source artwork already contains the full standing frog on its left
+       side. Bias the narrow mobile crop toward him instead of losing him in a
+       centered landscape crop. */
+    background-position: 24% center !important;
+    background-attachment: scroll;
+  }
+
+  .page,
+  .hero,
+  .scene {
+    width: 100%;
+    min-height: 100svh;
+    height: 100svh;
+  }
+
+  .hero {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .scene {
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .core {
+    top: calc(env(safe-area-inset-top) + 34px);
+    z-index: 5;
+    width: 100%;
+    margin: 0;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .core::before {
+    content: none;
+  }
+
+  .core h1 {
+    color: #173126;
+    font-size: clamp(2.25rem, 12vw, 3.25rem);
+    line-height: 0.9;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.65);
+  }
+
+  .core__line {
+    margin-top: 5px;
+    color: rgba(23, 49, 38, 0.86);
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.25;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .project-peek {
+    position: absolute;
+    top: auto;
+    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 78px);
+    left: 50%;
+    z-index: 7;
+    display: block;
+    width: min(350px, calc(100% - 28px));
+    padding: 14px 48px 14px 16px;
+    border: 1px solid rgba(23, 49, 38, 0.16);
+    border-radius: 21px;
+    background: linear-gradient(145deg, rgba(249, 255, 247, 0.96), rgba(224, 255, 241, 0.91));
+    box-shadow: 0 14px 34px rgba(18, 89, 70, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    opacity: 0;
+    transform: translate(-50%, -8px) scale(0.98);
+    transition: opacity 160ms ease, transform 160ms ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    pointer-events: none;
+  }
+
+  .project-peek--open {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  .project-peek__eyebrow {
+    margin: 0 0 3px;
+    color: rgba(23, 49, 38, 0.62);
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .project-peek h2 {
+    margin: 0;
+    font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+    font-size: clamp(1.05rem, 5vw, 1.3rem);
+    line-height: 1.08;
+  }
+
+  .project-peek__description {
+    margin: 5px 0 10px;
+    color: rgba(23, 49, 38, 0.78);
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.32;
+  }
+
+  .project-peek__close {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--ink);
+    font: 800 1.25rem/1 "Trebuchet MS", sans-serif;
+    box-shadow: 0 5px 12px rgba(18, 89, 70, 0.12);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .project-peek__visit {
+    min-height: 38px;
+    padding: 0.55rem 0.88rem;
+    border: 1px solid rgba(23, 49, 38, 0.16);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #caffdc, #8ef0b6);
+    color: var(--ink);
+    font: 900 0.72rem/1 "Trebuchet MS", sans-serif;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(18, 89, 70, 0.12);
+    pointer-events: auto;
+  }
+
+  .project-peek__close:focus-visible,
+  .project-peek__visit:focus-visible {
+    outline: 3px solid #4d7cff;
+    outline-offset: 2px;
+  }
+
+  .project-orbit {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 3;
+    animation: none;
+    contain: layout paint;
+  }
+
+  .portal,
+  .portal--donkey,
+  .portal--habit,
+  .portal--pixel,
+  .portal--artist,
+  .portal--info {
+    --bubble-size: clamp(122px, 38vw, 154px);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--bubble-size);
+    min-width: 0;
+    aspect-ratio: 1;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    transition: filter 160ms ease;
+  }
+
+  .portal:nth-child(2) { --bubble-size: clamp(132px, 41vw, 164px); }
+  .portal:nth-child(4) { --bubble-size: clamp(128px, 39.5vw, 160px); }
+
+  .portal__frame {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    padding: 11px;
+    border: 2px solid rgba(255, 255, 255, 0.82);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 21%, rgba(255,255,255,0.94) 0 5%, transparent 6%),
+      radial-gradient(circle at 36% 29%, rgba(255,255,255,0.48) 0 15%, transparent 16%),
+      linear-gradient(145deg, rgba(238, 255, 254, 0.88), rgba(110, 222, 220, 0.62));
+    box-shadow:
+      inset 0 2px 4px rgba(255,255,255,0.88),
+      inset 0 -11px 18px rgba(28, 157, 173, 0.18),
+      0 9px 18px rgba(18, 89, 70, 0.2);
+    animation: none;
+    overflow: hidden;
+  }
+
+  .portal__frame::before {
+    inset: 7px;
+    border-radius: inherit;
+    background: radial-gradient(circle at 65% 76%, rgba(255,255,255,0.2), transparent 52%);
+  }
+
+  .portal__frame::after {
+    display: none;
+  }
+
+  .portal__icon {
+    width: 100%;
+    height: 100%;
+  }
+
+  .portal__art {
+    inset: 4px;
+  }
+
+  .portal__art svg {
+    filter: drop-shadow(0 3px 2px rgba(23, 49, 38, 0.12));
+  }
+
+  .portal__spark,
+  .portal__label {
+    display: none;
+  }
+
+  .portal:hover,
+  .portal:focus-visible {
+    filter: none;
+  }
+
+  .portal:active .portal__frame {
+    transform: scale(0.94);
+  }
+
+  .portal--info {
+    display: none;
+  }
+
+  .portal--selected .portal__frame {
+    border-color: rgba(23, 49, 38, 0.38);
+    box-shadow:
+      inset 0 2px 4px rgba(255,255,255,0.9),
+      inset 0 -11px 18px rgba(28, 157, 173, 0.2),
+      0 0 0 4px rgba(202, 255, 220, 0.58),
+      0 12px 24px rgba(18, 89, 70, 0.24);
+  }
+
+  .footer {
+    display: none;
+  }
+
+  .social-trigger {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: calc(100vw - 24px);
+    min-height: 58px;
+    padding: 12px 18px;
+    font-size: clamp(0.88rem, 4.2vw, 1.05rem);
+  }
+
+  .info-dialog__panel {
+    padding: 24px 18px 20px;
+  }
+
+  .info-dialog__panel h2 {
+    padding-right: 34px;
+    font-size: clamp(1.75rem, 9vw, 2.45rem);
+  }
+
+  .social-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .social-links a {
+    width: 100%;
+    min-height: 54px;
+  }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .portal--donkey { transform: translate3d(8vw, 18svh, 0); }
+  .portal--habit { transform: translate3d(55vw, 16svh, 0); }
+  .portal--pixel { transform: translate3d(54vw, 55svh, 0); }
+  .portal--artist { transform: translate3d(8vw, 58svh, 0); }
+}
+
+/* Preserve the approved desktop composition. The newer pond/bubble treatment is
+   intentionally isolated to the mobile breakpoint above. */
+@media (min-width: 701px) {
+  html { overflow: visible; }
+  body { overflow-x: hidden; overflow-y: auto; }
+
+  .core h1 {
+    font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.06em;
+  }
+
+  .wordmark__sprout { display: none; }
+  .social-trigger { display: none; }
+  .footer { display: flex; }
 }
