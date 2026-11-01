@@ -1,16 +1,15 @@
 # Status Report — GoldenPinocchio Homepage
 
-## Latest local review — friendly wordmark + bottom social panel
-- Preserved the approved full-frame pond composition and four project bubbles.
-- Removed the former `About / Info` project bubble.
-- Mobile project taps now open a bottom preview card with description and explicit `Visit site` / close controls, so the first tap does not navigate away.
-- Moved the project preview card below the main composition so it no longer covers the `Pinocchio` title.
-- Restyled the central `Pinocchio` wordmark with a friendlier rounded font and a lime sprout.
-- Added a fixed bottom greeting pill — `Hey you, have a great day today! ♡` — that opens responsive GitHub and X / `@TrustyPinocchio` links.
+## Latest local review — floating labels + drag physics
+- Preserved the approved full-frame pond composition and five floating project bubbles.
+- Kept the project title visible directly below each bubble, including on the fixed mobile pond layout.
+- Added mouse and touch pointer dragging: bubbles can be picked up, moved, and released into the other bubbles so the existing collision physics reacts naturally.
+- A drag is distinguished from a tap, so dragging does not open a preview card or navigate away; a simple tap still opens the in-page preview card.
+- Added a grab/grabbing cursor and a restrained lift shadow while a bubble is being dragged.
 - Synchronized root source with the `docs/` CSS/JS deployment copies.
-- Browser-verified at 390×844 and 1440×900: no viewport overflow, sprout fully visible, dialogs working, and no console errors.
-- Fresh temporary preview: `https://diy-seems-genes-statute.trycloudflare.com`
-- This pass is approved for GitHub Pages publication after the final local and tunnel review.
+- Browser-verified at 390×844 and 1440×900: labels visible, tap preview opens, drag repositions without navigation, and no console errors.
+- Fresh temporary preview: `https://carriers-fotos-summer-scotia.trycloudflare.com/`
+- This pass is approved for GitHub Pages publication after the final human review.
 
 ## Completed
 - Read the project rulebook and planning docs

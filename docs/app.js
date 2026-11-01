@@ -1,5 +1,15 @@
 const projects = [
   {
+    title: "About / Info",
+    kind: "info",
+    accent: "#8ddcff",
+    tx: "0px",
+    ty: "-296px",
+    rot: "0deg",
+    description: "A short note about the Pinocchio portal and how the layout works.",
+    action: "dialog",
+  },
+  {
     title: "Donkey Kong Archive",
     kind: "donkey",
     accent: "#6fdb65",
@@ -72,6 +82,11 @@ function iconWrap(defaultSvg, altSvg, ariaLabel) {
       <div class="portal__art portal__art--alt" aria-label="${esc(ariaLabel)}">${altSvg}</div>
     </div>
   `;
+}
+
+function iconImage(path, ariaLabel) {
+  const src = encodeURI(path);
+  return `<img src="${src}" alt="${esc(ariaLabel)}" draggable="false" />`;
 }
 
 function iconInfoDefault() {
@@ -276,17 +291,22 @@ function iconArtistAlt() {
 }
 
 function getIconPair(kind) {
+  const newIcons = {
+    info: "Assets/Bubble Catagory Icons/Info : About Page Icon.png",
+    donkey: "Assets/Bubble Catagory Icons/1982 Donkey Kong Page Icon.png",
+    habit: "Assets/Bubble Catagory Icons/Weekly Habit Tracker Icon.png",
+    pixel: "Assets/Bubble Catagory Icons/Pixelcraftedwebsites Page Icon.png",
+    artist: "Assets/Bubble Catagory Icons/Pinocchio Artist Page Icon.png",
+  };
+
+  if (newIcons[kind]) {
+    const icon = iconImage(newIcons[kind], projects.find((project) => project.kind === kind)?.title || "Project icon");
+    return [icon, icon];
+  }
+
   switch (kind) {
-    case "info":
-      return [iconInfoDefault(), iconInfoAlt()];
     case "donkey":
       return [iconDonkeyDefault(), iconDonkeyAlt()];
-    case "habit":
-      return [iconHabitDefault(), iconHabitAlt()];
-    case "pixel":
-      return [iconPixelDefault(), iconPixelAlt()];
-    case "artist":
-      return [iconArtistDefault(), iconArtistAlt()];
     default:
       return [iconInfoDefault(), iconInfoAlt()];
   }
@@ -479,30 +499,14 @@ function bindInteractions() {
     const portal = event.target.closest(".portal");
     if (!portal) return;
 
-    if (mobilePeekQuery.matches) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (activePortal === portal) closeProjectPeek();
-      else openProjectPeek(portal);
-      return;
-    }
-
-    if (portal.hasAttribute("data-open-info")) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (infoDialog && typeof infoDialog.showModal === "function") {
-        infoDialog.showModal();
-      }
-      return;
-    }
-
-    const href = portal.dataset.href || "";
-    if (href) return;
     event.preventDefault();
-    openStubPortal({
-      title: portal.dataset.title || "Project",
-      description: portal.dataset.description || "",
-    });
+    event.stopPropagation();
+    if (portal.dataset.dragged === "true") {
+      delete portal.dataset.dragged;
+      return;
+    }
+    if (activePortal === portal) closeProjectPeek();
+    else openProjectPeek(portal);
   });
 }
 
@@ -522,6 +526,7 @@ function initBubblePhysics() {
   let rafId = 0;
   let bubbles = [];
   let lastTime = 0;
+  let activeDrag = null;
 
   const stop = () => {
     cancelAnimationFrame(rafId);
@@ -531,6 +536,7 @@ function initBubblePhysics() {
   const reset = () => {
     stop();
     bubbles = [];
+    activeDrag = null;
     orbit.classList.remove("bubble-field--active");
     orbit.querySelectorAll(".portal").forEach((portal) => {
       portal.style.removeProperty("transform");
@@ -539,17 +545,18 @@ function initBubblePhysics() {
 
   const start = () => {
     reset();
-    if (!mobileQuery.matches || reduceMotionQuery.matches) return;
+    if (reduceMotionQuery.matches) return;
 
     const bounds = orbit.getBoundingClientRect();
     const portals = [...orbit.querySelectorAll(".portal")];
-    const safeTop = 86;
-    const safeBottom = 96;
+    const safeTop = 0;
+    const safeBottom = 72;
     const placements = [
       [0.19, 0.25],
       [0.76, 0.22],
       [0.74, 0.65],
       [0.2, 0.69],
+      [0.5, 0.47],
     ];
 
     bubbles = portals.map((element, index) => {
@@ -562,7 +569,64 @@ function initBubblePhysics() {
         y: Math.max(safeTop, Math.min(bounds.height - size - safeBottom, bounds.height * yRatio - size / 2)),
         vx: (index % 2 ? -1 : 1) * (15 + index * 1.7),
         vy: (index < 2 ? 1 : -1) * (12 + index * 1.5),
+        dragging: false,
       };
+    });
+
+    bubbles.forEach((bubble) => {
+      bubble.element.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        const bounds = orbit.getBoundingClientRect();
+        const pointX = event.clientX - bounds.left;
+        const pointY = event.clientY - bounds.top;
+        activeDrag = {
+          bubble,
+          pointerId: event.pointerId,
+          offsetX: pointX - bubble.x,
+          offsetY: pointY - bubble.y,
+          startX: pointX,
+          startY: pointY,
+          moved: false,
+          lastX: pointX,
+          lastY: pointY,
+          lastTime: performance.now(),
+        };
+        bubble.dragging = true;
+        bubble.element.classList.add("portal--dragging");
+        bubble.element.setPointerCapture?.(event.pointerId);
+        event.preventDefault();
+        event.stopPropagation();
+      });
+
+      bubble.element.addEventListener("pointermove", (event) => {
+        if (!activeDrag || activeDrag.bubble !== bubble || activeDrag.pointerId !== event.pointerId) return;
+        const bounds = orbit.getBoundingClientRect();
+        const pointX = event.clientX - bounds.left;
+        const pointY = event.clientY - bounds.top;
+        if (Math.hypot(pointX - activeDrag.startX, pointY - activeDrag.startY) > 6) activeDrag.moved = true;
+        const now = performance.now();
+        const elapsed = Math.max((now - activeDrag.lastTime) / 1000, 0.016);
+        bubble.x = Math.max(6, Math.min(orbit.clientWidth - bubble.size - 6, pointX - activeDrag.offsetX));
+        bubble.y = Math.max(0, Math.min(orbit.clientHeight - bubble.size - 72, pointY - activeDrag.offsetY));
+        bubble.vx = (pointX - activeDrag.lastX) / elapsed;
+        bubble.vy = (pointY - activeDrag.lastY) / elapsed;
+        activeDrag.lastX = pointX;
+        activeDrag.lastY = pointY;
+        activeDrag.lastTime = now;
+        event.preventDefault();
+      });
+
+      const releaseDrag = (event) => {
+        if (!activeDrag || activeDrag.bubble !== bubble || activeDrag.pointerId !== event.pointerId) return;
+        if (activeDrag.moved) bubble.element.dataset.dragged = "true";
+        bubble.dragging = false;
+        bubble.element.classList.remove("portal--dragging");
+        bubble.element.releasePointerCapture?.(event.pointerId);
+        activeDrag = null;
+      };
+
+      bubble.element.addEventListener("pointerup", releaseDrag);
+      bubble.element.addEventListener("pointercancel", releaseDrag);
     });
 
     orbit.classList.add("bubble-field--active");
@@ -575,10 +639,11 @@ function initBubblePhysics() {
     lastTime = now;
     const width = orbit.clientWidth;
     const height = orbit.clientHeight;
-    const top = 86;
+    const top = 0;
     const bottom = 96;
 
     bubbles.forEach((bubble) => {
+      if (bubble.dragging) return;
       bubble.x += bubble.vx * delta;
       bubble.y += bubble.vy * delta;
 

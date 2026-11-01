@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="GoldenPinocchio — a playful, hand-drawn style project portal for creative work, experiments, and worlds-in-progress."
+    />
+    <title>GoldenPinocchio — Pinocchio Portal</title>
+    <link rel="icon" type="image/png" href="Assets/favicon.png" />
+    <link rel="stylesheet" href="styles.css?v=bubble-icons-1" />
+    <style>
+      html, body {
+        background-image: url("Assets/New Desktop Background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+    <script defer src="app.js?v=bubble-icons-1"></script>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero" aria-label="GoldenPinocchio homepage">
+        <div class="scene" aria-label="Project orbit composition">
+<aside id="project-peek" class="project-peek" aria-live="polite" hidden>
+  <button id="project-peek-close" class="project-peek__close" type="button" aria-label="Close project preview">×</button>
+  <p class="project-peek__eyebrow">project preview</p>
+  <h2 id="project-peek-title"></h2>
+  <p id="project-peek-description" class="project-peek__description"></p>
+  <button id="project-peek-visit" class="project-peek__visit" type="button">Visit site</button>
+</aside>
+
+<div id="project-orbit" class="project-orbit" aria-label="Project portals"></div>
+        </div>
+      </section>
+
+      <button id="social-trigger" class="social-trigger" type="button" aria-haspopup="dialog" aria-controls="info-dialog">
+        <span>Hey you, have a great day today!</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.8 8.7c0 5.2-8.8 10.1-8.8 10.1S3.2 13.9 3.2 8.7C3.2 6.1 5.1 4.2 7.6 4.2c1.5 0 2.9.8 4.4 2.3 1.5-1.5 2.9-2.3 4.4-2.3 2.5 0 4.4 1.9 4.4 4.5Z" />
+        </svg>
+      </button>
+      <footer class="footer">
+        <a href="https://github.com/goldenpinocchio" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://x.com/TrustyPinocchio" target="_blank" rel="noopener noreferrer">X / @TrustyPinocchio</a>
+      </footer>
+    </main>
+
+    <dialog id="info-dialog" class="info-dialog">
+      <form method="dialog" class="info-dialog__panel">
+        <button class="dialog-close" value="cancel" aria-label="Close information panel">×</button>
+        <p class="info-dialog__eyebrow">come say hello</p>
+        <h2>Find Pinocchio online</h2>
+        <p class="info-dialog__intro">See more projects on GitHub or follow along on X.</p>
+        <nav class="social-links" aria-label="Pinocchio social profiles">
+          <a href="https://github.com/goldenpinocchio" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://x.com/TrustyPinocchio" target="_blank" rel="noopener noreferrer">X / @TrustyPinocchio</a>
+        </nav>
+      </form>
+    </dialog>
+  </body>
+</html>

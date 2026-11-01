@@ -525,8 +525,8 @@ body::before {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: min(220px, 20vw);
-  min-width: 170px;
+  width: min(330px, 30vw);
+  min-width: 255px;
   transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot));
   text-decoration: none;
   color: var(--ink);
@@ -537,6 +537,18 @@ body::before {
   padding: 0;
   font: inherit;
   transition: transform 180ms ease, filter 180ms ease;
+  touch-action: none;
+}
+
+.bubble-field--active .portal {
+  cursor: grab;
+  transition: filter 160ms ease;
+}
+
+.bubble-field--active .portal--dragging {
+  cursor: grabbing;
+  z-index: 8;
+  filter: drop-shadow(0 16px 22px rgba(18, 89, 70, 0.24));
 }
 
 
@@ -548,8 +560,8 @@ body::before {
 
 .portal__frame {
   position: relative;
-  border-radius: 28px;
-  padding: 12px 12px 14px;
+  border-radius: 42px;
+  padding: 18px 18px 21px;
   border: 2px solid rgba(20, 112, 94, 0.18);
   background: rgba(245,255,251,0.82);
   box-shadow: 0 18px 34px rgba(19, 119, 126, 0.12), inset 0 0 0 1px color-mix(in srgb, var(--accent, #8ef0b6) 28%, transparent);
@@ -577,7 +589,7 @@ body::before {
 
 .portal__icon {
   position: relative;
-  height: 164px;
+  height: 246px;
 }
 
 .portal__art {
@@ -588,14 +600,17 @@ body::before {
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
-.portal__art svg {
+.portal__art svg,
+.portal__art img {
   width: 100%;
   height: 100%;
   overflow: visible;
+  object-fit: contain;
+  user-select: none;
 }
 
 .portal__art--default {
-  opacity: 1;
+  opacity: .93;
   transform: translateY(0) scale(1);
 }
 
@@ -658,11 +673,11 @@ body::before {
 .portal--pixel { --tx: -270px; --ty: 176px; --rot: 4deg; }
 .portal--artist { --tx: 270px; --ty: 176px; --rot: -4deg; }
 
-.portal--donkey .portal__frame { background: linear-gradient(180deg, rgba(218, 255, 230, 0.95), rgba(242, 255, 251, 0.84)); }
-.portal--habit .portal__frame { background: linear-gradient(180deg, rgba(221, 250, 255, 0.96), rgba(238, 255, 245, 0.84)); }
-.portal--pixel .portal__frame { background: linear-gradient(180deg, rgba(217, 255, 216, 0.95), rgba(240, 255, 251, 0.84)); }
-.portal--artist .portal__frame { background: linear-gradient(180deg, rgba(225, 252, 255, 0.95), rgba(231, 255, 235, 0.84)); }
-.portal--info .portal__frame { background: linear-gradient(180deg, rgba(216, 248, 255, 0.96), rgba(233, 255, 245, 0.84)); }
+.portal--donkey .portal__frame { background: linear-gradient(180deg, rgba(218, 255, 230, 0.78), rgba(242, 255, 251, 0.66)); }
+.portal--habit .portal__frame { background: linear-gradient(180deg, rgba(221, 250, 255, 0.78), rgba(238, 255, 245, 0.66)); }
+.portal--pixel .portal__frame { background: linear-gradient(180deg, rgba(217, 255, 216, 0.78), rgba(240, 255, 251, 0.66)); }
+.portal--artist .portal__frame { background: linear-gradient(180deg, rgba(225, 252, 255, 0.78), rgba(231, 255, 235, 0.66)); }
+.portal--info .portal__frame { background: linear-gradient(180deg, rgba(216, 248, 255, 0.78), rgba(233, 255, 245, 0.66)); }
 
 .footer {
   position: fixed;
@@ -977,11 +992,27 @@ body::before {
   }
 
   .footer {
-    position: static;
-    transform: none;
-    width: 100%;
-    padding: 18px 0 12px;
+    position: fixed;
+    left: 50%;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: min(838px, calc(100vw - 48px));
+    padding: 0;
+    z-index: 6;
+    flex-wrap: nowrap;
+    gap: 14px;
   }
+
+  .footer a {
+    flex: 1 1 0;
+    min-height: 58px;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
 
   .portal--donkey,
   .portal--habit,
@@ -1058,16 +1089,30 @@ body::before {
   }
 
   .footer {
-    position: static;
-    transform: none;
-    width: 100%;
-    padding: 16px 4px 8px;
-    gap: 10px;
+    position: fixed;
+    left: 50%;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: calc(100vw - 20px);
+    padding: 0;
+    gap: 8px;
+    z-index: 6;
+    flex-wrap: nowrap;
   }
 
   .footer a {
-    min-height: 40px;
-    padding: 0.64rem 0.86rem;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0.64rem 0.55rem;
+    font-size: clamp(0.58rem, 2.5vw, 0.72rem);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .social-trigger {
+    display: none;
   }
 
   .portal__icon {
@@ -1140,10 +1185,9 @@ body::before {
     min-height: 100%;
     height: 100%;
     overflow: hidden;
-    /* The source artwork already contains the full standing frog on its left
-       side. Bias the narrow mobile crop toward him instead of losing him in a
-       centered landscape crop. */
-    background-position: 24% center !important;
+    /* Nudge the crop slightly right so the handwritten identity text sits
+       more centrally in the narrow mobile crop. */
+    background-position: 52% center !important;
     background-attachment: scroll;
   }
 
@@ -1289,7 +1333,7 @@ body::before {
     display: block;
     z-index: 3;
     animation: none;
-    contain: layout paint;
+    contain: layout;
   }
 
   .portal,
@@ -1298,7 +1342,7 @@ body::before {
   .portal--pixel,
   .portal--artist,
   .portal--info {
-    --bubble-size: clamp(122px, 38vw, 154px);
+    --bubble-size: clamp(128px, 42vw, 170px);
     position: absolute;
     left: 0;
     top: 0;
@@ -1308,23 +1352,31 @@ body::before {
     transform: translate3d(0, 0, 0);
     will-change: transform;
     transition: filter 160ms ease;
+    touch-action: none;
+    cursor: grab;
   }
 
-  .portal:nth-child(2) { --bubble-size: clamp(132px, 41vw, 164px); }
-  .portal:nth-child(4) { --bubble-size: clamp(128px, 39.5vw, 160px); }
+  .portal--dragging {
+    cursor: grabbing;
+    z-index: 8;
+    filter: drop-shadow(0 16px 22px rgba(18, 89, 70, 0.24));
+  }
+
+  .portal:nth-child(2) { --bubble-size: clamp(138px, 45vw, 180px); }
+  .portal:nth-child(4) { --bubble-size: clamp(134px, 43.5vw, 176px); }
 
   .portal__frame {
     display: grid;
     width: 100%;
     height: 100%;
     place-items: center;
-    padding: 11px;
+    padding: 16px;
     border: 2px solid rgba(255, 255, 255, 0.82);
     border-radius: 50%;
     background:
       radial-gradient(circle at 30% 21%, rgba(255,255,255,0.94) 0 5%, transparent 6%),
       radial-gradient(circle at 36% 29%, rgba(255,255,255,0.48) 0 15%, transparent 16%),
-      linear-gradient(145deg, rgba(238, 255, 254, 0.88), rgba(110, 222, 220, 0.62));
+      linear-gradient(145deg, rgba(238, 255, 254, 0.70), rgba(110, 222, 220, 0.44));
     box-shadow:
       inset 0 2px 4px rgba(255,255,255,0.88),
       inset 0 -11px 18px rgba(28, 157, 173, 0.18),
@@ -1346,6 +1398,7 @@ body::before {
   .portal__icon {
     width: 100%;
     height: 100%;
+    transform: translateY(-14px) scale(0.86);
   }
 
   .portal__art {
@@ -1356,9 +1409,35 @@ body::before {
     filter: drop-shadow(0 3px 2px rgba(23, 49, 38, 0.12));
   }
 
-  .portal__spark,
-  .portal__label {
+  .portal__spark {
     display: none;
+  }
+
+  .portal__label {
+    position: absolute;
+    left: 50%;
+    top: auto;
+    bottom: 16px;
+    display: block;
+    width: max-content;
+    max-width: calc(100% - 28px);
+    padding: 5px 11px 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.30);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .portal__name {
+    display: block;
+    color: var(--ink);
+    font-size: clamp(0.78rem, 3.1vw, 0.98rem);
+    line-height: 1.08;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.86);
   }
 
   .portal:hover,
@@ -1368,10 +1447,6 @@ body::before {
 
   .portal:active .portal__frame {
     transform: scale(0.94);
-  }
-
-  .portal--info {
-    display: none;
   }
 
   .portal--selected .portal__frame {
@@ -1384,7 +1459,7 @@ body::before {
   }
 
   .footer {
-    display: none;
+    display: flex;
   }
 
   .social-trigger {
@@ -1437,4 +1512,51 @@ body::before {
   .wordmark__sprout { display: none; }
   .social-trigger { display: none; }
   .footer { display: flex; }
+}
+
+/* Primary bubble field: the homepage keeps its playful floating composition at every size. */
+@media (min-width: 701px) {
+  html, body { overflow: hidden; }
+  .project-orbit { position:absolute; inset:0; z-index:3; animation:none; contain:layout; }
+  .portal, .portal--donkey, .portal--habit, .portal--pixel, .portal--artist, .portal--info { --bubble-size:clamp(203px,18.9vw,284px); position:absolute; left:0; top:0; width:var(--bubble-size); min-width:0; aspect-ratio:1; transform:translate3d(0,0,0); will-change:transform; transition:filter 160ms ease; }
+  .portal:nth-child(2) { --bubble-size:clamp(224px,20.25vw,305px); }
+  .portal:nth-child(4) { --bubble-size:clamp(213px,19.575vw,294px); }
+  .portal__frame { display:grid; width:100%; height:100%; place-items:center; padding:20px; border:2px solid rgba(255,255,255,.72); border-radius:50%; background:radial-gradient(circle at 30% 21%,rgba(255,255,255,.80) 0 5%,transparent 6%),radial-gradient(circle at 36% 29%,rgba(255,255,255,.40) 0 15%,transparent 16%),linear-gradient(145deg,rgba(238,255,254,.72),rgba(110,222,220,.46)); box-shadow:inset 0 2px 4px rgba(255,255,255,.72),inset 0 -13px 20px rgba(28,157,173,.14),0 12px 24px rgba(18,89,70,.16); animation:none; }
+  .portal__frame::after, .portal__spark { display:none; }
+  .portal__label { position:absolute; left:50%; top:auto; bottom:19px; display:block; width:max-content; max-width:calc(100% - 36px); padding:6px 13px 7px; border-radius:999px; background:rgba(255,255,255,.30); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); transform:translateX(-50%); pointer-events:none; z-index:2; }
+  .portal__name { display:block; color:var(--ink); font-size:1rem; line-height:1.08; text-align:center; text-shadow:0 1px 0 rgba(255,255,255,.86); }
+  .portal__icon, .portal__art { width:100%; height:100%; }
+  .portal__art { inset:5px; }
+  .portal:hover, .portal:focus-visible { filter:drop-shadow(0 14px 22px rgba(18,89,70,.25)); }
+  .portal:hover .portal__art--default, .portal:focus-visible .portal__art--default { opacity:1; transform:none; }
+  .portal:hover .portal__art--alt, .portal:focus-visible .portal__art--alt { opacity:0; transform:none; }
+  .project-peek { position:fixed; left:50%; bottom:104px; z-index:7; display:block; width:min(390px,calc(100vw - 36px)); padding:17px 54px 17px 19px; border:1px solid rgba(23,49,38,.16); border-radius:22px; background:linear-gradient(145deg,rgba(249,255,247,.97),rgba(224,255,241,.93)); box-shadow:0 16px 38px rgba(18,89,70,.2),inset 0 1px 0 rgba(255,255,255,.9); opacity:0; transform:translate(-50%,10px) scale(.98); transition:opacity 160ms ease,transform 160ms ease; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); pointer-events:none; }
+  .project-peek--open { opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto; }
+  .project-peek__eyebrow { margin:0 0 4px; color:rgba(23,49,38,.62); font-size:.62rem; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
+  .project-peek h2 { margin:0; font-family:"Comic Sans MS","Trebuchet MS",sans-serif; font-size:1.35rem; line-height:1.08; }
+  .project-peek__description { margin:6px 0 11px; color:rgba(23,49,38,.78); font-size:.82rem; font-weight:700; line-height:1.35; }
+  .project-peek__close { position:absolute; top:10px; right:10px; width:38px; height:38px; border:0; border-radius:50%; background:rgba(255,255,255,.82); color:var(--ink); font:800 1.2rem/1 "Trebuchet MS",sans-serif; cursor:pointer; }
+  .project-peek__visit { min-height:38px; padding:.55rem .9rem; border:1px solid rgba(23,49,38,.16); border-radius:999px; background:linear-gradient(180deg,#caffdc,#8ef0b6); color:var(--ink); font:900 .75rem/1 "Trebuchet MS",sans-serif; cursor:pointer; }
+}
+
+/* The intermediate desktop/tablet width keeps the floating composition, but its
+   scene must have a real height so the bubble physics has valid vertical bounds. */
+@media (min-width: 701px) and (max-width: 1080px) {
+  .scene {
+    min-height: 100svh;
+    height: 100svh;
+  }
+
+  .project-orbit {
+    height: 100%;
+  }
+}
+
+/* Raise every bubble's icon and label inside its bubble at every viewport size. */
+.portal__icon {
+  transform: translateY(-14px);
+}
+
+.portal__label {
+  transform: translate(-50%, -14px);
 }
