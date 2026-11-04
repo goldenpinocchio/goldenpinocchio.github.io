@@ -47,7 +47,7 @@ const projects = [
     ty: "176px",
     rot: "-4deg",
     description: "A visual collective of my pieces of art; fake, common, fuax, original, water-colored, good vibes, and plenty of froggy behavior.",
-    href: "",
+    href: "https://goldenpinocchio.github.io/art/",
   },
 ];
 
